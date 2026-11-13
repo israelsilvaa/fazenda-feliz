@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Fazenda Feliz v3</title>
+<title>Fazenda Feliz v4</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--ok:#4caf2e;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 64px)}
+:root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--ok:#4caf2e;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 64px);--sheetb:calc(env(safe-area-inset-bottom,0px) + 84px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}}
 :root[data-theme="dark"]{--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -19,9 +19,11 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .em{position:relative;z-index:1;display:grid;place-items:center}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
-.wet{background:repeating-linear-gradient(90deg,#4a3320 0 10px,#35220f 10px 12px);box-shadow:0 0 0 3px var(--water),0 0 14px 3px #3ab8f0aa}
-.wet::after{content:'💧';position:absolute;top:0;right:3px;font-size:15px;animation:drip 1.6s ease-in infinite}
-.wet .bar u{background:var(--water)}
+.thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
+.thirst::after{content:'💧';position:absolute;left:4px;bottom:11px;font-size:16px;z-index:2;animation:blink .7s steps(2) infinite}
+.thirst .bar u{background:var(--water)}
+.fert{box-shadow:0 0 0 3px #b07cff}
+#ttl{position:absolute;left:0;right:0;top:-17px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;opacity:.85;pointer-events:none}
 .ready{box-shadow:0 0 0 3px var(--sun);animation:bob .8s ease-in-out infinite}
 .ready .bar u{background:#ffb02e}
 .late .bar u{animation:blink .5s steps(2) infinite}
@@ -46,7 +48,6 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 @keyframes sweep{to{transform:rotate(1turn)}}
 @keyframes swing{from{transform:rotate(-38deg)}to{transform:rotate(28deg)}}
 @keyframes hop{to{transform:translateY(-1.5px)}}
-@keyframes drip{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(5px);opacity:.2}}
 @keyframes bob{50%{transform:translateY(-3px)}}
 @keyframes blink{50%{opacity:.2}}
 @keyframes splash{40%{box-shadow:0 0 0 12px #3ab8f099;transform:scale(1.07)}}
@@ -62,9 +63,10 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .fab.r{right:calc(env(safe-area-inset-right,0px) + 10px)}
 .fab.on{background:var(--water);border-color:#fff;box-shadow:0 0 0 3px var(--water)}
 #bc{display:none;background:#ffd6d0;color:#7a1d10;border-color:#e57a6a}#bc.on{display:block;background:#ffd6d0;box-shadow:none;border-color:#e57a6a}
+#bak{position:absolute;top:-5px;right:-5px;background:#e53935;color:#fff;border-radius:10px;min-width:20px;font-size:12px;font-weight:700;padding:1px 4px;display:none}
 #bcn{font-size:17px;font-weight:700}
 #dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
-.chip{position:relative;flex:0 0 auto;min-width:62px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 6px;cursor:pointer}
+.chip{position:relative;flex:0 0 auto;min-width:66px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 4px;cursor:pointer}
 .chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
 .chip.on{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
 .chip.lock{background:#0003;border-style:dashed}
@@ -72,7 +74,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .chip b{position:absolute;top:2px;right:3px;font-size:13px}
 #sheet{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;background:#0007}
 #sheet.on{display:flex}
-.box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px var(--sheetb)}
 .box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:2px solid var(--line)}
 .row .i{font-size:28px}.row .t{flex:1}.row small{display:block;opacity:.8}
@@ -84,12 +86,13 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .row.done{background:linear-gradient(90deg,#4caf2e33,#4caf2e0d);border:2px solid var(--ok);border-radius:12px;margin:4px 0}
 .row.done .tag{background:var(--ok);color:#fff}
 .ok{width:30px;height:30px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-weight:700}
+.row.claim{background:#ffcf3333;border:2px solid var(--sun);border-radius:12px;margin:4px 0}
 .row.pend .i{filter:grayscale(1);opacity:.7}
 #bn{position:fixed;z-index:30;top:calc(var(--top) + 58px);left:50%;transform:translate(-50%,-20px);background:var(--sun);color:#3b2a14;font-weight:700;padding:8px 16px;border-radius:14px;opacity:0;transition:.3s;pointer-events:none;text-align:center;max-width:90vw}
 #bn.on{opacity:1;transform:translate(-50%,0)}
 .pop{position:fixed;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 1px 3px #000b;z-index:9;animation:up .9s forwards;white-space:nowrap}
 @keyframes up{to{transform:translateY(-44px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.ready,.pop,.wet::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
+@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
 :focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
 </style>
 </head>
@@ -101,14 +104,15 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <button class="fab l" id="bw" aria-label="Regar">💧</button>
 <button class="fab l" id="bh" style="--n:1" aria-label="Colher tudo">🧺<small>Colher</small></button>
 <button class="fab l" id="bp" style="--n:2" aria-label="Plantar tudo">🌱<small>Plantar</small></button>
+<button class="fab l" id="bu" style="--n:3" aria-label="Regar automático">🚿<small>Auto</small></button>
 <button class="fab r" id="bs" aria-label="Loja">🛒</button>
-<button class="fab r" id="ba" style="--n:1" aria-label="Conquistas">🏆</button>
+<button class="fab r" id="ba" style="--n:1" aria-label="Conquistas">🏆<span id="bak"></span></button>
 <button class="fab r" id="bc" style="--n:2" aria-label="Cancelar fila"><span id="bcn"></span><small>Cancelar</small></button>
 <div id="dock"></div>
 <div id="bn"></div>
 <div id="sheet"><div class="box" id="box"></div></div>
 <script>
-const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=3e5,WL=[1,2,3,4,6,8,10,12,14,16];
+const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=3e5,WC=2,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
 
 // ---------- Dados ----------
 const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
@@ -151,12 +155,15 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
 // ---------- Estado ----------
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp,HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,ach:{},st:{h:0,w:0,g:0,e:0},last:Date.now()});
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0},last:Date.now()});
 let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
-try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
+  Object.values(S.pl).forEach(p=>{if(p.c&&p.g===undefined){const k=C[p.c],tot=k.t*1000,g=Math.max(0,Math.min(tot,Date.now()-(p.p||0)));Object.assign(p,{g,w:TH(k).filter(x=>x*tot<=g).length,th:0,f:0,rt:g>=tot?(p.p||0)+tot:0})}});
   [['hen','hens','eggs','eggT'],['cow','cows','milk','milkT']].forEach(([k,n,q,t])=>{if(j[n]&&!S.an[k])S.an[k]={n:j[n],q:j[q]||0,t:j[t]||0,a:0}})}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const P=k=>S.pl[k]||(S.pl[k]={c:null,p:0,w:0,a:0});
+const P=k=>S.pl[k]||(S.pl[k]={c:null,g:0,w:0,th:0,f:0,rt:0,a:0});
+const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0});
+const isT=()=>sel==='agua'||sel==='adubo';
 const AN=k=>S.an[k]||(S.an[k]={n:0,q:0,t:0,a:0}),cnt=k=>AN(k).n;
 const earn=n=>{S.coins+=n;S.st.g+=n};
 const free=()=>S.wk-[...Object.values(S.pl),...Object.values(S.an)].filter(x=>x.a).length;
@@ -167,9 +174,10 @@ let bt;function bn(t){const b=$('#bn');b.textContent=t;b.classList.add('on');cle
 function pop(el,t){if(!el)return;const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='pop';s.textContent=t;s.style.left=(r.left+r.width/2-30)+'px';s.style.top=(r.top+r.height/3)+'px';document.body.append(s);setTimeout(()=>s.remove(),900)}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
 const FARM=t=>`<svg viewBox="0 0 48 48"><g class="bd"><rect x="18" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="26" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="16" y="24" width="18" height="16" rx="5" fill="#3a7bd5"/><rect x="16" y="24" width="18" height="6" rx="3" fill="#d9534f"/><circle cx="25" cy="18" r="6.5" fill="#f3c9a0"/><circle cx="27.5" cy="18" r="1" fill="#3b2a14"/><ellipse cx="25" cy="13.5" rx="13" ry="3.2" fill="#e8b84a"/><path d="M17 13.5a8 7 0 0 1 16 0z" fill="#f2c85b"/></g><g class="hoe"><path d="M30 27L43 9" stroke="#7a4a22" stroke-width="3" stroke-linecap="round"/><path d="M39 8L47 5L46 14Z" fill="#9aa5ad"/><circle cx="30" cy="27" r="3" fill="#f3c9a0"/></g></svg><i class="tl">${t}</i>`;
-const CELL='<span class="tm"></span><span class="em"></span><i class="rd"></i><i class="bar"><u></u></i>';
-function mk(cls,extra=''){const d=document.createElement('div');d.className=cls;d.innerHTML=CELL+extra;return{d,tm:d.querySelector('.tm'),em:d.querySelector('.em'),u:d.querySelector('u'),ct:d.querySelector('.cnt')}}
-function paint(x,cls,em,tm,bw){
+const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><i class="rd"></i><i class="bar"><u></u></i>';
+function mk(cls){const d=document.createElement('div');d.className=cls;d.innerHTML=CELL;return{d,tm:d.querySelector('.tm'),em:d.querySelector('.em'),u:d.querySelector('u'),ct:d.querySelector('.cnt')}}
+function paint(x,cls,em,tm,bw,ct=''){
+  x.ct.textContent=ct;
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
   x.tm.textContent=tm;x.u.style.width=(bw*100)+'%';
   cls+=x.d.classList.contains('splash')?' splash':'';
@@ -181,25 +189,26 @@ function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
 
 // ---------- Dock ----------
 function buildDock(){
-  $('#dock').innerHTML=CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}">${c.e}<small>${c.cost} 💰</small></button>`).join('')}
-$('#dock').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const c=C[b.dataset.k];
+  $('#dock').innerHTML=`<button class="chip" data-k="adubo" title="Fertilizante: +50% de velocidade">🧪<small id="fz"></small></button>`+CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}">${c.e}<small>${c.cost}→${c.sell}</small></button>`).join('')}
+$('#dock').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;if(b.dataset.k==='adubo'){sel=sel==='adubo'?last:'adubo';return ui()}const c=C[b.dataset.k];
   if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);sel=last=c.k;ui()};
 $('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
+$('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (${WC} 💰 por rega)`:'Regar automático desligado');done()};
 
 // ---------- Mapa ----------
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false;
 function buildMap(){
-  map.innerHTML='';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌾 Fazenda Feliz v4 · desenvolvido por Israel Silva (Claude Code)</div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
-    own.forEach(m=>{const x=mk('plot pen','<span class="cnt"></span>');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
+    own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
   map.style.gridTemplateColumns=`repeat(${S.cols},74px)`;
   for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
     const x=mk('plot'),key=r+','+c;x.d.dataset.key=key;x.key=key;map.append(x.d);cells.push(cm[key]=x)}
   fit();
 }
 function fit(){
-  const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth,mh=map.offsetHeight,T=70,B=150,pad=12,ah=vh-T-B;
+  const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth,mh=map.offsetHeight,T=84,B=150,pad=12,ah=vh-T-B;
   px=mw+pad*2<=vw?(vw-mw)/2:Math.min(pad,Math.max(vw-mw-pad,px));
   py=mh<=ah?T+(ah-mh)/2:Math.min(T,Math.max(vh-B-mh,py));
   map.style.transform=`translate(${px}px,${py}px)`;
@@ -221,14 +230,15 @@ function start(t){
   if(t.t==='p'){
     const k=C[t.c];if(p.c||p.a)return;
     if(S.coins<k.cost)return bn('Faltam moedas para plantar');
-    S.coins-=k.cost;const e=n+pt(k);Object.assign(p,{c:t.c,p:e,w:0,a:{t:'p',s:n,e}});pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
-  }else if(p.c&&!p.a&&n>=p.p+C[p.c].t*1000)p.a={t:'h',s:n,e:n+HT()};
+    S.coins-=k.cost;const e=n+pt(k);Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,rt:0,a:{t:'p',s:n,e}});pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
+  }else if(p.c&&!p.a&&p.rt&&n-p.rt<DEAD)p.a={t:'h',s:n,e:n+HT()};
 }
 const pump=()=>{while(S.q.length&&free()>0)start(S.q.shift())};
 const queued=k=>S.q.some(t=>t.k===k);
 function run(t,d){if(queued(t.k))return pop(d,'Na fila ⏳');if(free()<=0)return pop(d,'Sem trabalhador livre');start(t)}
 function enqueue(ts){S.q.push(...ts);pump()}
 
+function water(p,d){p.th=0;p.w++;S.st.w++;addXp(1);pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
 function act(key,d){
   const n=Date.now();
   if(key.startsWith('pen:')){const a=AN(key.slice(4));
@@ -236,27 +246,26 @@ function act(key,d){
   else{
     const p=P(key);
     if(p.a)return pop(d,p.a.t==='p'?'Plantando...':'Colhendo...');
-    if(!p.c){if(sel==='agua')return pop(d,'Plante antes de regar');run({k:key,t:'p',c:sel},d)}
-    else{const k=C[p.c],tot=k.t*1000,el=n-p.p;
-      if(el>=tot+DEAD){p.c=null;p.w=0;pop(d,'Limpo')}
-      else if(el>=tot)run({k:key,t:'h'},d);
-      else if(sel==='agua'&&!p.w){p.p-=(tot-el)*.4;p.w=1;S.st.w++;addXp(1);pop(d,'💦');d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450);buzz()}
-      else pop(d,p.w?'Já regada 💧':'Crescendo...')}
+    if(!p.c){if(isT())return pop(d,'Plante antes');run({k:key,t:'p',c:sel},d)}
+    else if(p.rt){if(n-p.rt>=DEAD){clr(p);pop(d,'Limpo')}else run({k:key,t:'h'},d)}
+    else if(sel==='agua')p.th?water(p,d):pop(d,'Não precisa de água');
+    else if(sel==='adubo'){if(p.f)pop(d,'Já adubada');else if(!S.fert)bn('Sem fertilizante. Compre na loja 🧪');else{p.f=1;S.fert--;pop(d,'🧪 +50%');buzz()}}
+    else pop(d,p.th?'Precisa de água! 💧':'Crescendo...');
   }
   done();
 }
 function bulk(kind){
   const n=Date.now(),ts=[],ok=t=>!queued(t.k);
   if(kind==='p'){
-    const c=sel==='agua'?last:sel,k=C[c];
+    const c=isT()?last:sel,k=C[c];
     cells.forEach(x=>{const p=S.pl[x.key];if(!(p&&(p.c||p.a)))ts.push({k:x.key,t:'p',c})});
     const can=Math.floor(S.coins/k.cost);
     if(!ts.length)return bn('Sem canteiros livres');
     if(!can)return bn(`Faltam moedas para ${k.e} ${k.n}`);
     ts.splice(can);
   }else{
-    cells.forEach(x=>{const p=S.pl[x.key];if(!p||!p.c||p.a)return;const tot=C[p.c].t*1000,el=n-p.p;
-      if(el>=tot+DEAD){p.c=null;p.w=0}else if(el>=tot)ts.push({k:x.key,t:'h'})});
+    cells.forEach(x=>{const p=S.pl[x.key];if(!p||!p.c||p.a||!p.rt)return;
+      if(n-p.rt>=DEAD)clr(p);else ts.push({k:x.key,t:'h'})});
     pens.forEach(x=>{const a=AN(x.m.k);if(a.q&&!a.a)ts.push({k:'pen:'+x.m.k,t:'c'})});
     if(!ts.length)return bn('Nada para colher');
   }
@@ -270,6 +279,7 @@ const lc=()=>50*(S.cols+S.rows-7),wc=()=>Math.round(6*S.wk**1.8)*10,bc=()=>150*(
 const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'land',i:'🌱',t:'Ampliar terreno',s:mx?'Terreno no máximo':`${S.cols}x${S.rows}, ganha uma ${S.cols<=S.rows?'coluna':'linha'}`,p:lc(),full:mx,buy(){S.cols<=S.rows?S.cols++:S.rows++;buildMap()}},
   {id:'wk',i:'🧑‍🌾',t:`Trabalhador (${S.wk}/10)`,s:'Faz uma tarefa por vez: plantar, colher ou coletar',p:wc(),lv:WL[S.wk],full:S.wk>=10,buy(){S.wk++}},
+  {id:'fert',i:'🧪',t:`Fertilizante (você tem ${S.fert})`,s:'Pacote com 5. A planta cresce 50% mais rápido',p:25,lv:2,buy(){S.fert+=5}},
   {id:'sp',i:'👢',t:`Botas ágeis (${S.sp}/5)`,s:'Trabalhadores 15% mais rápidos',p:bc(),lv:3+2*S.sp,full:S.sp>=5,buy(){S.sp++}},
   ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 💰. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
 function row(it){
@@ -279,9 +289,11 @@ function shop(){
   $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2>`+SH().map(row).join('')+
    `<div class="row"><span class="t"><small>Apagar o progresso salvo</small></span><button data-a="reset">${armed?'Toque de novo':'Recomeçar'}</button></div>`}
 function ach(){
-  const L=A.map(a=>({a,d:!!S.ach[a[0]]})).sort((x,y)=>x.d-y.d),n=L.filter(x=>x.d).length;
-  $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <button data-a="x">Fechar</button></h2>`+
-   L.map(({a,d})=>`<div class="row ${d?'done':'pend'}"><span class="i">${a[1]}</span><span class="t"><b>${a[2]}</b><small>${a[3]}</small></span>${d?`<span class="tag">+${a[5]} 💰</span><span class="ok">✓</span>`:`<span class="tag gold">${a[5]} 💰</span>`}</div>`).join('')}
+  const st=a=>S.clm[a[0]]?2:S.ach[a[0]]?0:1,L=[...A].sort((x,y)=>st(x)-st(y)),n=A.filter(a=>st(a)===2).length,cl=A.filter(a=>st(a)===0).length;
+  const R=(a,c,r)=>`<div class="row ${c}"><span class="i">${a[1]}</span><span class="t"><b>${a[2]}</b><small>${a[3]}</small></span>${r}</div>`;
+  $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <span>${cl?'<button data-a="claimall">Coletar tudo</button> ':''}<button data-a="x">Fechar</button></span></h2>`+
+   L.map(a=>[R(a,'claim',`<button data-a="claim:${a[0]}">Coletar +${a[5]} 💰</button>`),R(a,'pend',`<span class="tag gold">${a[5]} 💰</span>`),R(a,'done',`<span class="tag">+${a[5]} 💰</span><span class="ok">✓</span>`)][st(a)]).join('')}
+const claim=id=>{const a=A.find(x=>x[0]===id);if(a&&S.ach[id]&&!S.clm[id]){S.clm[id]=1;S.coins+=a[5];return a[5]}return 0};
 function open(f){fn=f;f();$('#sheet').classList.add('on')}
 $('#bs').onclick=()=>open(shop);$('#ba').onclick=()=>open(ach);
 $('#sheet').onclick=e=>{
@@ -289,17 +301,22 @@ $('#sheet').onclick=e=>{
   if(e.target.id==='sheet'||a==='x')return sh.classList.remove('on');
   if(!a)return;
   if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';buildMap();buildDock();sh.classList.remove('on')}}
+  else if(a.startsWith('claim')){const t=a==='claimall'?A.reduce((s,x)=>s+claim(x[0]),0):claim(a.slice(6));if(t)bn(`🏆 +${t} 💰`)}
   else{const it=SH().find(i=>i.id===a);if(it&&S.lv>=(it.lv||1)&&!it.full&&S.coins>=it.p){S.coins-=it.p;it.buy();pump()}}
   done();if(sh.classList.contains('on'))fn();
 };
-function chk(){A.forEach(a=>{if(!S.ach[a[0]]&&a[4]()){S.ach[a[0]]=1;S.coins+=a[5];bn(`Conquista: ${a[1]} ${a[2]} (+${a[5]} 💰)`)}})}
+function chk(){A.forEach(a=>{if(!S.ach[a[0]]&&a[4]()){S.ach[a[0]]=1;bn(`🏆 Conquista: ${a[1]} ${a[2]}! Colete o prêmio`)}})}
 
 // ---------- Loop ----------
 function tick(){
   const n=Date.now(),dt=Math.min(n-S.last,36e5);S.last=n;
   AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n;const iv=m.every*1000;while(a.t>=iv){if(a.q<m.cap)a.q++;a.t-=iv}});
-  for(const key in S.pl){const p=S.pl[key];if(!p.a||n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
-    if(t==='h'){earn(k.sell);S.st.h++;addXp(k.xp);pop(cm[key]&&cm[key].d,`+${k.sell} 💰`);p.c=null;p.w=0}}
+  for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
+    if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
+      if(t==='h'){earn(k.sell);S.st.h++;addXp(k.xp);pop(cm[key]&&cm[key].d,`+${k.sell} 💰`);clr(p)}}
+    else if(p.th){if(S.auto&&S.coins>=WC){S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
+    else if(!p.rt){const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
+      if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
   AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,x=pens.find(z=>z.m===m);
     earn(g);if(m.k==='hen')S.st.e+=a.q;a.q=0;a.a=0;pop(x&&x.d,`+${g} 💰`)});
   pump();
@@ -309,27 +326,26 @@ function ui(){
   $('#coins').textContent=S.coins;$('#lvt').textContent='Nível '+S.lv;$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
-  $('#bw').classList.toggle('on',sel==='agua');
+  $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#fz').textContent='×'+S.fert;
+  const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';
   document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
   const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
   cells.forEach(x=>{
-    const p=S.pl[x.key];let cls='plot',em='',tm='',bw=0,r;
+    const p=S.pl[x.key];let cls='plot',em='',tm='',bw=0,r,ct='';
     if(p&&p.c){
-      const k=C[p.c],tot=k.t*1000,el=n-p.p,pr=Math.min(1,el/tot),rem=tot+DEAD-el;
-      if(p.a){[r,em,tm,bw]=work(p.a,p.a.t==='p'?'🌱':k.e);cls+=r}
-      else if(pr<1){em=pr>.5?'🌿':'🌱';bw=pr;tm=fmt(Math.ceil((tot-el)/1000))}
-      else if(rem>0){em=k.e;bw=rem/DEAD;tm=fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}
-      else{em='🥀';cls+=' dead'}
-      if(p.w&&em!=='🥀')cls+=' wet';
+      const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,rem=p.rt?DEAD-(n-p.rt):0;ct='+'+k.sell;
+      if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
+      else if(p.rt){if(rem>0){em=k.e;bw=rem/DEAD;tm=fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em='🥀';cls+=' dead';ct=''}}
+      else{em=p.g/tot>.5?'🌿':'🌱';bw=p.g/tot;if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
-    paint(x,cls,em,tm,bw);
+    paint(x,cls,em,tm,bw,ct);
   });
   pens.forEach(x=>{
     const m=x.m,a=AN(m.k);let cls='plot pen',em=m.e,tm='',bw=0,r;
     if(a.a){[r,em,tm,bw]=work(a.a,m.pe);cls+=r}else if(a.q)cls+=' ready';
     if(qs.has('pen:'+m.k))cls+=' qd';
-    x.ct.textContent=m.pe+a.q+'/'+m.cap;paint(x,cls,em,tm,bw);
+    paint(x,cls,em,tm,bw,m.pe+a.q+'/'+m.cap);
   });
 }
 buildMap();buildDock();tick();chk();ui();
