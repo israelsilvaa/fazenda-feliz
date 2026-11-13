@@ -20,7 +20,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
-.thirst::after{content:'💧';position:absolute;left:4px;bottom:11px;font-size:16px;z-index:2;animation:blink .7s steps(2) infinite}
+.thirst::after{content:'💧';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:22px;line-height:1;z-index:4;pointer-events:none}
 .thirst .bar u{background:var(--water)}
 .fert{box-shadow:0 0 0 3px #b07cff}
 .fert-level{position:absolute;right:-6px;top:-7px;z-index:5;width:23px;height:23px;border-radius:50%;display:none;place-items:center;background:linear-gradient(145deg,#fff4a8,#ffc52e);border:2px solid #8d5a12;color:#4b2d08;font-size:11px;font-weight:700;line-height:1;box-shadow:0 1px 3px #0008}
@@ -37,6 +37,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .ready .tm{left:50%;right:auto;width:auto;max-width:62px;text-align:center;font-size:9px;line-height:13px;background:#9b4b16ed;border-radius:7px;padding:0 4px;text-shadow:0 1px 2px #000}
 /* Partículas douradas discretas; todas as plantas prontas compartilham o mesmo ritmo. */
 .ready .em::after{content:"";position:absolute;left:50%;bottom:7px;width:3px;height:3px;border-radius:50%;background:#fff0a0;box-shadow:0 0 4px 1px #ffe65c, -9px 4px 0 -1px #fff0a0, 8px 1px 0 -1px #fff0a0;pointer-events:none;z-index:4;animation:plantParticles 2.4s ease-out infinite;animation-delay:-1.2s}
+#map.large .ready .em::after{display:none}#map.large .rare-gold,#map.large .rare-magic,#map.large .rare-rainbow,#map.large .rare-crystal{box-shadow:0 0 0 3px currentColor}
 @keyframes plantParticles{0%{transform:translate(-50%,5px);opacity:0}18%{opacity:.9}82%{opacity:.7}100%{transform:translate(-50%,-24px);opacity:0}}
 .late .bar u{animation:blink .5s steps(2) infinite}
 .dead{filter:grayscale(.8) brightness(.8)}
@@ -60,7 +61,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 /* radar */
 .rd{position:absolute;inset:5px;border-radius:50%;display:none;overflow:hidden;border:2px solid #9fffb0aa;background:radial-gradient(circle,#0000 0 28%,#9fffb055 29% 31%,#0000 32% 58%,#9fffb044 59% 61%,#0000 62%),#0a2a10aa}
 .work .rd{display:block}
-.rd::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#0000 0 70%,#9fffb0e0 100%);animation:sweep 1.2s linear infinite}
+.rd::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#0000 0 70%,#9fffb0e0 100%);}
 /* fazendeiro */
 .em svg{width:44px;height:44px;overflow:visible}
 .bd{animation:hop .55s ease-in-out infinite alternate}
@@ -70,6 +71,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
 .cnt{position:absolute;top:1px;right:4px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
 @keyframes sweep{to{transform:rotate(1turn)}}
+#map.many-work .bd,#map.many-work .tl{animation:none}
+#map.many-ready .ready .em::after{display:none}
 @keyframes swing{from{transform:rotate(-38deg)}to{transform:rotate(28deg)}}
 @keyframes hop{to{transform:translateY(-1.5px)}}
 @keyframes bob{50%{transform:translateY(-3px)}}
@@ -91,7 +94,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bc{display:none;background:#ffd6d0;color:#7a1d10;border-color:#e57a6a}#bc.on{display:block;background:#ffd6d0;box-shadow:none;border-color:#e57a6a}
 #bak{position:absolute;top:-5px;right:-5px;background:#e53935;color:#fff;border-radius:10px;min-width:20px;font-size:12px;font-weight:700;padding:1px 4px;display:none}
 #bcn{font-size:17px;font-weight:700}
-#dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
+#dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 8px;scrollbar-width:thin;scrollbar-color:#d6a52b #6b432655;cursor:grab;overscroll-behavior-x:contain;touch-action:pan-x}
+#dock::-webkit-scrollbar{height:7px}#dock::-webkit-scrollbar-track{background:#6b432655;border-radius:8px}#dock::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#f6d76c,#c18a19);border:1px solid #fff5;border-radius:8px}#dock.dragging{cursor:grabbing;user-select:none}
 .chip{position:relative;flex:0 0 auto;min-width:66px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 4px;cursor:pointer}
 .chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
 .chip.on{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
@@ -148,7 +152,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <div id="bn"></div>
 <div id="sheet"><div class="box" id="box"></div></div>
 <script>
-const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=9e5,WC=2,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
+const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=9e5,WC=0,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
 
 // ---------- Dados ----------
 const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
@@ -265,6 +269,7 @@ const done=()=>{chk();save();const d=$('#dock'),x=d.scrollLeft;buildDock();d.scr
 // ---------- UI utilitária ----------
 let bt;function bn(t){const b=$('#bn');b.textContent=t;b.classList.add('on');clearTimeout(bt);bt=setTimeout(()=>b.classList.remove('on'),2600)}
 function pop(el,t){if(!el)return;const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='pop';s.textContent=t;s.style.left=(r.left+r.width/2-30)+'px';s.style.top=(r.top+r.height/3)+'px';document.body.append(s);setTimeout(()=>s.remove(),900)}
+let autoWaterNoticeCount=0;function popAutoWater(el){if(!el||autoWaterNoticeCount>=16)return;autoWaterNoticeCount++;pop(el,'💦');setTimeout(()=>autoWaterNoticeCount=Math.max(0,autoWaterNoticeCount-1),900)}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
 const FARM=t=>`<svg viewBox="0 0 48 48"><g class="bd"><rect x="18" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="26" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="16" y="24" width="18" height="16" rx="5" fill="#3a7bd5"/><rect x="16" y="24" width="18" height="6" rx="3" fill="#d9534f"/><circle cx="25" cy="18" r="6.5" fill="#f3c9a0"/><circle cx="27.5" cy="18" r="1" fill="#3b2a14"/><ellipse cx="25" cy="13.5" rx="13" ry="3.2" fill="#e8b84a"/><path d="M17 13.5a8 7 0 0 1 16 0z" fill="#f2c85b"/></g><g class="hoe"><path d="M30 27L43 9" stroke="#7a4a22" stroke-width="3" stroke-linecap="round"/><path d="M39 8L47 5L46 14Z" fill="#9aa5ad"/><circle cx="30" cy="27" r="3" fill="#f3c9a0"/></g></svg><i class="tl">${t}</i>`;
 const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><span class="fert-level"></span><i class="rd"></i><i class="bar"><u></u></i>';
@@ -300,15 +305,25 @@ function cropArt(key,progress,dead=false){
   const plant=dead?`<path d="M32 52Q22 38 12 43M32 52Q44 35 52 43M32 48Q28 31 23 27" stroke="#806b4d" stroke-width="3" fill="none" stroke-linecap="round"/>${round(32,58,4,2,'#8a6947','#705339')}`:`${leaves}${fruit}`;
   return `<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><ellipse cx="32" cy="63" rx="19" ry="3.5" fill="#3a2518" opacity=".25"/><g transform="translate(0 ${Math.round((1-p)*15)}) scale(${(.62+p*.38).toFixed(2)})" style="transform-origin:32px 58px">${plant}</g></svg>`;
 }
+const cropClusterCache=new Map();
+let cropDefs=null;
 function cropCluster(key,progress,dead=false){
-  const stage=progress>=1?1:progress>=.72?.78:progress>=.43?.5:.24;
-  return Array.from({length:6},()=>cropArt(key,stage,dead)).join('');
+  const stage=progress>=1?1:progress>=.72?.78:progress>=.43?.5:.24,cacheKey=key+'|'+stage+'|'+(dead?1:0);
+  let html=cropClusterCache.get(cacheKey);
+  if(!html){
+    if(!cropDefs){cropDefs=document.createElementNS('http://www.w3.org/2000/svg','svg');cropDefs.setAttribute('width','0');cropDefs.setAttribute('height','0');cropDefs.setAttribute('aria-hidden','true');cropDefs.style.cssText='position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';document.body.appendChild(cropDefs)}
+    const id='cs'+cropClusterCache.size,inner=cropArt(key,stage,dead).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+    cropDefs.insertAdjacentHTML('beforeend',`<defs><g id="${id}">${inner}</g></defs>`);
+    html=Array.from({length:6},()=>`<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><use href="#${id}"/></svg>`).join('');
+    cropClusterCache.set(cacheKey,html);
+  }
+  return html;
 }
 function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
-  x.ct.textContent=ct;
-  x.fert.classList.toggle('on',!!fertLevel);x.fert.dataset.level=fertLevel||'';
+  if(x.lct!==ct){x.ct.textContent=ct;x.lct=ct}
+  const fl=fertLevel||0;if(x.lfl!==fl){x.fert.classList.toggle('on',!!fl);x.fert.dataset.level=fl||'';x.lfl=fl}
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
-  x.tm.textContent=tm;if(!fertLevel)x.tm.removeAttribute('title');x.u.style.width=(bw*100)+'%';
+  if(x.lastTm!==tm){x.tm.textContent=tm;x.lastTm=tm}if(!fertLevel&&x.tm.hasAttribute('title'))x.tm.removeAttribute('title');const width=(Math.round(bw*100))+'%';if(x.lastWidth!==width){x.u.style.width=width;x.lastWidth=width}
   cls+=x.d.classList.contains('splash')?' splash':'';
   if(x.d.className!==cls)x.d.className=cls}
 
@@ -325,22 +340,32 @@ function buildDock(){
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
     CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}">${c.e}<small>${c.cost}→${c.sell}</small></button>`).join('');
 }
+let suppressDockClick=false;
 $('#dock').onclick=e=>{
+  if(suppressDockClick){suppressDockClick=false;e.preventDefault();return}
   const b=e.target.closest('.chip');if(!b)return;
   if(['f1','f2','f3','veneno','pocao'].includes(b.dataset.k)){sel=sel===b.dataset.k?last:b.dataset.k;ui();return}
   const c=C[b.dataset.k];if(!c)return;
   if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);
   sel=last=c.k;ui();
 };
+const dock=$('#dock');let dockDrag=null;
+dock.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){dock.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+dock.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===0)dockDrag={x:e.clientX,left:dock.scrollLeft,moved:false}});
+dock.addEventListener('pointermove',e=>{if(!dockDrag)return;const dx=e.clientX-dockDrag.x;if(Math.abs(dx)>4)dockDrag.moved=true;if(dockDrag.moved){dock.scrollLeft=dockDrag.left-dx;dock.classList.add('dragging')}});
+dock.addEventListener('pointerup',()=>{if(dockDrag?.moved)suppressDockClick=true;dockDrag=null;dock.classList.remove('dragging')});
+dock.addEventListener('pointercancel',()=>{dockDrag=null;dock.classList.remove('dragging')});
+
 $('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
-$('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (${WC} 💰 por rega)`:'Regar automático desligado');done()};
+$('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (grátis)`:'Regar automático desligado');done()};
 $('#bf').onclick=()=>{S.autoFert=S.autoFert?0:1;bn(S.autoFert?'Adubo automático ligado':'Adubo automático desligado');done()};
 $('#bhelp').onclick=()=>open(help);
 
 // ---------- Mapa ----------
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v10 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.classList.toggle('large',S.cols*S.rows>36);
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v11 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -355,10 +380,11 @@ function fit(){
   py=mh<=ah?T+(ah-mh)/2:Math.min(T,Math.max(vh-B-mh,py));
   map.style.transformOrigin='top left';map.style.transform=`translate(${px}px,${py}px) scale(${zoom})`;
 }
-view.addEventListener('pointerdown',e=>{drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false});
+let mapRaf=0;
+view.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false;view.setPointerCapture?.(e.pointerId)});
 addEventListener('pointermove',e=>{if(!drag)return;
   if(!moved&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)moved=true;
-  if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;fit()}});
+  if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;if(!mapRaf)mapRaf=requestAnimationFrame(()=>{mapRaf=0;fit()})}});
 addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
 addEventListener('pointercancel',()=>{drag=null});
 addEventListener('resize',fit);
@@ -382,7 +408,7 @@ const queued=k=>S.q.some(t=>t.k===k);
 function run(t,d){if(queued(t.k))return pop(d,'Na fila ⏳');if(free()<=0)return pop(d,'Sem trabalhador livre');start(t)}
 function enqueue(ts){S.q.push(...ts);pump()}
 
-function water(p,d){p.th=0;p.w++;S.st.w++;S.daily.water=(S.daily.water||0)+1;addXp(1);pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
+function water(p,d,manual=true){p.th=0;p.w++;S.st.w++;S.daily.water=(S.daily.water||0)+1;addXp(1);if(manual){pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}else popAutoWater(d)}
 function act(key,d){
   const n=Date.now();
   if(key.startsWith('pen:')){const a=AN(key.slice(4));
@@ -447,26 +473,31 @@ function shop(){
 function help(){
   $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
   <div id="helptext">
-    <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
-    <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione a ferramenta de água e toque em uma planta que esteja pedindo água. O aspersor pode automatizar as regas.</small></span></div>
-    <div class="help-row"><span class="i">🌱</span><span><b>Fases de crescimento</b><small>As plantas mudam de aparência em quatro etapas: muda, crescimento médio, quase pronta e pronta. A aparência muda por etapas para deixar o mapa mais leve.</small></span></div>
-    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando o canteiro ganha o contorno dourado, a planta pode ser colhida. Você tem 15 minutos para colher antes que ela murche. O brilho usa partículas douradas discretas que sobem juntas no mesmo ritmo.</small></span></div>
-    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais. Colheitas em sequência aumentam o combo e podem dar bônus.</small></span></div>
-    <div class="help-row"><span class="i">🌾</span><span><b>Plantar</b><small>Planta a semente selecionada nos canteiros vazios, respeitando suas moedas. Cada canteiro ocupado mostra seis plantinhas.</small></span></div>
-    <div class="help-row"><span class="i">⚡①</span><span><b>Adubos e acelerador</b><small>Os três adubos usam o mesmo ícone de raio; o número na bolinha indica o nível. Selecione o nível 1, 2 ou 3 no inventário e toque em uma planta em crescimento. O nível 1 acelera 20% por 2 minutos, o nível 2 acelera 30% por 3 minutos e o nível 3 acelera 40% por 4 minutos. O número ⚡ que aparece no canteiro mostra o nível aplicado. O cronômetro mostra o tempo de crescimento restante e seus segundos diminuem mais rápido enquanto o efeito estiver ativo. Não é possível acumular dois adubos na mesma planta.</small></span></div>
-    <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Ative Auto adubo para aplicar automaticamente o melhor adubo disponível ao plantar: nível 3, depois nível 2 e por último nível 1. Também é possível aplicar manualmente pelo inventário.</small></span></div>
-    <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta e conta para as conquistas de plantas perdidas. Quando uma planta morre, toque nela ou use Colher para limpar o canteiro e receber composto. Na loja, troque 5 compostos por 3 adubos de nível 1. A melhoria Compostagem aumenta a quantidade recebida ao limpar plantas mortas.</small></span></div>
-    <div class="help-row"><span class="i">🧪</span><span><b>Poção, raridades e cristais</b><small>A poção adianta instantaneamente 15% do crescimento. Plantas douradas, mágicas, arco-íris e de cristal podem aparecer raramente. Ao colher uma planta de cristal, você recebe 1 cristal; na loja, troque cada cristal por 500 moedas.</small></span></div>
-    <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>As colheitas podem ser comuns, boas, excelentes ou perfeitas. Água, adubo e melhorias ajudam a obter recompensas maiores.</small></span></div>
-    <div class="help-row"><span class="i">🛒</span><span><b>Loja e melhorias</b><small>Compre adubos, veneno, poções, animais, trabalhadores, aspersor, melhorias permanentes e evoluções dos canteiros. O aspersor rega gratuitamente; a rega automática comum custa 2 moedas por rega. As melhorias e os canteiros evoluídos aplicam os bônus descritos na loja.</small></span></div>
-    <div class="help-row"><span class="i">♻️💎</span><span><b>Moedas de troca</b><small>Além das moedas 💰, acompanhe no topo o composto ♻️ e os cristais 💎. Composto é recebido ao limpar plantas mortas e pode ser trocado por adubos na loja. Cristais vêm de colheitas raras de cristal e podem ser trocados por moedas. Os contadores ficam visíveis durante o jogo.</small></span></div>
-    <div class="help-row"><span class="i">📅</span><span><b>Missões diárias</b><small>Complete objetivos de colheita, rega e adubação para ganhar moedas extras. As missões reiniciam todos os dias à meia-noite, no horário local; o contador mostra quanto falta.</small></span></div>
-    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Desbloqueie prêmios por níveis, colheitas, regas, plantas raras, qualidade, combos, compostagem e outras metas. Algumas conquistas são secretas.</small></span></div>
-    <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom e mapa</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste para se movimentar.</small></span></div>
-    <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
+    <p>🌻 Plante sementes, cuide dos canteiros, colha e venda a produção para ganhar moedas e XP. Suba de nível para liberar novas sementes, animais, trabalhadores e melhorias. O progresso é salvo automaticamente neste aparelho.</p>
+    <h3>🌱 Plantio e crescimento</h3>
+    <div class="help-row"><span class="i">🌱</span><span><b>Sementes</b><small>Escolha uma semente na barra inferior e toque em um canteiro vazio. O plantio custa as moedas mostradas no botão da semente. Plantar tudo preenche os canteiros livres com a semente selecionada, limitado pelo seu saldo. A barra inferior pode ser rolada para os lados.</small></span></div>
+    <div class="help-row"><span class="i">🌿</span><span><b>Fases e tempo</b><small>As plantas passam por quatro aparências de crescimento. O tempo-base de cada semente aparece na lista de sementes. O trabalhador faz o plantio antes do crescimento começar; botas e melhorias de trabalhadores aceleram as tarefas.</small></span></div>
+    <div class="help-row"><span class="i">💧</span><span><b>Regar: a planta pausa, não morre</b><small>Cada planta precisa de uma rega quando chega a cerca de 50% do crescimento. Sementes com tempo-base de 140 segundos ou mais pedem duas regas: aproximadamente em 35% e 70%. Quando aparece a gota, o crescimento pausa até regar. A planta não morre por esperar água; só murcha depois de ficar pronta e passar o prazo de colheita. Selecione 💧 e toque no canteiro. A rega automática é grátis; o aspersor comprado na loja também rega de graça. Com Auto ligado, as plantas sedentas são regadas automaticamente.</small></span></div>
+    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Quando o canteiro fica com contorno dourado, está pronto. Toque nele ou use Colher para enfileirar as colheitas prontas e a coleta dos produtos dos animais. A planta pronta pode ser colhida por 15 minutos; depois murcha. Uma planta murcha pode ser limpa para receber composto, mas não rende a venda normal.</small></span></div>
+    <h3>⭐ Qualidade, combo e raridades</h3>
+    <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>Existem quatro qualidades: comum (×1), boa (×1,2), excelente (×1,5) e perfeita (×2). Regar todas as vezes necessárias garante pelo menos qualidade boa. A melhoria Olho de agricultor aumenta a chance de excelente; colher uma planta adubada concede qualidade perfeita. O multiplicador é aplicado ao valor de venda.</small></span></div>
+    <div class="help-row"><span class="i">🔥</span><span><b>Combo</b><small>Colheitas feitas em sequência, com intervalo máximo de 30 segundos, aumentam o combo. A partir de 5 colheitas o bônus é +2%; com 10 é +5%; com 20 é +10%. Se passar 30 segundos sem colher, o combo recomeça.</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Plantas raras</b><small>Uma planta pode nascer Dourada (×3 no valor), Mágica (×5), Arco-íris (×10) ou Cristal (×1). A planta de cristal também concede 1 cristal ao colher; troque-o na loja por 500 moedas. A melhoria Sorte no jardim aumenta a chance relativa de raridade; o canteiro mágico também aumenta essa chance. Probabilidades-base aproximadas: 0,9% dourada, 0,18% mágica, 0,085% cristal e 0,035% arco-íris.</small></span></div>
+    <h3>🛒 Loja e evolução</h3>
+    <div class="help-row"><span class="i">🛒</span><span><b>As cinco melhorias permanentes</b><small>Solo fértil: +5% de velocidade de crescimento por nível. Mãos rápidas: trabalhadores 5% mais rápidos por nível. Olho de agricultor: aumenta a chance de qualidade excelente. Sorte no jardim: +15% de chance relativa de raridade por nível. Compostagem: +1 composto extra ao limpar uma planta morta por nível. Cada melhoria tem até 5 níveis.</small></span></div>
+    <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá mais 2 minutos antes de a planta pronta murchar; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
+    <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>Amplie o terreno pela loja até o limite de 10×10 (100 canteiros). Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
+    <h3>🧑‍🌾 Trabalhadores, fila e animais</h3>
+    <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
+    <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador.</small></span></div>
+    <h3>🧰 Ferramentas e recursos</h3>
+    <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 4 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Auto adubo aplica automaticamente o melhor disponível (nível 3, depois 2 e 1) ao plantar.</small></span></div>
+    <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta. Limpe a planta morta tocando nela ou usando Colher para receber composto. Cada nível de Compostagem aumenta o composto recebido. Troque 5 compostos por 3 adubos simples na loja.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Poção</b><small>A poção adianta instantaneamente 15% do crescimento de uma planta. Compre pacotes na loja e selecione na barra inferior para usar.</small></span></div>
+    <div class="help-row"><span class="i">📅</span><span><b>Missões e conquistas</b><small>Missões diárias: colha 15 plantas (100 moedas), regue 10 vezes (80 moedas) e use 2 adubos (120 moedas). Elas reiniciam à meia-noite no horário local. Conquistas dão moedas por metas de nível, colheita, animais, qualidade, raridades e muito mais; algumas são secretas.</small></span></div>
+    <div class="help-row"><span class="i">💾</span><span><b>Salvamento e progresso offline</b><small>O jogo salva automaticamente neste navegador, aproximadamente a cada 5 segundos e ao sair/ocultar a aba. Ao voltar, calcula até 1 hora de progresso offline para crescimento e produção dos animais. Use o mesmo navegador e aparelho para continuar seu jogo.</small></span></div>
   </div>`;
 }
-
 function ach(){
   const visible=A.filter(a=>!a[6]||S.ach[a[0]]),st=a=>S.clm[a[0]]?2:S.ach[a[0]]?0:1,L=[...visible].sort((x,y)=>st(x)-st(y)),n=A.filter(a=>st(a)===2).length,cl=A.filter(a=>st(a)===0).length;
   const prog=a=>{const id=a[0],crops=S.st.crops||{};let cur=0,max=0;
@@ -519,7 +550,7 @@ function tick(){
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
       if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>30000){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult);earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 💰 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
-    else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
+    else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,false)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
   for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD+(S.plotTier===1?120000:0)&&n>=(p.shieldUntil||0)){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
@@ -538,6 +569,7 @@ function ui(){
   document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
   const tierClass=['','tier-stone','tier-fertile','tier-magic','tier-gold'][Math.min(4,S.plotTier||0)];
   const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
+  let nr=0,nw=0;
   cells.forEach(x=>{
     const p=S.pl[x.key];let cls='plot '+tierClass,em='',tm='',bw=0,r,ct='';
     if(p&&p.c){
@@ -545,21 +577,25 @@ function ui(){
       const k=C[p.c],tot=k.t*1000,rt=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1))*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),rem=p.rt?Math.max(DEAD+(S.plotTier===1?120000:0)-(n-p.rt),(p.shieldUntil||0)-n):0;ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
       else if(p.rt){if(rem>0&&!p.died){em=cropCluster(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
-      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm=(boosted?'⚡ ':'')+fmt(Math.ceil((tot-p.g)/1000));if(boosted)x.tm.title=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;else x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
+      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm=(boosted?'⚡ ':'')+fmt(Math.ceil((tot-p.g)/1000));if(boosted){const tt=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;if(x.tm.title!==tt)x.tm.title=tt}else if(x.tm.hasAttribute('title'))x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
+    if(cls.includes(' ready'))nr++;if(cls.includes(' work'))nw++;
     paint(x,cls,em,tm,bw,ct,p&&p.fm&&n<(p.fe||0)?(p.fl||1):0);
   });
+  const mp=$('#map');mp.classList.toggle('many-ready',nr>8);
   pens.forEach(x=>{
     const m=x.m,a=AN(m.k);let cls='plot pen '+tierClass,em=m.e,tm='',bw=0,r;
     if(a.a){[r,em,tm,bw]=work(a.a,m.pe);cls+=r}else if(a.q)cls+=' ready';
     if(qs.has('pen:'+m.k))cls+=' qd';
+    if(cls.includes(' work'))nw++;
     paint(x,cls,em,tm,bw,m.pe+a.q+'/'+m.cap);
   });
+  mp.classList.toggle('many-work',nw>6);
 }
 buildMap();buildDock();tick();chk();ui();
-setInterval(()=>{tick();chk();if(++tickN%2===0)ui();if(tickN%20===0)save()},250);
-document.addEventListener('visibilitychange',save);
+setInterval(()=>{if(document.hidden)return;tick();chk();if(++tickN%2===0)ui();if(tickN%20===0)save()},250);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){save();return}tick();chk();ui();save()});
 </script>
 </body>
 </html>
