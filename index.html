@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Fazenda Feliz v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 10px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}}
+:root[data-theme="dark"]{--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none;background:repeating-linear-gradient(45deg,var(--g1) 0 28px,var(--g2) 28px 56px)}
+#view{position:fixed;inset:0;touch-action:none;cursor:grab}
+#map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
+.plot{width:var(--cell,74px);height:var(--cell,74px);border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
+.plot .tm{position:absolute;top:1px;left:5px;font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000}
+.bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden}
+.bar u{display:block;height:100%;width:0;background:#7ddc5a}
+.wet{background:repeating-linear-gradient(90deg,#4a3320 0 10px,#35220f 10px 12px);box-shadow:0 0 0 3px var(--water),0 0 14px 3px #3ab8f0aa}
+.wet::after{content:'💧';position:absolute;top:0;right:3px;font-size:15px;animation:drip 1.6s ease-in infinite}
+.wet .bar u{background:var(--water)}
+.ready{box-shadow:0 0 0 3px var(--sun);animation:bob .8s ease-in-out infinite}
+.ready .bar u{background:#ffb02e}
+.late .bar u{animation:blink .5s steps(2) infinite}
+.dead{filter:grayscale(.8) brightness(.8)}
+.dead .bar{display:none}
+.splash{animation:splash .45s}
+.work{box-shadow:0 0 0 3px #fff8}
+.work .em{animation:wk .35s ease-in-out infinite alternate}
+.work .bar u{background:#fff}
+#pens{grid-column:1/-1;display:flex;gap:6px}
+.pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
+.pen .cnt{position:absolute;top:1px;right:4px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000}
+@keyframes wk{to{transform:rotate(-12deg) translateY(-2px)}}
+@keyframes drip{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(5px);opacity:.2}}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes blink{50%{opacity:.2}}
+@keyframes splash{40%{box-shadow:0 0 0 12px #3ab8f099;transform:scale(1.07)}}
+.p{background:var(--panel);border:3px solid var(--line);border-radius:14px;padding:5px 10px;position:fixed;z-index:5}
+#lv{top:var(--top);left:calc(env(safe-area-inset-left,0px) + 8px);min-width:128px;font-weight:700}
+#lv small{display:block;height:7px;border-radius:5px;background:#0003;margin-top:3px;overflow:hidden}
+#lv u{display:block;height:100%;width:0;background:var(--sun)}
+#co{top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);font-weight:700;font-size:19px}
+.fab{position:fixed;z-index:6;width:56px;height:56px;border-radius:50%;border:3px solid var(--line);background:var(--panel);font-size:26px;padding:0;cursor:pointer;color:inherit}
+.fab.on{background:var(--water);border-color:#fff;box-shadow:0 0 0 3px var(--water)}
+#bw{left:calc(env(safe-area-inset-left,0px) + 10px);bottom:var(--bot)}
+#bs{right:calc(env(safe-area-inset-right,0px) + 10px);bottom:var(--bot)}
+#ba{right:calc(env(safe-area-inset-right,0px) + 10px);bottom:calc(var(--bot) + 64px)}
+#dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.chip{flex:0 0 auto;min-width:62px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 6px;cursor:pointer}
+.chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
+.chip.on{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
+.chip.lock{opacity:.55}
+#sheet{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;background:#0007}
+#sheet.on{display:flex}
+.box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:2px solid var(--line)}
+.row .i{font-size:28px}.row .t{flex:1}.row small{display:block;opacity:.75}
+.box button{font:inherit;cursor:pointer;color:#3b2a14;background:var(--sun);border:0;border-radius:10px;padding:7px 12px;font-weight:600}
+.box button:disabled{opacity:.4;cursor:not-allowed}
+.row.done{opacity:.6}
+#bn{position:fixed;z-index:30;top:calc(var(--top) + 58px);left:50%;transform:translate(-50%,-20px);background:var(--sun);color:#3b2a14;font-weight:700;padding:8px 16px;border-radius:14px;opacity:0;transition:.3s;pointer-events:none;text-align:center;max-width:90vw}
+#bn.on{opacity:1;transform:translate(-50%,0)}
+.pop{position:fixed;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 1px 3px #000b;z-index:9;animation:up .9s forwards}
+@keyframes up{to{transform:translateY(-44px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ready,.pop,.wet::after,.late .bar u,.splash,.work .em{animation:none}}
+:focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="view"><div id="map"></div></div>
+<div class="p" id="lv"><span id="lvt"></span><small><u id="xpb"></u></small></div>
+<div class="p" id="co">💰 <span id="coins">0</span></div>
+<button class="fab" id="bw" aria-label="Regar">💧</button>
+<button class="fab" id="ba" aria-label="Conquistas">🏆</button>
+<button class="fab" id="bs" aria-label="Loja">🛒</button>
+<div id="dock"></div>
+<div id="bn"></div>
+<div id="sheet"><div class="box" id="box"></div></div>
+<script>
+const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',CELL=74,GAP=6;
+const CR=[
+ {k:'cenoura',n:'Cenoura',e:'🥕',cost:5,sell:12,t:10,xp:4,lv:1},
+ {k:'trigo',n:'Trigo',e:'🌾',cost:10,sell:26,t:20,xp:8,lv:2},
+ {k:'milho',n:'Milho',e:'🌽',cost:20,sell:55,t:35,xp:14,lv:3},
+ {k:'tomate',n:'Tomate',e:'🍅',cost:35,sell:95,t:55,xp:22,lv:4},
+ {k:'abobora',n:'Abóbora',e:'🎃',cost:60,sell:170,t:90,xp:35,lv:6},
+ {k:'melancia',n:'Melancia',e:'🍉',cost:100,sell:290,t:140,xp:55,lv:8}];
+const C=Object.fromEntries(CR.map(c=>[c.k,c]));
+const A=[
+ ['first','🥇','Primeira colheita','Colha 1 planta',s=>s.st.h>=1],
+ ['h25','🧺','Cesta cheia','Colha 25 plantas',s=>s.st.h>=25],
+ ['h100','🚜','Mão na terra','Colha 100 plantas',s=>s.st.h>=100],
+ ['w10','💧','Chuva de verão','Regue 10 vezes',s=>s.st.w>=10],
+ ['hen','🐔','Galinheiro','Compre uma galinha',s=>s.hens>=1],
+ ['e20','🥚','Cesta de ovos','Colete 20 ovos',s=>s.st.e>=20],
+ ['cow','🐄','Vaqueiro','Compre uma vaca',s=>s.cows>=1],
+ ['l5','⭐','Nível 5','Chegue ao nível 5',s=>s.lv>=5],
+ ['land','🌳','Terra grande','Tenha 36 canteiros',s=>s.cols*s.rows>=36],
+ ['r1','💰','Bolso cheio','Ganhe 1.000 moedas',s=>s.st.g>=1000],
+ ['r3','🏦','Fazendeiro rico','Ganhe 3.000 moedas',s=>s.st.g>=3000],
+ ['r6','👑','Barão da roça','Ganhe 6.000 moedas',s=>s.st.g>=6000],
+ ['r10','💎','Magnata da fazenda','Ganhe 10.000 moedas',s=>s.st.g>=10000]];
+const need=l=>25*l,win=k=>(15+k.t*.6)*1000,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0'),pt=k=>1500+500*CR.indexOf(k),HT=5000;
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},hens:0,eggs:0,eggT:0,cows:0,milk:0,milkT:0,ach:{},pa:{e:0,m:0},st:{h:0,w:0,g:0,e:0},last:Date.now()});
+let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0;
+try{const j=localStorage.getItem(KEY);if(j)S=Object.assign(fresh(),JSON.parse(j))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const P=(r,c)=>S.pl[r+','+c]||(S.pl[r+','+c]={c:null,p:0,w:0,r:0});
+const earn=n=>{S.coins+=n;S.st.g+=n};
+let bt;function bn(t){const b=$('#bn');b.textContent=t;b.classList.add('on');clearTimeout(bt);bt=setTimeout(()=>b.classList.remove('on'),2600)}
+function pop(el,t){const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='pop';s.textContent=t;s.style.left=(r.left+r.width/2-22)+'px';s.style.top=(r.top+r.height/3)+'px';document.body.append(s);setTimeout(()=>s.remove(),900)}
+const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
+function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;const u=CR.filter(c=>c.lv===S.lv).map(c=>c.e+' '+c.n);bn(`Nível ${S.lv}!`+(u.length?` Desbloqueou: ${u.join(', ')}`:''));buildDock()}}
+
+// Dock de sementes
+function buildDock(){
+  const d=$('#dock');d.innerHTML='';
+  CR.forEach(c=>{const b=document.createElement('button'),lk=S.lv<c.lv;b.className='chip'+(lk?' lock':'');b.dataset.k=c.k;
+    b.innerHTML=lk?`🔒<small>Nv ${c.lv}</small>`:`${c.e}<small>${c.cost} 💰</small>`;d.append(b)});
+}
+$('#dock').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const c=C[b.dataset.k];
+  if(S.lv<c.lv)return bn(`${c.n} libera no nível ${c.lv}`);sel=last=c.k;ui()};
+$('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
+
+// Mapa
+const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false;
+function buildMap(){
+  map.innerHTML='';cells=[];cm={};pens=[];
+  if(S.hens||S.cows){const w=document.createElement('div');w.id='pens';map.append(w);[['e',S.hens,'🐔'],['m',S.cows,'🐄']].forEach(([k,q,e])=>{if(!q)return;const d=document.createElement('div');d.className='plot pen';d.dataset.pen=k;d.innerHTML='<span class="tm"></span><span class="em"></span><span class="cnt"></span><i class="bar"><u></u></i>';w.append(d);pens.push({d,k,e,tm:d.children[0],em:d.children[1],ct:d.children[2],u:d.querySelector('u')})})}
+  map.style.gridTemplateColumns=`repeat(${S.cols},${CELL}px)`;
+  for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
+    const d=document.createElement('div');d.className='plot';d.dataset.r=r;d.dataset.c=c;
+    d.innerHTML='<span class="tm"></span><span class="em"></span><i class="bar"><u></u></i>';map.append(d);
+    cells.push(cm[r+','+c]={d,r,c,tm:d.children[0],em:d.children[1],u:d.querySelector('u')});
+  }
+  fit();
+}
+function fit(){
+  const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth,mh=map.offsetHeight,T=70,B=84,pad=12;
+  px=mw+pad*2<=vw?(vw-mw)/2:Math.min(pad,Math.max(vw-mw-pad,px));
+  const ah=vh-T-B;
+  py=mh<=ah?T+(ah-mh)/2:Math.min(T,Math.max(vh-B-mh,py));
+  map.style.transform=`translate(${px}px,${py}px)`;
+}
+view.addEventListener('pointerdown',e=>{drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false});
+addEventListener('pointermove',e=>{if(!drag)return;
+  if(!moved&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)moved=true;
+  if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;fit()}});
+addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
+addEventListener('pointercancel',()=>{drag=null});
+addEventListener('resize',fit);
+map.onclick=e=>{if(moved)return;const d=e.target.closest('.plot');if(!d)return;if(d.dataset.pen)return penAct(d.dataset.pen,d);act(+d.dataset.r,+d.dataset.c,d)};
+function penAct(k,d){const n=Date.now(),q=k==='e'?S.eggs:S.milk;if(S.pa[k])return pop(d,'Coletando...');if(!q)return pop(d,k==='e'?'Sem ovos ainda':'Sem leite ainda');S.pa[k]=n+HT;save();ui()}
+
+function act(r,c,d){
+  const p=P(r,c),n=Date.now();
+  if(p.a)return pop(d,p.a.t==='p'?'Plantando...':'Colhendo...');
+  if(p.c){
+    const k=C[p.c],tot=k.t*1000,el=n-p.p;
+    if(el>=tot&&p.r>=win(k)){p.c=null;p.w=0;p.r=0;pop(d,'Limpo')}
+    else if(el>=tot){p.a={t:'h',s:n,e:n+HT};buzz()}
+    else if(sel==='agua'&&!p.w){p.p-=(tot-el)*.4;p.w=1;S.st.w++;addXp(1);pop(d,'💦');d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450);buzz()}
+    else pop(d,p.w?'Já regada 💧':'Crescendo...');
+  }else if(sel!=='agua'){
+    const k=C[sel];if(S.coins<k.cost)return pop(d,'Faltam moedas');
+    S.coins-=k.cost;Object.assign(p,{c:sel,p:n+pt(k),w:0,r:0,a:{t:'p',s:n,e:n+pt(k)}});pop(d,`-${k.cost}`);
+  }else pop(d,'Plante antes de regar');
+  chk();save();ui();
+}
+
+// Loja
+const hc=()=>60+40*S.hens,cc=()=>250+150*S.cows,lc=()=>50*(S.cols+S.rows-7);
+function row(i,t,s,a,lbl,dis){return `<div class="row"><span class="i">${i}</span><span class="t"><b>${t}</b><small>${s}</small></span><button data-a="${a}"${dis?' disabled':''}>${lbl}</button></div>`}
+function shop(){
+  const maxL=S.cols>=10&&S.rows>=10;
+  $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2>`+
+   row('🌱','Ampliar terreno',maxL?'Terreno no máximo':`${S.cols}x${S.rows}, ganha uma ${S.cols<=S.rows?'coluna':'linha'}`,'land',maxL?'Cheio':`${lc()} 💰`,maxL||S.coins<lc())+
+   row('🐔','Galinha',`Nv 2, ${S.hens}/6, ovo a cada ${fmt(15)}. Ovo vale 8 💰, coleta no mapa`,'hen',`${hc()} 💰`,S.lv<2||S.hens>=6||S.coins<hc())+
+   row('🐄','Vaca',`Nv 5, ${S.cows}/3, leite a cada ${fmt(40)}. Leite vale 40 💰, coleta no mapa`,'cow',`${cc()} 💰`,S.lv<5||S.cows>=3||S.coins<cc())+
+   `<div class="row"><span class="t"><small>Apagar o progresso salvo</small></span><button data-a="reset">${armed?'Toque de novo':'Recomeçar'}</button></div>`;
+}
+function ach(){
+  const n=A.filter(a=>S.ach[a[0]]).length;
+  $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <button data-a="x">Fechar</button></h2>`+
+   A.map(a=>`<div class="row${S.ach[a[0]]?' done':''}"><span class="i">${S.ach[a[0]]?a[1]:'🔒'}</span><span class="t"><b>${a[2]}</b><small>${a[3]}, prêmio 50 💰</small></span>${S.ach[a[0]]?'✓':''}</div>`).join('');
+}
+function open(f){f();$('#sheet').classList.add('on');$('#sheet').dataset.f=f.name}
+$('#bs').onclick=()=>open(shop);$('#ba').onclick=()=>open(ach);
+$('#sheet').onclick=e=>{
+  if(e.target.id==='sheet')return $('#sheet').classList.remove('on');
+  const a=e.target.dataset.a;if(!a)return;
+  if(a==='x')return $('#sheet').classList.remove('on');
+  if(a==='land'&&S.coins>=lc()){S.coins-=lc();S.cols<=S.rows?S.cols++:S.rows++;buildMap()}
+  if(a==='hen'&&S.coins>=hc()){S.coins-=hc();S.hens++;buildMap()}
+  if(a==='cow'&&S.coins>=cc()){S.coins-=cc();S.cows++;buildMap()}
+  if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';buildMap();buildDock();$('#sheet').classList.remove('on')}}
+  chk();save();ui();if($('#sheet').classList.contains('on'))shop();
+};
+
+function chk(){A.forEach(a=>{if(!S.ach[a[0]]&&a[4](S)){S.ach[a[0]]=1;S.coins+=50;bn(`Conquista: ${a[1]} ${a[2]} (+50 💰)`)}})}
+function tick(){
+  const n=Date.now(),dt=Math.min(n-S.last,3600000);S.last=n;
+  if(S.hens){S.eggT+=dt*S.hens;while(S.eggT>=15000){if(S.eggs<12)S.eggs++;S.eggT-=15000}}
+  if(S.cows){S.milkT+=dt*S.cows;while(S.milkT>=40000){if(S.milk<6)S.milk++;S.milkT-=40000}}
+  for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
+    if(p.a){if(n>=p.a.e){const x=cm[key],t=p.a.t,k=C[p.c];p.a=0;
+      if(t==='h'){earn(k.sell);S.st.h++;addXp(k.xp);if(x)pop(x.d,`+${k.sell} 💰`);p.c=null;p.w=0;p.r=0}}
+    }else if(n-p.p>=C[p.c].t*1000)p.r+=Math.min(dt,1000)}
+  ['e','m'].forEach(k=>{if(S.pa[k]&&n>=S.pa[k]){const q=k==='e'?S.eggs:S.milk,g=q*(k==='e'?8:40),x=pens.find(z=>z.k===k);
+    earn(g);if(k==='e'){S.st.e+=q;S.eggs=0}else S.milk=0;S.pa[k]=0;if(x)pop(x.d,`+${g} 💰`)}});
+}
+function ui(){
+  const n=Date.now();
+  $('#coins').textContent=S.coins;$('#lvt').textContent='Nível '+S.lv;$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
+  $('#bw').classList.toggle('on',sel==='agua');
+  document.querySelectorAll('.chip').forEach(b=>{b.classList.toggle('on',b.dataset.k===sel)});
+  cells.forEach(x=>{
+    const p=S.pl[x.r+','+x.c];let em='',tm='',bw=0,cls='plot';
+    if(p&&p.c){
+      const k=C[p.c],tot=k.t*1000,el=n-p.p,pr=Math.min(1,el/tot);
+      if(p.a){em='🧑‍🌾';bw=Math.min(1,(n-p.a.s)/(p.a.e-p.a.s));tm=fmt(Math.max(0,Math.ceil((p.a.e-n)/1000)));cls+=' work'}
+      else if(pr<1){em=pr>.5?'🌿':'🌱';bw=pr;tm=fmt(Math.ceil((tot-el)/1000))}
+      else if(p.r<win(k)){em=k.e;bw=1-p.r/win(k);tm=fmt(Math.ceil((win(k)-p.r)/1000));cls+=' ready'+(bw<.3?' late':'')}
+      else{em='🥀';cls+=' dead'}
+      if(p.w&&!cls.includes('dead'))cls+=' wet';
+    }
+    x.em.textContent=em;x.tm.textContent=tm;x.u.style.width=(bw*100)+'%';
+    const keep=x.d.classList.contains('splash')?' splash':'';
+    if(x.d.className!==cls+keep)x.d.className=cls+keep;
+  });
+  pens.forEach(x=>{const q=x.k==='e'?S.eggs:S.milk,mx=x.k==='e'?12:6,e=S.pa[x.k];let cls='plot pen',em=x.e,tm='',bw=0;
+    if(e){cls+=' work';em='🧑‍🌾';bw=Math.min(1,1-(e-n)/HT);tm=fmt(Math.max(0,Math.ceil((e-n)/1000)))}
+    else if(q)cls+=' ready';
+    x.em.textContent=em;x.tm.textContent=tm;x.ct.textContent=(x.k==='e'?'🥚':'🥛')+q+'/'+mx;x.u.style.width=(bw*100)+'%';
+    if(x.d.className!==cls)x.d.className=cls});
+}
+buildMap();buildDock();tick();chk();ui();
+setInterval(()=>{tick();chk();ui();if(++tickN%20===0)save()},250);
+document.addEventListener('visibilitychange',save);
+</script>
+</body>
+</html>
