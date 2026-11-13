@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Fazenda Feliz v4</title>
+<title>🌻 Fazenda Feliz</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--ok:#4caf2e;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 64px);--sheetb:calc(env(safe-area-inset-bottom,0px) + 84px)}
@@ -23,8 +23,9 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .thirst::after{content:'💧';position:absolute;left:4px;bottom:11px;font-size:16px;z-index:2;animation:blink .7s steps(2) infinite}
 .thirst .bar u{background:var(--water)}
 .fert{box-shadow:0 0 0 3px #b07cff}
-#ttl{position:absolute;left:0;right:0;top:-17px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;opacity:.85;pointer-events:none}
-.ready{box-shadow:0 0 0 3px var(--sun);animation:bob .8s ease-in-out infinite}
+#ttl{position:absolute;left:50%;top:-30px;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none;background:linear-gradient(135deg,#fff4c4,#ffe08a);color:#68451d;border:2px solid #b98535;border-radius:14px;padding:4px 12px;box-shadow:0 3px 0 #68451d55,0 5px 12px #0002;font-size:14px;font-weight:700;text-shadow:0 1px #fff8}
+#ttl small{display:block;font-size:9px;font-weight:600;opacity:.8;text-shadow:none}
+.ready{box-shadow:0 0 0 3px var(--sun),0 0 14px 5px #ffcf3380;animation:glow 1.8s ease-in-out infinite alternate}
 .ready .bar u{background:#ffb02e}
 .late .bar u{animation:blink .5s steps(2) infinite}
 .dead{filter:grayscale(.8) brightness(.8)}
@@ -74,6 +75,12 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .chip b{position:absolute;top:2px;right:3px;font-size:13px}
 #sheet{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;background:#0007}
 #sheet.on{display:flex}
+#zoom{position:fixed;z-index:6;right:10px;top:calc(var(--top) + 58px);display:flex;gap:6px}
+#zoom button{width:38px;height:38px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:22px;font-weight:700}
+.help-row{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-top:2px solid var(--line)}
+.help-row .i{font-size:25px;min-width:34px;text-align:center}
+.help-row small{display:block;opacity:.82;line-height:1.35}
+#helptext{line-height:1.4}
 .box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px var(--sheetb)}
 .box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:2px solid var(--line)}
@@ -108,6 +115,9 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <button class="fab r" id="bs" aria-label="Loja">🛒</button>
 <button class="fab r" id="ba" style="--n:1" aria-label="Conquistas">🏆<span id="bak"></span></button>
 <button class="fab r" id="bc" style="--n:2" aria-label="Cancelar fila"><span id="bcn"></span><small>Cancelar</small></button>
+<button class="fab r" id="bf" style="--n:3" aria-label="Adubo automático">🧪<small>Auto adubo</small></button>
+<button class="fab r" id="bhelp" style="--n:4" aria-label="Ajuda">❔<small>Ajuda</small></button>
+<div id="zoom"><button id="zout" aria-label="Diminuir zoom">−</button><button id="zin" aria-label="Aumentar zoom">+</button></div>
 <div id="dock"></div>
 <div id="bn"></div>
 <div id="sheet"><div class="box" id="box"></div></div>
@@ -150,16 +160,21 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
  ['h500','🏭','Colheitadeira','Colha 500 plantas',()=>S.st.h>=500,300],
  ['wk10','🪖','Exército verde','Tenha 10 trabalhadores',()=>S.wk>=10,400],
  ['r10','💎','Magnata da fazenda','Ganhe 10.000 moedas',()=>S.st.g>=1e4,500],
- ['r30','🏆','Dono do vale','Ganhe 30.000 moedas',()=>S.st.g>=3e4,1000]];
+ ['r30','🏆','Dono do vale','Ganhe 30.000 moedas',()=>S.st.g>=3e4,1000],
+  ['sun1','🌻','Primeiro girassol','Plante 1 girassol',()=>((S.st.planted||{}).girassol||0)>=1,100],
+  ['sun10','🌞','Campo dourado','Colha 10 girassóis',()=>((S.st.crops||{}).girassol||0)>=10,300],
+  ['variety','🥗','Horta diversificada','Colha 8 tipos diferentes de alimentos',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=8,250]];
 
 // ---------- Estado ----------
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp,HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0},last:Date.now()});
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,crops:{},planted:{}},last:Date.now()});
 let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
+S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
   Object.values(S.pl).forEach(p=>{if(p.c&&p.g===undefined){const k=C[p.c],tot=k.t*1000,g=Math.max(0,Math.min(tot,Date.now()-(p.p||0)));Object.assign(p,{g,w:TH(k).filter(x=>x*tot<=g).length,th:0,f:0,rt:g>=tot?(p.p||0)+tot:0})}});
   [['hen','hens','eggs','eggT'],['cow','cows','milk','milkT']].forEach(([k,n,q,t])=>{if(j[n]&&!S.an[k])S.an[k]={n:j[n],q:j[q]||0,t:j[t]||0,a:0}})}}catch(e){}
+S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const P=k=>S.pl[k]||(S.pl[k]={c:null,g:0,w:0,th:0,f:0,rt:0,a:0});
 const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0});
@@ -194,11 +209,13 @@ $('#dock').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;if(b.datas
   if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);sel=last=c.k;ui()};
 $('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
 $('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (${WC} 💰 por rega)`:'Regar automático desligado');done()};
+$('#bf').onclick=()=>{S.autoFert=S.autoFert?0:1;bn(S.autoFert?'Adubo automático ligado':'Adubo automático desligado');done()};
+$('#bhelp').onclick=()=>open(help);
 
 // ---------- Mapa ----------
-const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false;
+const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
-  map.innerHTML='<div id="ttl">🌾 Fazenda Feliz v4 · desenvolvido por Israel Silva (Claude Code)</div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -208,10 +225,10 @@ function buildMap(){
   fit();
 }
 function fit(){
-  const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth,mh=map.offsetHeight,T=84,B=150,pad=12,ah=vh-T-B;
+  const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth*zoom,mh=map.offsetHeight*zoom,T=84,B=150,pad=12,ah=vh-T-B;
   px=mw+pad*2<=vw?(vw-mw)/2:Math.min(pad,Math.max(vw-mw-pad,px));
   py=mh<=ah?T+(ah-mh)/2:Math.min(T,Math.max(vh-B-mh,py));
-  map.style.transform=`translate(${px}px,${py}px)`;
+  map.style.transformOrigin='top left';map.style.transform=`translate(${px}px,${py}px) scale(${zoom})`;
 }
 view.addEventListener('pointerdown',e=>{drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false});
 addEventListener('pointermove',e=>{if(!drag)return;
@@ -220,6 +237,8 @@ addEventListener('pointermove',e=>{if(!drag)return;
 addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
 addEventListener('pointercancel',()=>{drag=null});
 addEventListener('resize',fit);
+$('#zin').onclick=()=>{zoom=Math.min(1.5,+(zoom+.1).toFixed(2));fit()};
+$('#zout').onclick=()=>{zoom=Math.max(.55,+(zoom-.1).toFixed(2));fit()};
 map.onclick=e=>{if(moved)return;const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
 
 // ---------- Trabalhadores e fila ----------
@@ -230,7 +249,7 @@ function start(t){
   if(t.t==='p'){
     const k=C[t.c];if(p.c||p.a)return;
     if(S.coins<k.cost)return bn('Faltam moedas para plantar');
-    S.coins-=k.cost;const e=n+pt(k);Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,rt:0,a:{t:'p',s:n,e}});pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
+    S.coins-=k.cost;const e=n+pt(k);const useFert=!!(S.autoFert&&S.fert>0);if(useFert)S.fert--;S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:useFert?1:0,rt:0,a:{t:'p',s:n,e}});pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
   }else if(p.c&&!p.a&&p.rt&&n-p.rt<DEAD)p.a={t:'h',s:n,e:n+HT()};
 }
 const pump=()=>{while(S.q.length&&free()>0)start(S.q.shift())};
@@ -288,9 +307,39 @@ function row(it){
 function shop(){
   $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2>`+SH().map(row).join('')+
    `<div class="row"><span class="t"><small>Apagar o progresso salvo</small></span><button data-a="reset">${armed?'Toque de novo':'Recomeçar'}</button></div>`}
+
+function help(){
+  $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
+  <div id="helptext">
+    <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
+    <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione para regar manualmente um canteiro que esteja pedindo água.</small></span></div>
+    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais.</small></span></div>
+    <div class="help-row"><span class="i">🌱</span><span><b>Plantar</b><small>Planta a semente selecionada em todos os canteiros vazios, respeitando suas moedas.</small></span></div>
+    <div class="help-row"><span class="i">🚿</span><span><b>Água automática</b><small>Regas são feitas automaticamente quando a planta pedir água. Cada rega custa ${WC} moedas.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Consome 1 fertilizante ao iniciar cada plantio e acelera o crescimento em 50%.</small></span></div>
+    <div class="help-row"><span class="i">🛒</span><span><b>Loja</b><small>Compre terrenos, trabalhadores, fertilizantes, melhorias e animais.</small></span></div>
+    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa.</small></span></div>
+    <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste o mapa para se movimentar.</small></span></div>
+    <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
+  </div>`;
+}
+
 function ach(){
   const st=a=>S.clm[a[0]]?2:S.ach[a[0]]?0:1,L=[...A].sort((x,y)=>st(x)-st(y)),n=A.filter(a=>st(a)===2).length,cl=A.filter(a=>st(a)===0).length;
-  const R=(a,c,r)=>`<div class="row ${c}"><span class="i">${a[1]}</span><span class="t"><b>${a[2]}</b><small>${a[3]}</small></span>${r}</div>`;
+  const prog=a=>{const id=a[0],crops=S.st.crops||{};let cur=0,max=0;
+    if(id==='sun1'){cur=(S.st.planted||{}).girassol||0;max=1}
+    else if(id==='sun10'){cur=crops.girassol||0;max=10}
+    else if(id==='variety'){cur=Object.values(crops).filter(v=>v>0).length;max=8}
+    else if(id==='first'||id==='h25'||id==='h100'||id==='h500'){cur=S.st.h;max=({first:1,h25:25,h100:100,h500:500})[id]}
+    else if(id==='w10'){cur=S.st.w;max=10}
+    else if(id==='e20'){cur=S.st.e;max=20}
+    else if(id==='l5'||id==='l10'){cur=S.lv;max=id==='l5'?5:10}
+    else if(id==='wk3'||id==='wk6'||id==='wk10'){cur=S.wk;max=Number(id.slice(2))}
+    else if(id==='r1'||id==='r3'||id==='r6'||id==='r10'||id==='r30'){cur=S.st.g;max=Number(id.slice(1))*1000}
+    else if(id==='hen'||id==='cow'||id==='sheep'||id==='bee'){cur=cnt(id);max=1}
+    else if(id==='land'){cur=S.cols*S.rows;max=36}
+    return max?` · ${Math.min(cur,max)}/${max} (faltam ${Math.max(0,max-cur)})`:''};
+  const R=(a,c,r)=>`<div class="row ${c}"><span class="i">${a[1]}</span><span class="t"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`;
   $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <span>${cl?'<button data-a="claimall">Coletar tudo</button> ':''}<button data-a="x">Fechar</button></span></h2>`+
    L.map(a=>[R(a,'claim',`<button data-a="claim:${a[0]}">Coletar +${a[5]} 💰</button>`),R(a,'pend',`<span class="tag gold">${a[5]} 💰</span>`),R(a,'done',`<span class="tag">+${a[5]} 💰</span><span class="ok">✓</span>`)][st(a)]).join('')}
 const claim=id=>{const a=A.find(x=>x[0]===id);if(a&&S.ach[id]&&!S.clm[id]){S.clm[id]=1;S.coins+=a[5];return a[5]}return 0};
@@ -313,7 +362,7 @@ function tick(){
   AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n;const iv=m.every*1000;while(a.t>=iv){if(a.q<m.cap)a.q++;a.t-=iv}});
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
-      if(t==='h'){earn(k.sell);S.st.h++;addXp(k.xp);pop(cm[key]&&cm[key].d,`+${k.sell} 💰`);clr(p)}}
+      if(t==='h'){earn(k.sell);S.st.h++;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;addXp(k.xp);pop(cm[key]&&cm[key].d,`+${k.sell} 💰`);clr(p)}}
     else if(p.th){if(S.auto&&S.coins>=WC){S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
@@ -326,7 +375,7 @@ function ui(){
   $('#coins').textContent=S.coins;$('#lvt').textContent='Nível '+S.lv;$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
-  $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#fz').textContent='×'+S.fert;
+  $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#bf').classList.toggle('on',!!S.autoFert);$('#fz').textContent='×'+S.fert;
   const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';
   document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
   const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
