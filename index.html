@@ -16,23 +16,42 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
 .plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
 .tm{position:absolute;top:auto;bottom:13px;left:50%;transform:translateX(-50%);font-size:10px;line-height:14px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:3;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 4px;white-space:nowrap;box-shadow:0 1px 3px #0006}
-.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible;filter:drop-shadow(0 2px 1px #26170c55);animation:plantSway 3.2s ease-in-out infinite alternate}.ready .crop-svg{animation:plantSway .85s ease-in-out infinite alternate}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}@keyframes plantSway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible;filter:drop-shadow(0 1px 1px #26170c44)}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
 .thirst::after{content:'💧';position:absolute;left:4px;bottom:11px;font-size:16px;z-index:2;animation:blink .7s steps(2) infinite}
 .thirst .bar u{background:var(--water)}
 .fert{box-shadow:0 0 0 3px #b07cff}
+.fert-level{position:absolute;right:-6px;top:-7px;z-index:5;width:23px;height:23px;border-radius:50%;display:none;place-items:center;background:linear-gradient(145deg,#fff4a8,#ffc52e);border:2px solid #8d5a12;color:#4b2d08;font-size:11px;font-weight:700;line-height:1;box-shadow:0 1px 3px #0008}
+.fert-level.on{display:grid}
+.fert-level::before{content:'⚡';position:absolute;font-size:13px;transform:translate(-1px,-1px);text-shadow:0 1px #fff8}
+.fert-level::after{content:attr(data-level);position:absolute;right:-4px;bottom:-4px;min-width:12px;height:12px;padding:0 2px;border-radius:8px;display:grid;place-items:center;background:#6338a5;color:#fff;border:1px solid #fff;font-size:8px;line-height:10px}
+.fertilizer-icon{display:inline-grid;place-items:center;position:relative;width:25px;height:25px;font-size:22px;line-height:1}
+.fertilizer-icon::before{content:'⚡'}
+.fertilizer-icon::after{content:attr(data-level);position:absolute;right:-7px;top:-5px;min-width:14px;height:14px;padding:0 2px;border-radius:50%;display:grid;place-items:center;background:#6338a5;color:#fff;border:1px solid #fff;font-size:9px;font-weight:700;line-height:12px}
 #ttl{position:absolute;left:50%;top:-30px;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none;background:linear-gradient(135deg,#fff4c4,#ffe08a);color:#68451d;border:2px solid #b98535;border-radius:14px;padding:4px 12px;box-shadow:0 3px 0 #68451d55,0 5px 12px #0002;font-size:14px;font-weight:700;text-shadow:0 1px #fff8}
 #ttl small{display:block;font-size:9px;font-weight:600;opacity:.8;text-shadow:none}
-.ready{box-shadow:0 0 0 3px var(--sun),0 0 20px 8px #ffcf33b0;animation:glow .62s ease-in-out infinite alternate}
+.ready{box-shadow:0 0 0 3px var(--sun),0 0 7px 2px #ffcf3370}
 .ready .bar u{background:#ffb02e}
 .ready .tm{left:50%;right:auto;width:auto;max-width:62px;text-align:center;font-size:9px;line-height:13px;background:#9b4b16ed;border-radius:7px;padding:0 4px;text-shadow:0 1px 2px #000}
-/* Partículas únicas: pontinhos dourados que nascem na planta e sobem */
-.ready .em::after{content:"";position:absolute;left:8%;bottom:2px;width:84%;height:100%;pointer-events:none;z-index:4;background-image:radial-gradient(circle,#fff2a8 0 1.7px,transparent 2.2px);background-size:13px 15px;background-position:2px 0;animation:plantParticles .58s linear infinite;filter:drop-shadow(0 0 2px #ffe65c)}
-@keyframes plantParticles{0%{transform:translateY(8px);opacity:0;background-position:2px 12px}18%{opacity:1}100%{transform:translateY(-13px);opacity:0;background-position:2px -5px}}
+/* Partículas douradas discretas; todas as plantas prontas compartilham o mesmo ritmo. */
+.ready .em::after{content:"";position:absolute;left:50%;bottom:7px;width:3px;height:3px;border-radius:50%;background:#fff0a0;box-shadow:0 0 4px 1px #ffe65c, -9px 4px 0 -1px #fff0a0, 8px 1px 0 -1px #fff0a0;pointer-events:none;z-index:4;animation:plantParticles 2.4s ease-out infinite;animation-delay:-1.2s}
+@keyframes plantParticles{0%{transform:translate(-50%,5px);opacity:0}18%{opacity:.9}82%{opacity:.7}100%{transform:translate(-50%,-24px);opacity:0}}
 .late .bar u{animation:blink .5s steps(2) infinite}
 .dead{filter:grayscale(.8) brightness(.8)}
+/* Aparência das variedades raras e evolução do terreno */
+.rare-gold{box-shadow:0 0 0 3px #f6c642,0 0 18px 5px #ffd95a88}
+.rare-magic{box-shadow:0 0 0 3px #79baff,0 0 18px 5px #71b7ff99}
+.rare-rainbow{box-shadow:0 0 0 3px #d58cff,0 0 20px 6px #e4a0ff99}
+.rare-crystal{box-shadow:0 0 0 3px #72e6e0,0 0 18px 5px #7bfff099}.rare-gold::after,.rare-magic::after,.rare-rainbow::after,.rare-crystal::after{content:'✦';position:absolute;right:3px;top:0;font-size:12px;color:#fff3a3;text-shadow:0 0 5px #fff;pointer-events:none}
+.tier-stone{border-color:#8e9698;background:repeating-linear-gradient(90deg,#777d7d 0 10px,#626969 10px 12px)}
+.tier-fertile{border-color:#4c8b37;background:repeating-linear-gradient(90deg,#80502d 0 10px,#5d3b23 10px 12px)}
+.tier-magic{border-color:#9870c7;background:repeating-linear-gradient(90deg,#76519b 0 10px,#583b78 10px 12px)}
+.tier-gold{border-color:#e4b82e;background:repeating-linear-gradient(90deg,#a97922 0 10px,#805719 10px 12px)}
+.row .t small .meter{display:block;height:5px;background:#0002;border-radius:5px;margin-top:4px;overflow:hidden}.row .t small .meter u{display:block;height:100%;background:#70bd4e}
+.daily-panel{margin:10px 0;padding:10px;border:2px solid var(--line);border-radius:12px;background:#00000008}.daily-panel h3{margin:0 0 5px;font-size:16px}.daily-panel .row{padding:7px 0}.daily-panel button{border:0;border-radius:9px;padding:6px 9px;background:#e9bd42;color:#422d0c;font-weight:700}
+
 .dead .bar{display:none}
 .splash{animation:splash .45s}
 .qd::before{content:'⏳';position:absolute;left:4px;bottom:11px;font-size:14px;z-index:2}
@@ -61,6 +80,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #lv small{display:block;height:7px;border-radius:5px;background:#0003;margin-top:3px;overflow:hidden}
 #lv u{display:block;height:100%;width:0;background:var(--sun)}
 #co{top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);font-weight:700;font-size:19px}
+#resources{position:fixed;z-index:5;top:calc(var(--top) + 54px);left:calc(env(safe-area-inset-left,0px) + 8px);display:flex;gap:5px;max-width:58vw;justify-content:flex-start;pointer-events:none}
+.resource{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:3px 7px;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 2px 4px #0002}
 #wk{top:var(--top);left:50%;transform:translateX(-50%);font-weight:700;font-size:15px;white-space:nowrap;padding:4px 8px}
 .fab{position:fixed;z-index:6;width:56px;height:56px;border-radius:50%;border:3px solid var(--line);background:var(--panel);font-size:22px;line-height:1;padding:0;cursor:pointer;color:inherit;bottom:calc(var(--bot) + var(--n,0)*64px)}
 .fab small{display:block;font-size:9px;font-weight:600;margin-top:1px}
@@ -112,6 +133,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <div class="p" id="lv"><span class="lv-star" aria-hidden="true">★</span><span id="lvt"></span><small><u id="xpb"></u></small></div>
 <div class="p" id="wk"><span id="wkt"></span></div>
 <div class="p" id="co">💰 <span id="coins">0</span></div>
+<div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div>
 <button class="fab l" id="bw" aria-label="Regar">💧</button>
 <button class="fab l" id="bh" style="--n:1" aria-label="Colher tudo">🧺<small>Colher</small></button>
 <button class="fab l" id="bp" style="--n:2" aria-label="Plantar tudo">🌱<small>Plantar</small></button>
@@ -203,34 +225,50 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
   ['w100','🌊','Guardião da água','Regue 100 vezes',()=>S.st.w>=100,250],
   ['variety12','🌈','Arco-íris da horta','Colha 12 tipos diferentes de plantas',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=12,500],
   ['plant10','🌱','Colecionador de sementes','Plante 10 tipos diferentes de plantas',()=>Object.values(S.st.planted||{}).filter(v=>v>0).length>=10,350],
-  ['r100','💰','Tesouro do campo','Ganhe 100.000 moedas',()=>S.st.g>=100000,1500]];
+  ['r100','💰','Tesouro do campo','Ganhe 100.000 moedas',()=>S.st.g>=100000,1500],
+ ['q50','💎','Perfeição no campo','Consiga 50 colheitas excelentes ou perfeitas',()=>Object.entries(S.st.quality||{}).filter(([k])=>+k>=3).reduce((v,[,n])=>v+n,0)>=50,900],
+ ['rare1','🔮','Achado extraordinário','Encontre sua primeira planta rara',()=>Object.values(S.st.rares||{}).reduce((v,n)=>v+n,0)>=1,500],
+ ['combo20','🔥','Colheita em ritmo','Alcance um combo de 20 colheitas',()=>S.st.bestCombo>=20,1000],
+ ['poison10','☠️','Controle de pragas','Use veneno em 10 plantas',()=>S.st.poison>=10,350],
+ ['compost100','♻️','Ciclo natural','Produza 100 compostos',()=>S.st.compost>=100,700],
+ ['secret_sun','🤫','Segredo ensolarado','Colha 5 girassóis perfeitos',()=>((S.st.perfectSun||0)>=5),1200,true]];
 
 // ---------- Estado ----------
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
-const spd=()=>.85**S.sp,HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},last:Date.now()});
+const spd=()=>.85**S.sp*(.95**(S.upgrades?.worker||0)),HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
 let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
-S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
+S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
   Object.values(S.pl).forEach(p=>{if(p.c&&p.g===undefined){const k=C[p.c],tot=k.t*1000,g=Math.max(0,Math.min(tot,Date.now()-(p.p||0)));Object.assign(p,{g,w:TH(k).filter(x=>x*tot<=g).length,th:0,f:0,rt:g>=tot?(p.p||0)+tot:0})}});
   [['hen','hens','eggs','eggT'],['cow','cows','milk','milkT']].forEach(([k,n,q,t])=>{if(j[n]&&!S.an[k])S.an[k]={n:j[n],q:j[q]||0,t:j[t]||0,a:0}})}}catch(e){}
-S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.st.dead=Number(S.st.dead)||0;S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
+S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.st.dead=Number(S.st.dead)||0;S.items=Object.assign({f1:0,f2:0,f3:0,poison:0,potion:0},S.items||{});delete S.items.repel;
+/* Compatibilidade: o antigo estoque genérico de adubo vira adubo simples. */
+if(S.fert){S.items.f1=(S.items.f1||0)+S.fert;S.fert=0;}S.upgrades=Object.assign({soil:0,worker:0,quality:0,rare:0,compost:0},S.upgrades||{});S.plotTier=Number(S.plotTier)||0;S.combo=Number(S.combo)||0;S.comboAt=Number(S.comboAt)||0;S.comboTier=Number(S.comboTier)||0;S.daily=Object.assign({date:'',harvest:0,water:0,fert:0,claimed:{}},S.daily||{});S.daily.claimed=S.daily.claimed||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
+const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+const dailyResetRemaining=()=>{const n=new Date(),next=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,0,0);let ms=next-n;const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000);return ` ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`};if(S.daily.date!==today())S.daily={date:today(),harvest:0,water:0,fert:0,claimed:{}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const P=k=>S.pl[k]||(S.pl[k]={c:null,g:0,w:0,th:0,f:0,rt:0,died:0,a:0});
-const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0,died:0});
-const isT=()=>sel==='agua'||sel==='adubo';
+const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0,died:0,fm:0,fl:0,fe:0,fertUsed:0,rare:'',shieldUntil:0});
+const isT=()=>sel==='agua'||['f1','f2','f3'].includes(sel);
 const AN=k=>S.an[k]||(S.an[k]={n:0,q:0,t:0,a:0}),cnt=k=>AN(k).n;
+const item=(k,n=1)=>{S.items[k]=(S.items[k]||0)+n};
+const fertilizerInfo={f1:{name:'Adubo x1 simples',mult:1.2,dur:120000,cost:60},f2:{name:'Adubo x2 médio',mult:1.3,dur:180000,cost:130},f3:{name:'Adubo x3 premium',mult:1.4,dur:240000,cost:250}};
+const rarityInfo={gold:{name:'Dourada',mult:3,emoji:'✨'},magic:{name:'Mágica',mult:5,emoji:'🔮'},rainbow:{name:'Arco-íris',mult:10,emoji:'🌈'},crystal:{name:'Cristal',mult:1,emoji:'💎'}};
+function rollRarity(){const r=Math.random();const boost=(1+(S.upgrades.rare||0)*.15)*(S.plotTier===3?1.5:1);if(r<.00035*boost)return 'rainbow';if(r<.0012*boost)return 'crystal';if(r<.003*boost)return 'magic';if(r<.012*boost)return 'gold';return ''}
+function useFertilizer(p,preferred=''){const keys=preferred?[preferred]:['f3','f2','f1'];const k=keys.find(x=>S.items[x]>0);if(!k)return false;S.items[k]--;p.fm=fertilizerInfo[k].mult;p.fl=Number(k.slice(1));p.fe=Date.now()+fertilizerInfo[k].dur;p.fertUsed=1;S.daily.fert=(S.daily.fert||0)+1;return true}
+function dailyClaim(id){const rewards={harvest:100,water:80,fert:120},goals={harvest:15,water:10,fert:2};const v=S.daily[id]||0;if(v<goals[id]||S.daily.claimed[id])return 0;S.daily.claimed[id]=1;earn(rewards[id]);return rewards[id]}
 const earn=n=>{S.coins+=n;S.st.g+=n};
 const free=()=>S.wk-[...Object.values(S.pl),...Object.values(S.an)].filter(x=>x.a).length;
-const done=()=>{chk();save();ui()};
+const done=()=>{chk();save();const d=$('#dock'),x=d.scrollLeft;buildDock();d.scrollLeft=x;ui()};
 
 // ---------- UI utilitária ----------
 let bt;function bn(t){const b=$('#bn');b.textContent=t;b.classList.add('on');clearTimeout(bt);bt=setTimeout(()=>b.classList.remove('on'),2600)}
 function pop(el,t){if(!el)return;const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='pop';s.textContent=t;s.style.left=(r.left+r.width/2-30)+'px';s.style.top=(r.top+r.height/3)+'px';document.body.append(s);setTimeout(()=>s.remove(),900)}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
 const FARM=t=>`<svg viewBox="0 0 48 48"><g class="bd"><rect x="18" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="26" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="16" y="24" width="18" height="16" rx="5" fill="#3a7bd5"/><rect x="16" y="24" width="18" height="6" rx="3" fill="#d9534f"/><circle cx="25" cy="18" r="6.5" fill="#f3c9a0"/><circle cx="27.5" cy="18" r="1" fill="#3b2a14"/><ellipse cx="25" cy="13.5" rx="13" ry="3.2" fill="#e8b84a"/><path d="M17 13.5a8 7 0 0 1 16 0z" fill="#f2c85b"/></g><g class="hoe"><path d="M30 27L43 9" stroke="#7a4a22" stroke-width="3" stroke-linecap="round"/><path d="M39 8L47 5L46 14Z" fill="#9aa5ad"/><circle cx="30" cy="27" r="3" fill="#f3c9a0"/></g></svg><i class="tl">${t}</i>`;
-const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><i class="rd"></i><i class="bar"><u></u></i>';
-function mk(cls){const d=document.createElement('div');d.className=cls;d.innerHTML=CELL;return{d,tm:d.querySelector('.tm'),em:d.querySelector('.em'),u:d.querySelector('u'),ct:d.querySelector('.cnt')}}
+const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><span class="fert-level"></span><i class="rd"></i><i class="bar"><u></u></i>';
+function mk(cls){const d=document.createElement('div');d.className=cls;d.innerHTML=CELL;return{d,tm:d.querySelector('.tm'),em:d.querySelector('.em'),u:d.querySelector('u'),ct:d.querySelector('.cnt'),fert:d.querySelector('.fert-level')}}
 
 function cropArt(key,progress,dead=false){
   const p=Math.max(.18,Math.min(1,progress)),h=18+34*p;
@@ -263,12 +301,14 @@ function cropArt(key,progress,dead=false){
   return `<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><ellipse cx="32" cy="63" rx="19" ry="3.5" fill="#3a2518" opacity=".25"/><g transform="translate(0 ${Math.round((1-p)*15)}) scale(${(.62+p*.38).toFixed(2)})" style="transform-origin:32px 58px">${plant}</g></svg>`;
 }
 function cropCluster(key,progress,dead=false){
-  return Array.from({length:6},()=>cropArt(key,progress,dead)).join('');
+  const stage=progress>=1?1:progress>=.72?.78:progress>=.43?.5:.24;
+  return Array.from({length:6},()=>cropArt(key,stage,dead)).join('');
 }
-function paint(x,cls,em,tm,bw,ct=''){
+function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
   x.ct.textContent=ct;
+  x.fert.classList.toggle('on',!!fertLevel);x.fert.dataset.level=fertLevel||'';
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
-  x.tm.textContent=tm;x.u.style.width=(bw*100)+'%';
+  x.tm.textContent=tm;if(!fertLevel)x.tm.removeAttribute('title');x.u.style.width=(bw*100)+'%';
   cls+=x.d.classList.contains('splash')?' splash':'';
   if(x.d.className!==cls)x.d.className=cls}
 
@@ -278,9 +318,20 @@ function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
 
 // ---------- Dock ----------
 function buildDock(){
-  $('#dock').innerHTML=`<button class="chip" data-k="adubo" title="Fertilizante: +50% de velocidade">🧪<small id="fz"></small></button>`+CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}">${c.e}<small>${c.cost}→${c.sell}</small></button>`).join('')}
-$('#dock').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;if(b.dataset.k==='adubo'){sel=sel==='adubo'?last:'adubo';return ui()}const c=C[b.dataset.k];
-  if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);sel=last=c.k;ui()};
+  const tools=[
+    ['f1','⚡','Adubo nível 1'],['f2','⚡','Adubo nível 2'],['f3','⚡','Adubo nível 3'],
+    ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
+  ];
+  $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}">${c.e}<small>${c.cost}→${c.sell}</small></button>`).join('');
+}
+$('#dock').onclick=e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  if(['f1','f2','f3','veneno','pocao'].includes(b.dataset.k)){sel=sel===b.dataset.k?last:b.dataset.k;ui();return}
+  const c=C[b.dataset.k];if(!c)return;
+  if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);
+  sel=last=c.k;ui();
+};
 $('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
 $('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (${WC} 💰 por rega)`:'Regar automático desligado');done()};
 $('#bf').onclick=()=>{S.autoFert=S.autoFert?0:1;bn(S.autoFert?'Adubo automático ligado':'Adubo automático desligado');done()};
@@ -323,7 +374,7 @@ function start(t){
   if(t.t==='p'){
     const k=C[t.c];if(p.c||p.a)return;
     if(S.coins<k.cost)return bn('Faltam moedas para plantar');
-    S.coins-=k.cost;const e=n+pt(k);const useFert=!!(S.autoFert&&S.fert>0);if(useFert)S.fert--;S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:useFert?1:0,rt:0,a:{t:'p',s:n,e}});pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
+    S.coins-=k.cost;const e=n+pt(k);const useFert=!!(S.autoFert&&(S.items.f3||S.items.f2||S.items.f1));const rare=rollRarity();S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,fm:0,fe:0,rt:0,died:0,rare,q:0,shieldUntil:0,a:{t:'p',s:n,e}});if(useFert){useFertilizer(p);}pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
   }else if(p.c&&!p.a&&p.rt&&n-p.rt<DEAD)p.a={t:'h',s:n,e:n+HT()};
 }
 const pump=()=>{while(S.q.length&&free()>0)start(S.q.shift())};
@@ -331,7 +382,7 @@ const queued=k=>S.q.some(t=>t.k===k);
 function run(t,d){if(queued(t.k))return pop(d,'Na fila ⏳');if(free()<=0)return pop(d,'Sem trabalhador livre');start(t)}
 function enqueue(ts){S.q.push(...ts);pump()}
 
-function water(p,d){p.th=0;p.w++;S.st.w++;addXp(1);pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
+function water(p,d){p.th=0;p.w++;S.st.w++;S.daily.water=(S.daily.water||0)+1;addXp(1);pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
 function act(key,d){
   const n=Date.now();
   if(key.startsWith('pen:')){const a=AN(key.slice(4));
@@ -339,10 +390,14 @@ function act(key,d){
   else{
     const p=P(key);
     if(p.a)return pop(d,p.a.t==='p'?'Plantando...':'Colhendo...');
+    if(p.c&&sel==='veneno'&&!p.died){if(!S.items.poison)bn('Sem veneno. Compre na loja');else{S.items.poison--;p.died=1;p.rt=Date.now();p.g=C[p.c].t*1000;p.a=0;S.st.dead=(S.st.dead||0)+1;S.st.poison=(S.st.poison||0)+1;pop(d,'☠️ Planta eliminada');buzz()}done();return}
+    
     if(!p.c){if(isT())return pop(d,'Plante antes');run({k:key,t:'p',c:sel},d)}
-    else if(p.rt){if(n-p.rt>=DEAD){clr(p);pop(d,'Limpo')}else run({k:key,t:'h'},d)}
+    else if(p.rt){if(p.died||n-p.rt>=DEAD){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p);pop(d,'♻️ +composto')}else run({k:key,t:'h'},d)}
     else if(sel==='agua')p.th?water(p,d):pop(d,'Não precisa de água');
-    else if(sel==='adubo'){if(p.f)pop(d,'Já adubada');else if(!S.fert)bn('Sem fertilizante. Compre na loja 🧪');else{p.f=1;S.fert--;pop(d,'🧪 +50%');buzz()}}
+    else if(['f1','f2','f3'].includes(sel)){if(p.fm&&Date.now()<p.fe)pop(d,'Esta planta já está adubada');else if(useFertilizer(p,sel)){const f=fertilizerInfo[sel];pop(d,`${sel==='f1'?'🌿':sel==='f2'?'🌱':'🌟'} ${f.name}: crescimento ${f.mult.toFixed(1)}x por ${f.dur/60000} min`);bn(`${f.name} aplicado! +${Math.round((f.mult-1)*100)}% de velocidade por ${f.dur/60000} min.`);buzz()}else bn(`Sem ${fertilizerInfo[sel].name.toLowerCase()}. Compre na loja.`)}
+    else if(sel==='veneno'){if(!S.items.poison)bn('Sem veneno. Compre na loja');else if(p.rt||p.g>0){S.items.poison--;p.died=1;p.rt=Date.now();p.g=C[p.c].t*1000;p.a=0;S.st.dead=(S.st.dead||0)+1;S.st.poison=(S.st.poison||0)+1;pop(d,'☠️ Planta eliminada');buzz()}else pop(d,'Planta ainda não cresceu')}
+    else if(sel==='pocao'){if(!S.items.potion)bn('Sem poção. Compre na loja');else if(p.rt)pop(d,'Já está pronta');else{S.items.potion--;const k=C[p.c],tot=k.t*1000;p.g=Math.min(tot,p.g+tot*.15);if(p.g>=tot){p.rt=Date.now();p.th=0}pop(d,'🧪 Poção: +15% de crescimento instantâneo');bn('🧪 Poção aplicada: +15% do crescimento da planta');buzz()}}
     else pop(d,p.th?'Precisa de água! 💧':'Crescendo...');
   }
   done();
@@ -358,7 +413,7 @@ function bulk(kind){
     ts.splice(can);
   }else{
     cells.forEach(x=>{const p=S.pl[x.key];if(!p||!p.c||p.a||!p.rt)return;
-      if(n-p.rt>=DEAD)clr(p);else ts.push({k:x.key,t:'h'})});
+      if(p.died||n-p.rt>=DEAD){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p)}else ts.push({k:x.key,t:'h'})});
     pens.forEach(x=>{const a=AN(x.m.k);if(a.q&&!a.a)ts.push({k:'pen:'+x.m.k,t:'c'})});
     if(!ts.length)return bn('Nada para colher');
   }
@@ -372,35 +427,48 @@ const lc=()=>50*(S.cols+S.rows-7),wc=()=>Math.round(6*S.wk**1.8)*10,bc=()=>150*(
 const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'land',i:'🌱',t:'Ampliar terreno',s:mx?'Terreno no máximo':`${S.cols}x${S.rows}, ganha uma ${S.cols<=S.rows?'coluna':'linha'}`,p:lc(),full:mx,buy(){S.cols<=S.rows?S.cols++:S.rows++;buildMap()}},
   {id:'wk',i:'🧑‍🌾',t:`Trabalhador (${S.wk}/10)`,s:'Faz uma tarefa por vez: plantar, colher ou coletar',p:wc(),lv:WL[S.wk],full:S.wk>=10,buy(){S.wk++}},
-  {id:'fert',i:'🧪',t:`Fertilizante (você tem ${S.fert})`,s:'Pacote com 5. A planta cresce 50% mais rápido',p:25,lv:2,buy(){S.fert+=5}},
   {id:'sp',i:'👢',t:`Botas ágeis (${S.sp}/5)`,s:'Trabalhadores 15% mais rápidos',p:bc(),lv:3+2*S.sp,full:S.sp>=5,buy(){S.sp++}},
+  ...Object.entries(fertilizerInfo).map(([id,f])=>({id,i:`<span class=\"fertilizer-icon\" data-level=\"${id.slice(1)}\"></span>`,t:`Adubo nível ${id.slice(1)} (${S.items[id]||0})`,s:`Acelera o crescimento em ${Math.round((f.mult-1)*100)}% por ${f.dur/60000} min. Pacote com 5 unidades`,p:f.cost,lv:2,buy(){item(id,5)}})),
+  {id:'poison',i:'☠️',t:`Veneno (${S.items.poison||0})`,s:'Elimina uma planta e conta para conquistas de descarte. Pacote com 3',p:90,lv:4,buy(){item('poison',3)}},
+  {id:'potion',i:'🧪',t:`Poção de crescimento (${S.items.potion||0})`,s:'Avança instantaneamente 15% do crescimento. Pacote com 2',p:180,lv:7,buy(){item('potion',2)}},
+  {id:'sprinkler',i:'🚿',t:`Aspersor automático ${S.sprinkler?'(comprado)':''}`,s:'Regas automáticas gratuitas em todos os canteiros',p:1800,lv:12,full:!!S.sprinkler,buy(){S.sprinkler=1}},
+  {id:'compost_trade',i:'♻️',t:'Trocar 5 compostos por 3 adubos simples',s:`Você tem ${S.st.compost||0} compostos`,p:0,lv:3,full:(S.st.compost||0)<5,buy(){S.st.compost-=5;item('f1',3)}},
+  {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 500 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(500)}},
+  ...[{id:'soil',i:'🌿',name:'Solo fértil',desc:'+5% de velocidade por nível',cost:[250,500,900,1500,2400]},{id:'worker',i:'🧤',name:'Mãos rápidas',desc:'Trabalhadores 5% mais rápidos por nível',cost:[300,600,1100,1800,2800]},{id:'quality',i:'🌟',name:'Olho de agricultor',desc:'Melhora a chance de colheitas de qualidade',cost:[400,800,1400,2300,3500]},{id:'rare',i:'🔮',name:'Sorte no jardim',desc:'+15% de chance de planta rara por nível',cost:[600,1200,2200,3600,5500]},{id:'compost',i:'♻️',name:'Compostagem',desc:'+1 composto extra ao limpar uma planta morta por nível',cost:[350,700,1200,2000,3200]}].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${S.upgrades[u.id]}/5)`,s:u.desc,p:u.cost[S.upgrades[u.id]],lv:Math.min(25,8+S.upgrades[u.id]*3),full:S.upgrades[u.id]>=5,buy(){S.upgrades[u.id]++}})),
+  ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente e proteção de 2 minutos',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
   ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 💰. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
 function row(it){
   const lk=S.lv<(it.lv||1),dis=lk||it.full||S.coins<it.p;
-  return `<div class="row${lk?' lock':''}"><span class="i">${it.i}</span><span class="t"><b>${it.t}</b><small>${lk?`<span class="tag">🔒 Nível ${it.lv}</span> `:''}${it.s}</small></span><button data-a="${it.id}"${dis?' disabled':''}>${lk?'🔒 Nv '+it.lv:it.full?'Cheio':it.p+' 💰'}</button></div>`}
+  return `<div class="row${lk?' lock':''}"><span class="i">${it.i}</span><span class="t"><b>${it.t}</b><small>${lk?`<span class="tag">🔒 Nível ${it.lv}</span> `:''}${it.s}</small></span><button data-a="${it.id}"${dis?' disabled':''}>${lk?'🔒 Nv '+it.lv:it.full?'Cheio':it.id==='compost_trade'?'5 ♻️':it.id==='crystal_trade'?'1 💎':it.p+' 💰'}</button></div>`}
 function shop(){
-  $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2>`+SH().map(row).join('')+
+  $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2><div class="daily-panel"><h3>📅 Missões diárias</h3><small>⏳ Reseta em <b id="dailyResetTimer">${dailyResetRemaining()}</b> · ♻️ Composto: ${S.st.compost||0} · 💎 Cristais: ${S.st.crystals||0} · 🔥 Melhor combo: ${S.st.bestCombo||0}</small>${[['harvest','Colha 15 plantas',15,100],['water','Regue 10 vezes',10,80],['fert','Use 2 adubos',2,120]].map(([id,label,max,reward])=>`<div class="row"><span class="t"><b>${label}</b><small>${Math.min(S.daily[id]||0,max)}/${max} · ${reward} 💰</small></span>${S.daily.claimed[id]?'✓':(S.daily[id]||0)>=max?`<button data-a="daily:${id}">Resgatar</button>`:'🔒'}</div>`).join('')}</div>`+SH().map(row).join('')+
    `<div class="row"><span class="t"><small>Apagar o progresso salvo</small></span><button data-a="reset">${armed?'Toque de novo':'Recomeçar'}</button></div>`}
 
 function help(){
   $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
   <div id="helptext">
     <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
-    <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione para regar manualmente um canteiro que esteja pedindo água.</small></span></div>
-    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando aparecerem estrelinhas, a planta já pode ser colhida. O aviso “🍂” mostra quanto tempo falta para ela murchar: você tem 15 minutos após ficar pronta para colher!</small></span></div>
-    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais.</small></span></div>
-    <div class="help-row"><span class="i">🌱</span><span><b>Plantar</b><small>Planta a semente selecionada em todos os canteiros vazios, respeitando suas moedas. Cada canteiro mostra 6 plantinhas da mesma semente.</small></span></div>
-    <div class="help-row"><span class="i">🚿</span><span><b>Água automática</b><small>Regas são feitas automaticamente quando a planta pedir água. Cada rega custa ${WC} moedas.</small></span></div>
-    <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Consome 1 fertilizante ao iniciar cada plantio e acelera o crescimento em 50%.</small></span></div>
-    <div class="help-row"><span class="i">🛒</span><span><b>Loja</b><small>Compre terrenos, trabalhadores, fertilizantes, melhorias e animais.</small></span></div>
-    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa. Há conquistas por colheitas, níveis até 100, regas, variedade de plantas e até por deixar plantas morrerem.</small></span></div>
-    <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste o mapa para se movimentar.</small></span></div>
+    <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione a ferramenta de água e toque em uma planta que esteja pedindo água. O aspersor pode automatizar as regas.</small></span></div>
+    <div class="help-row"><span class="i">🌱</span><span><b>Fases de crescimento</b><small>As plantas mudam de aparência em quatro etapas: muda, crescimento médio, quase pronta e pronta. A aparência muda por etapas para deixar o mapa mais leve.</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando o canteiro ganha o contorno dourado, a planta pode ser colhida. Você tem 15 minutos para colher antes que ela murche. O brilho usa partículas douradas discretas que sobem juntas no mesmo ritmo.</small></span></div>
+    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais. Colheitas em sequência aumentam o combo e podem dar bônus.</small></span></div>
+    <div class="help-row"><span class="i">🌾</span><span><b>Plantar</b><small>Planta a semente selecionada nos canteiros vazios, respeitando suas moedas. Cada canteiro ocupado mostra seis plantinhas.</small></span></div>
+    <div class="help-row"><span class="i">⚡①</span><span><b>Adubos e acelerador</b><small>Os três adubos usam o mesmo ícone de raio; o número na bolinha indica o nível. Selecione o nível 1, 2 ou 3 no inventário e toque em uma planta em crescimento. O nível 1 acelera 20% por 2 minutos, o nível 2 acelera 30% por 3 minutos e o nível 3 acelera 40% por 4 minutos. O número ⚡ que aparece no canteiro mostra o nível aplicado. O cronômetro mostra o tempo de crescimento restante e seus segundos diminuem mais rápido enquanto o efeito estiver ativo. Não é possível acumular dois adubos na mesma planta.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Ative Auto adubo para aplicar automaticamente o melhor adubo disponível ao plantar: nível 3, depois nível 2 e por último nível 1. Também é possível aplicar manualmente pelo inventário.</small></span></div>
+    <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta e conta para as conquistas de plantas perdidas. Quando uma planta morre, toque nela ou use Colher para limpar o canteiro e receber composto. Na loja, troque 5 compostos por 3 adubos de nível 1. A melhoria Compostagem aumenta a quantidade recebida ao limpar plantas mortas.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Poção, raridades e cristais</b><small>A poção adianta instantaneamente 15% do crescimento. Plantas douradas, mágicas, arco-íris e de cristal podem aparecer raramente. Ao colher uma planta de cristal, você recebe 1 cristal; na loja, troque cada cristal por 500 moedas.</small></span></div>
+    <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>As colheitas podem ser comuns, boas, excelentes ou perfeitas. Água, adubo e melhorias ajudam a obter recompensas maiores.</small></span></div>
+    <div class="help-row"><span class="i">🛒</span><span><b>Loja e melhorias</b><small>Compre adubos, veneno, poções, animais, trabalhadores, aspersor, melhorias permanentes e evoluções dos canteiros. O aspersor rega gratuitamente; a rega automática comum custa 2 moedas por rega. As melhorias e os canteiros evoluídos aplicam os bônus descritos na loja.</small></span></div>
+    <div class="help-row"><span class="i">♻️💎</span><span><b>Moedas de troca</b><small>Além das moedas 💰, acompanhe no topo o composto ♻️ e os cristais 💎. Composto é recebido ao limpar plantas mortas e pode ser trocado por adubos na loja. Cristais vêm de colheitas raras de cristal e podem ser trocados por moedas. Os contadores ficam visíveis durante o jogo.</small></span></div>
+    <div class="help-row"><span class="i">📅</span><span><b>Missões diárias</b><small>Complete objetivos de colheita, rega e adubação para ganhar moedas extras. As missões reiniciam todos os dias à meia-noite, no horário local; o contador mostra quanto falta.</small></span></div>
+    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Desbloqueie prêmios por níveis, colheitas, regas, plantas raras, qualidade, combos, compostagem e outras metas. Algumas conquistas são secretas.</small></span></div>
+    <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom e mapa</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste para se movimentar.</small></span></div>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
   </div>`;
 }
 
 function ach(){
-  const st=a=>S.clm[a[0]]?2:S.ach[a[0]]?0:1,L=[...A].sort((x,y)=>st(x)-st(y)),n=A.filter(a=>st(a)===2).length,cl=A.filter(a=>st(a)===0).length;
+  const visible=A.filter(a=>!a[6]||S.ach[a[0]]),st=a=>S.clm[a[0]]?2:S.ach[a[0]]?0:1,L=[...visible].sort((x,y)=>st(x)-st(y)),n=A.filter(a=>st(a)===2).length,cl=A.filter(a=>st(a)===0).length;
   const prog=a=>{const id=a[0],crops=S.st.crops||{};let cur=0,max=0;
     if(id==='sun1'){cur=(S.st.planted||{}).girassol||0;max=1}
     else if(id==='sun10'){cur=crops.girassol||0;max=10}
@@ -412,6 +480,12 @@ function ach(){
     else if(id==='variety12'){cur=Object.values(crops).filter(v=>v>0).length;max=12}
     else if(id==='plant10'){cur=Object.values(S.st.planted||{}).filter(v=>v>0).length;max=10}
     else if(id==='r100'){cur=S.st.g;max=100000}
+    else if(id==='q50'){cur=Object.entries(S.st.quality||{}).filter(([k])=>+k>=3).reduce((v,[,n])=>v+n,0);max=50}
+    else if(id==='rare1'){cur=Object.values(S.st.rares||{}).reduce((v,n)=>v+n,0);max=1}
+    else if(id==='combo20'){cur=S.st.bestCombo||0;max=20}
+    else if(id==='poison10'){cur=S.st.poison||0;max=10}
+    else if(id==='compost100'){cur=S.st.compost||0;max=100}
+    else if(id==='secret_sun'){cur=S.st.perfectSun||0;max=5}
     else if(id==='w10'){cur=S.st.w;max=10}
     else if(id==='e20'){cur=S.st.e;max=20}
     else if(/^l(\d+)$/.test(id)){cur=S.lv;max=Number(id.slice(1))}
@@ -432,6 +506,7 @@ $('#sheet').onclick=e=>{
   if(!a)return;
   if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';buildMap();buildDock();sh.classList.remove('on')}}
   else if(a.startsWith('claim')){const t=a==='claimall'?A.reduce((s,x)=>s+claim(x[0]),0):claim(a.slice(6));if(t)bn(`🏆 +${t} 💰`)}
+  else if(a.startsWith('daily:')){const t=dailyClaim(a.slice(6));if(t)bn(`📅 Missão concluída! +${t} 💰`);shop();save();return}
   else{const it=SH().find(i=>i.id===a);if(it&&S.lv>=(it.lv||1)&&!it.full&&S.coins>=it.p){S.coins-=it.p;it.buy();pump()}}
   done();if(sh.classList.contains('on'))fn();
 };
@@ -439,48 +514,51 @@ function chk(){A.forEach(a=>{if(!S.ach[a[0]]&&a[4]()){S.ach[a[0]]=1;bn(`🏆 Con
 
 // ---------- Loop ----------
 function tick(){
-  const n=Date.now(),dt=Math.min(n-S.last,36e5);S.last=n;
+  const n=Date.now(),dt=Math.min(n-S.last,36e5);S.last=n;if(S.daily.date!==today())S.daily={date:today(),harvest:0,water:0,fert:0,claimed:{}};
   AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n;const iv=m.every*1000;while(a.t>=iv){if(a.q<m.cap)a.q++;a.t-=iv}});
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
-      if(t==='h'){earn(k.sell);S.st.h++;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;addXp(k.xp);pop(cm[key]&&cm[key].d,`+${k.sell} 💰`);clr(p)}}
-    else if(p.th){if(S.auto&&S.coins>=WC){S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
-    else if(!p.rt){const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
+      if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>30000){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult);earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 💰 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
+    else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
+    else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
-  for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
+  for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD+(S.plotTier===1?120000:0)&&n>=(p.shieldUntil||0)){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
   AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,x=pens.find(z=>z.m===m);
     earn(g);if(m.k==='hen')S.st.e+=a.q;a.q=0;a.a=0;pop(x&&x.d,`+${g} 💰`)});
   pump();
 }
 function ui(){
+  const resetTimer=$('#dailyResetTimer');if(resetTimer)resetTimer.textContent=dailyResetRemaining();
   const n=Date.now(),qs=new Set(S.q.map(t=>t.k)),ql=S.q.length;
-  $('#coins').textContent=S.coins;$('#lvt').textContent='Nível '+S.lv;$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
+  $('#coins').textContent=S.coins;$('#compostCount').textContent='♻️ '+(S.st.compost||0);$('#crystalCount').textContent='💎 '+(S.st.crystals||0);$('#lvt').textContent='Nível '+S.lv;$('#map').classList.toggle('sprinkler-on',!!S.sprinkler);$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
-  $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#bf').classList.toggle('on',!!S.autoFert);$('#fz').textContent='×'+S.fert;
+  $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#bf').classList.toggle('on',!!S.autoFert);
   const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';
   document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
+  const tierClass=['','tier-stone','tier-fertile','tier-magic','tier-gold'][Math.min(4,S.plotTier||0)];
   const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
   cells.forEach(x=>{
-    const p=S.pl[x.key];let cls='plot',em='',tm='',bw=0,r,ct='';
+    const p=S.pl[x.key];let cls='plot '+tierClass,em='',tm='',bw=0,r,ct='';
     if(p&&p.c){
-      const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,rem=p.rt?DEAD-(n-p.rt):0;ct='+'+k.sell;
+      if(p.rare)cls+=' rare-'+p.rare;
+      const k=C[p.c],tot=k.t*1000,rt=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1))*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),rem=p.rt?Math.max(DEAD+(S.plotTier===1?120000:0)-(n-p.rt),(p.shieldUntil||0)-n):0;ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
-      else if(p.rt){if(rem>0){em=cropCluster(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
-      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
+      else if(p.rt){if(rem>0&&!p.died){em=cropCluster(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
+      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm=(boosted?'⚡ ':'')+fmt(Math.ceil((tot-p.g)/1000));if(boosted)x.tm.title=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;else x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
-    paint(x,cls,em,tm,bw,ct);
+    paint(x,cls,em,tm,bw,ct,p&&p.fm&&n<(p.fe||0)?(p.fl||1):0);
   });
   pens.forEach(x=>{
-    const m=x.m,a=AN(m.k);let cls='plot pen',em=m.e,tm='',bw=0,r;
+    const m=x.m,a=AN(m.k);let cls='plot pen '+tierClass,em=m.e,tm='',bw=0,r;
     if(a.a){[r,em,tm,bw]=work(a.a,m.pe);cls+=r}else if(a.q)cls+=' ready';
     if(qs.has('pen:'+m.k))cls+=' qd';
     paint(x,cls,em,tm,bw,m.pe+a.q+'/'+m.cap);
   });
 }
 buildMap();buildDock();tick();chk();ui();
-setInterval(()=>{tick();chk();ui();if(++tickN%20===0)save()},250);
+setInterval(()=>{tick();chk();if(++tickN%2===0)ui();if(tickN%20===0)save()},250);
 document.addEventListener('visibilitychange',save);
 </script>
 </body>
