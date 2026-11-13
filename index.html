@@ -14,14 +14,13 @@ html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
 body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none;background:repeating-linear-gradient(45deg,var(--g1) 0 28px,var(--g2) 28px 56px)}
 #view{position:fixed;inset:0;touch-action:none;cursor:grab}
 #map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
-.plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);contain:layout style;background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
+.plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
 .tm{position:absolute;top:auto;bottom:13px;left:50%;transform:translateX(-50%);font-size:10px;line-height:14px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:3;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 4px;white-space:nowrap;box-shadow:0 1px 3px #0006}
-.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.cl{display:grid;width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center}.crop-svg{width:28px;height:32px;overflow:visible}.dead .crop-svg{opacity:.85}
-#map.lite .ready:not([class*="rare-"]){box-shadow:0 0 0 3px var(--sun)}#map.lite .ready .em::after{display:none}#map.lite .late .bar u{animation:none}
+.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible;filter:drop-shadow(0 1px 1px #26170c44)}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
-.thirst::after{content:'💧';position:absolute;left:50%;top:5px;transform:translateX(-50%);font-size:17px;line-height:1;z-index:4;pointer-events:none;text-shadow:0 1px 2px #0009}
+.thirst::after{content:'💧';position:absolute;left:4px;bottom:11px;font-size:16px;z-index:2;animation:blink .7s steps(2) infinite}
 .thirst .bar u{background:var(--water)}
 .fert{box-shadow:0 0 0 3px #b07cff}
 .fert-level{position:absolute;right:-6px;top:-7px;z-index:5;width:23px;height:23px;border-radius:50%;display:none;place-items:center;background:linear-gradient(145deg,#fff4a8,#ffc52e);border:2px solid #8d5a12;color:#4b2d08;font-size:11px;font-weight:700;line-height:1;box-shadow:0 1px 3px #0008}
@@ -92,8 +91,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bc{display:none;background:#ffd6d0;color:#7a1d10;border-color:#e57a6a}#bc.on{display:block;background:#ffd6d0;box-shadow:none;border-color:#e57a6a}
 #bak{position:absolute;top:-5px;right:-5px;background:#e53935;color:#fff;border-radius:10px;min-width:20px;font-size:12px;font-weight:700;padding:1px 4px;display:none}
 #bcn{font-size:17px;font-weight:700}
-#dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:calc(var(--bot) - 8px);display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 8px;touch-action:pan-x;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--sun) #0003;cursor:grab}
-#dock::-webkit-scrollbar{height:6px}#dock::-webkit-scrollbar-track{background:#0003;border-radius:6px}#dock::-webkit-scrollbar-thumb{background:var(--sun);border-radius:6px}
+#dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
 .chip{position:relative;flex:0 0 auto;min-width:66px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 4px;cursor:pointer}
 .chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
 .chip.on{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
@@ -107,7 +105,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .help-row{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-top:2px solid var(--line)}
 .help-row .i{font-size:25px;min-width:34px;text-align:center}
 .help-row small{display:block;opacity:.82;line-height:1.35}
-#helptext{line-height:1.4}.help-sec{margin:14px 0 2px;font-size:15px;font-weight:700;opacity:.75}
+#helptext{line-height:1.4}
 .box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px var(--sheetb)}
 .box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:2px solid var(--line)}
@@ -266,8 +264,7 @@ const done=()=>{chk();save();const d=$('#dock'),x=d.scrollLeft;buildDock();d.scr
 
 // ---------- UI utilitária ----------
 let bt;function bn(t){const b=$('#bn');b.textContent=t;b.classList.add('on');clearTimeout(bt);bt=setTimeout(()=>b.classList.remove('on'),2600)}
-let popQ=[],popN=0,popRaf=0;
-function pop(el,t){if(!el||popN+popQ.length>=16)return;popQ.push([el,t]);if(!popRaf)popRaf=requestAnimationFrame(()=>{popRaf=0;const q=popQ;popQ=[];const rs=q.map(a=>a[0].getBoundingClientRect());q.forEach((a,i)=>{const r=rs[i],e=document.createElement('span');e.className='pop';e.textContent=a[1];e.style.left=(r.left+r.width/2-30)+'px';e.style.top=(r.top+r.height/3)+'px';document.body.append(e);popN++;setTimeout(()=>{e.remove();popN--},900)})})}
+function pop(el,t){if(!el)return;const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='pop';s.textContent=t;s.style.left=(r.left+r.width/2-30)+'px';s.style.top=(r.top+r.height/3)+'px';document.body.append(s);setTimeout(()=>s.remove(),900)}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
 const FARM=t=>`<svg viewBox="0 0 48 48"><g class="bd"><rect x="18" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="26" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="16" y="24" width="18" height="16" rx="5" fill="#3a7bd5"/><rect x="16" y="24" width="18" height="6" rx="3" fill="#d9534f"/><circle cx="25" cy="18" r="6.5" fill="#f3c9a0"/><circle cx="27.5" cy="18" r="1" fill="#3b2a14"/><ellipse cx="25" cy="13.5" rx="13" ry="3.2" fill="#e8b84a"/><path d="M17 13.5a8 7 0 0 1 16 0z" fill="#f2c85b"/></g><g class="hoe"><path d="M30 27L43 9" stroke="#7a4a22" stroke-width="3" stroke-linecap="round"/><path d="M39 8L47 5L46 14Z" fill="#9aa5ad"/><circle cx="30" cy="27" r="3" fill="#f3c9a0"/></g></svg><i class="tl">${t}</i>`;
 const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><span class="fert-level"></span><i class="rd"></i><i class="bar"><u></u></i>';
@@ -303,18 +300,15 @@ function cropArt(key,progress,dead=false){
   const plant=dead?`<path d="M32 52Q22 38 12 43M32 52Q44 35 52 43M32 48Q28 31 23 27" stroke="#806b4d" stroke-width="3" fill="none" stroke-linecap="round"/>${round(32,58,4,2,'#8a6947','#705339')}`:`${leaves}${fruit}`;
   return `<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><ellipse cx="32" cy="63" rx="19" ry="3.5" fill="#3a2518" opacity=".25"/><g transform="translate(0 ${Math.round((1-p)*15)}) scale(${(.62+p*.38).toFixed(2)})" style="transform-origin:32px 58px">${plant}</g></svg>`;
 }
-const CCache={};
 function cropCluster(key,progress,dead=false){
-  const stage=progress>=1?1:progress>=.72?.78:progress>=.43?.5:.24,id=key+stage+dead;
-  return CCache[id]||(CCache[id]='<span class="cl">'+cropArt(key,stage,dead).repeat(6)+'</span>');
+  const stage=progress>=1?1:progress>=.72?.78:progress>=.43?.5:.24;
+  return Array.from({length:6},()=>cropArt(key,stage,dead)).join('');
 }
 function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
-  if(x.ctv!==ct){x.ctv=ct;x.ct.textContent=ct}
-  if(x.fl!==fertLevel){x.fl=fertLevel;x.fert.classList.toggle('on',!!fertLevel);x.fert.dataset.level=fertLevel||''}
+  x.ct.textContent=ct;
+  x.fert.classList.toggle('on',!!fertLevel);x.fert.dataset.level=fertLevel||'';
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
-  if(x.tmv!==tm){x.tmv=tm;x.tm.textContent=tm}
-  if(!fertLevel)x.tm.removeAttribute('title');
-  const w=Math.round(bw*100);if(x.bwv!==w){x.bwv=w;x.u.style.width=w+'%'}
+  x.tm.textContent=tm;if(!fertLevel)x.tm.removeAttribute('title');x.u.style.width=(bw*100)+'%';
   cls+=x.d.classList.contains('splash')?' splash':'';
   if(x.d.className!==cls)x.d.className=cls}
 
@@ -338,19 +332,13 @@ $('#dock').onclick=e=>{
   if(S.lv<c.lv)return bn(`${c.e} ${c.n} libera no nível ${c.lv}`);
   sel=last=c.k;ui();
 };
-{const d=$('#dock');let dx=null,ds=0,dm=false;
-d.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){d.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
-d.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){dx=e.clientX;ds=d.scrollLeft;dm=false}});
-addEventListener('pointermove',e=>{if(dx===null)return;const m=e.clientX-dx;if(Math.abs(m)>6)dm=true;if(dm)d.scrollLeft=ds-m});
-addEventListener('pointerup',()=>{dx=null;setTimeout(()=>{dm=false},0)});
-d.addEventListener('click',e=>{if(dm){e.stopPropagation();e.preventDefault()}},true)}
 $('#bw').onclick=()=>{sel=sel==='agua'?last:'agua';ui()};
 $('#bu').onclick=()=>{S.auto=S.auto?0:1;bn(S.auto?`Regar automático ligado (${WC} 💰 por rega)`:'Regar automático desligado');done()};
 $('#bf').onclick=()=>{S.autoFert=S.autoFert?0:1;bn(S.autoFert?'Adubo automático ligado':'Adubo automático desligado');done()};
 $('#bhelp').onclick=()=>open(help);
 
 // ---------- Mapa ----------
-const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1,fr=0;
+const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.innerHTML='<div id="ttl">🌻 Fazenda Feliz 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
@@ -359,7 +347,7 @@ function buildMap(){
   map.style.gridTemplateColumns=`repeat(${S.cols},74px)`;
   for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
     const x=mk('plot'),key=r+','+c;x.d.dataset.key=key;x.key=key;map.append(x.d);cells.push(cm[key]=x)}
-  map.classList.toggle('lite',cells.length>36);fit();
+  fit();
 }
 function fit(){
   const vw=view.clientWidth,vh=view.clientHeight,mw=map.offsetWidth*zoom,mh=map.offsetHeight*zoom,T=84,B=150,pad=12,ah=vh-T-B;
@@ -370,7 +358,7 @@ function fit(){
 view.addEventListener('pointerdown',e=>{drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false});
 addEventListener('pointermove',e=>{if(!drag)return;
   if(!moved&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)moved=true;
-  if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;if(!fr)fr=requestAnimationFrame(()=>{fr=0;fit()})}});
+  if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;fit()}});
 addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
 addEventListener('pointercancel',()=>{drag=null});
 addEventListener('resize',fit);
@@ -394,7 +382,7 @@ const queued=k=>S.q.some(t=>t.k===k);
 function run(t,d){if(queued(t.k))return pop(d,'Na fila ⏳');if(free()<=0)return pop(d,'Sem trabalhador livre');start(t)}
 function enqueue(ts){S.q.push(...ts);pump()}
 
-function water(p,d,q){p.th=0;p.w++;S.st.w++;S.daily.water=(S.daily.water||0)+1;addXp(1);pop(d,'💦');if(q)return;if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
+function water(p,d){p.th=0;p.w++;S.st.w++;S.daily.water=(S.daily.water||0)+1;addXp(1);pop(d,'💦');if(d){d.classList.add('splash');setTimeout(()=>d.classList.remove('splash'),450)}buzz()}
 function act(key,d){
   const n=Date.now();
   if(key.startsWith('pen:')){const a=AN(key.slice(4));
@@ -458,7 +446,25 @@ function shop(){
 
 function help(){
   $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
-  <div id="helptext"><p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p><div class="help-sec">Primeiros passos</div><<<<<<<<div class="help-sec">Bônus e raridades</div><<<<<<<<div class="help-sec">Fazenda</div><<<<<<div class="help-sec">Controles e progresso</div><<</div>`;
+  <div id="helptext">
+    <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
+    <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione a ferramenta de água e toque em uma planta que esteja pedindo água. O aspersor pode automatizar as regas.</small></span></div>
+    <div class="help-row"><span class="i">🌱</span><span><b>Fases de crescimento</b><small>As plantas mudam de aparência em quatro etapas: muda, crescimento médio, quase pronta e pronta. A aparência muda por etapas para deixar o mapa mais leve.</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando o canteiro ganha o contorno dourado, a planta pode ser colhida. Você tem 15 minutos para colher antes que ela murche. O brilho usa partículas douradas discretas que sobem juntas no mesmo ritmo.</small></span></div>
+    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais. Colheitas em sequência aumentam o combo e podem dar bônus.</small></span></div>
+    <div class="help-row"><span class="i">🌾</span><span><b>Plantar</b><small>Planta a semente selecionada nos canteiros vazios, respeitando suas moedas. Cada canteiro ocupado mostra seis plantinhas.</small></span></div>
+    <div class="help-row"><span class="i">⚡①</span><span><b>Adubos e acelerador</b><small>Os três adubos usam o mesmo ícone de raio; o número na bolinha indica o nível. Selecione o nível 1, 2 ou 3 no inventário e toque em uma planta em crescimento. O nível 1 acelera 20% por 2 minutos, o nível 2 acelera 30% por 3 minutos e o nível 3 acelera 40% por 4 minutos. O número ⚡ que aparece no canteiro mostra o nível aplicado. O cronômetro mostra o tempo de crescimento restante e seus segundos diminuem mais rápido enquanto o efeito estiver ativo. Não é possível acumular dois adubos na mesma planta.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Ative Auto adubo para aplicar automaticamente o melhor adubo disponível ao plantar: nível 3, depois nível 2 e por último nível 1. Também é possível aplicar manualmente pelo inventário.</small></span></div>
+    <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta e conta para as conquistas de plantas perdidas. Quando uma planta morre, toque nela ou use Colher para limpar o canteiro e receber composto. Na loja, troque 5 compostos por 3 adubos de nível 1. A melhoria Compostagem aumenta a quantidade recebida ao limpar plantas mortas.</small></span></div>
+    <div class="help-row"><span class="i">🧪</span><span><b>Poção, raridades e cristais</b><small>A poção adianta instantaneamente 15% do crescimento. Plantas douradas, mágicas, arco-íris e de cristal podem aparecer raramente. Ao colher uma planta de cristal, você recebe 1 cristal; na loja, troque cada cristal por 500 moedas.</small></span></div>
+    <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>As colheitas podem ser comuns, boas, excelentes ou perfeitas. Água, adubo e melhorias ajudam a obter recompensas maiores.</small></span></div>
+    <div class="help-row"><span class="i">🛒</span><span><b>Loja e melhorias</b><small>Compre adubos, veneno, poções, animais, trabalhadores, aspersor, melhorias permanentes e evoluções dos canteiros. O aspersor rega gratuitamente; a rega automática comum custa 2 moedas por rega. As melhorias e os canteiros evoluídos aplicam os bônus descritos na loja.</small></span></div>
+    <div class="help-row"><span class="i">♻️💎</span><span><b>Moedas de troca</b><small>Além das moedas 💰, acompanhe no topo o composto ♻️ e os cristais 💎. Composto é recebido ao limpar plantas mortas e pode ser trocado por adubos na loja. Cristais vêm de colheitas raras de cristal e podem ser trocados por moedas. Os contadores ficam visíveis durante o jogo.</small></span></div>
+    <div class="help-row"><span class="i">📅</span><span><b>Missões diárias</b><small>Complete objetivos de colheita, rega e adubação para ganhar moedas extras. As missões reiniciam todos os dias à meia-noite, no horário local; o contador mostra quanto falta.</small></span></div>
+    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Desbloqueie prêmios por níveis, colheitas, regas, plantas raras, qualidade, combos, compostagem e outras metas. Algumas conquistas são secretas.</small></span></div>
+    <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom e mapa</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste para se movimentar.</small></span></div>
+    <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
+  </div>`;
 }
 
 function ach(){
@@ -513,7 +519,7 @@ function tick(){
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
       if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>30000){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult);earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 💰 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
-    else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,1)}}
+    else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
   for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD+(S.plotTier===1?120000:0)&&n>=(p.shieldUntil||0)){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
@@ -552,8 +558,8 @@ function ui(){
   });
 }
 buildMap();buildDock();tick();chk();ui();
-setInterval(()=>{tick();if(tickN%4===0)chk();if(++tickN%2===0&&!document.hidden)ui();if(tickN%20===0)save()},250);
-document.addEventListener('visibilitychange',()=>{save();if(!document.hidden){tick();ui()}});
+setInterval(()=>{tick();chk();if(++tickN%2===0)ui();if(tickN%20===0)save()},250);
+document.addEventListener('visibilitychange',save);
 </script>
 </body>
 </html>
