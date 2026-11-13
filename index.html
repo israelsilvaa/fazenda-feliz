@@ -16,7 +16,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
 .plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
 .tm{position:absolute;top:1px;left:5px;font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
-.em{position:relative;z-index:1;display:grid;place-items:center}
+.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.crop-svg{width:62px;height:66px;overflow:visible;filter:drop-shadow(0 2px 1px #26170c55);animation:plantSway 3.2s ease-in-out infinite alternate}.ready .crop-svg{animation:plantSway 2.2s ease-in-out infinite alternate}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}@keyframes plantSway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
@@ -27,6 +27,11 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #ttl small{display:block;font-size:9px;font-weight:600;opacity:.8;text-shadow:none}
 .ready{box-shadow:0 0 0 3px var(--sun),0 0 14px 5px #ffcf3380;animation:glow 1.8s ease-in-out infinite alternate}
 .ready .bar u{background:#ffb02e}
+.ready::before,.ready::after{content:'✦';position:absolute;z-index:3;color:#fff8a8;text-shadow:0 0 5px #fff,0 0 10px #ffdf45;pointer-events:none;animation:twinkle .9s ease-in-out infinite alternate}
+.ready::before{top:5px;right:7px;font-size:17px}
+.ready::after{content:'✧';bottom:12px;left:7px;font-size:15px;animation-delay:.45s}
+.ready .tm{left:0;right:0;text-align:center;width:100%;font-size:9px;line-height:13px;background:#9b4b16d9;border-radius:6px;padding:0 2px;text-shadow:0 1px 2px #000}
+@keyframes twinkle{from{opacity:.35;transform:scale(.7) rotate(-15deg)}to{opacity:1;transform:scale(1.2) rotate(15deg)}}
 .late .bar u{animation:blink .5s steps(2) infinite}
 .dead{filter:grayscale(.8) brightness(.8)}
 .dead .bar{display:none}
@@ -99,7 +104,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bn.on{opacity:1;transform:translate(-50%,0)}
 .pop{position:fixed;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 1px 3px #000b;z-index:9;animation:up .9s forwards;white-space:nowrap}
 @keyframes up{to{transform:translateY(-44px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
+@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready::before,.ready::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
 :focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
 </style>
 </head>
@@ -163,21 +168,22 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
  ['r30','🏆','Dono do vale','Ganhe 30.000 moedas',()=>S.st.g>=3e4,1000],
   ['sun1','🌻','Primeiro girassol','Plante 1 girassol',()=>((S.st.planted||{}).girassol||0)>=1,100],
   ['sun10','🌞','Campo dourado','Colha 10 girassóis',()=>((S.st.crops||{}).girassol||0)>=10,300],
-  ['variety','🥗','Horta diversificada','Colha 8 tipos diferentes de alimentos',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=8,250]];
+  ['variety','🥗','Horta diversificada','Colha 8 tipos diferentes de alimentos',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=8,250],
+  ['dead5','🥀','Descuido na horta','Deixe 5 plantas morrerem sem colher',()=>((S.st.dead||0)>=5),50]];
 
 // ---------- Estado ----------
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp,HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,crops:{},planted:{}},last:Date.now()});
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},last:Date.now()});
 let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
 S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
   Object.values(S.pl).forEach(p=>{if(p.c&&p.g===undefined){const k=C[p.c],tot=k.t*1000,g=Math.max(0,Math.min(tot,Date.now()-(p.p||0)));Object.assign(p,{g,w:TH(k).filter(x=>x*tot<=g).length,th:0,f:0,rt:g>=tot?(p.p||0)+tot:0})}});
   [['hen','hens','eggs','eggT'],['cow','cows','milk','milkT']].forEach(([k,n,q,t])=>{if(j[n]&&!S.an[k])S.an[k]={n:j[n],q:j[q]||0,t:j[t]||0,a:0}})}}catch(e){}
-S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
+S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.st.dead=Number(S.st.dead)||0;S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const P=k=>S.pl[k]||(S.pl[k]={c:null,g:0,w:0,th:0,f:0,rt:0,a:0});
-const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0});
+const P=k=>S.pl[k]||(S.pl[k]={c:null,g:0,w:0,th:0,f:0,rt:0,died:0,a:0});
+const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0,died:0});
 const isT=()=>sel==='agua'||sel==='adubo';
 const AN=k=>S.an[k]||(S.an[k]={n:0,q:0,t:0,a:0}),cnt=k=>AN(k).n;
 const earn=n=>{S.coins+=n;S.st.g+=n};
@@ -191,6 +197,37 @@ const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}};
 const FARM=t=>`<svg viewBox="0 0 48 48"><g class="bd"><rect x="18" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="26" y="38" width="5" height="8" rx="2" fill="#5b3a1e"/><rect x="16" y="24" width="18" height="16" rx="5" fill="#3a7bd5"/><rect x="16" y="24" width="18" height="6" rx="3" fill="#d9534f"/><circle cx="25" cy="18" r="6.5" fill="#f3c9a0"/><circle cx="27.5" cy="18" r="1" fill="#3b2a14"/><ellipse cx="25" cy="13.5" rx="13" ry="3.2" fill="#e8b84a"/><path d="M17 13.5a8 7 0 0 1 16 0z" fill="#f2c85b"/></g><g class="hoe"><path d="M30 27L43 9" stroke="#7a4a22" stroke-width="3" stroke-linecap="round"/><path d="M39 8L47 5L46 14Z" fill="#9aa5ad"/><circle cx="30" cy="27" r="3" fill="#f3c9a0"/></g></svg><i class="tl">${t}</i>`;
 const CELL='<span class="tm"></span><span class="em"></span><span class="cnt"></span><i class="rd"></i><i class="bar"><u></u></i>';
 function mk(cls){const d=document.createElement('div');d.className=cls;d.innerHTML=CELL;return{d,tm:d.querySelector('.tm'),em:d.querySelector('.em'),u:d.querySelector('u'),ct:d.querySelector('.cnt')}}
+
+function cropArt(key,progress,dead=false){
+  const p=Math.max(.18,Math.min(1,progress)),h=18+34*p;
+  const leaf=dead?'#8b7651':'#398b3e',leaf2=dead?'#a18a61':'#62b94e',stem=dead?'#806b4d':'#39783a';
+  const leaves=`
+    <path d="M32 51 Q8 48 10 30 Q25 28 32 45Z" fill="${leaf}"/>
+    <path d="M32 49 Q55 47 55 27 Q39 26 32 44Z" fill="${leaf2}"/>
+    <path d="M32 44 Q13 35 18 18 Q33 21 33 39Z" fill="${leaf2}"/>
+    <path d="M33 42 Q50 32 45 15 Q31 19 31 38Z" fill="${leaf}"/>
+    <path d="M32 50 Q28 30 32 10" stroke="${stem}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <g stroke="#d8ef9a" stroke-width="1" opacity=".7" fill="none"><path d="M31 44L14 32M33 43L50 30M32 37L21 21M32 36L42 19"/></g>`;
+  let fruit='';
+  const round=(x,y,rx,ry,color,stroke='#8a4d25')=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${color}" stroke="${stroke}" stroke-width="1.2"/>`;
+  if(key==='cenoura') fruit=`<path d="M27 42 Q32 40 37 42 L33 61 Q31 65 29 60Z" fill="#ed8a24" stroke="#b85c16" stroke-width="1.4"/><path d="M28 49l5 1M29 54l4 1" stroke="#ffd17b" stroke-width="1"/>`;
+  else if(key==='batata') fruit=`${round(23,53,8,5,'#b88b52')}${round(39,55,8,5,'#c79a5e')}<circle cx="21" cy="52" r="1" fill="#6d482b"/><circle cx="40" cy="54" r="1" fill="#6d482b"/>`;
+  else if(key==='trigo') fruit=`<g stroke="#c69b37" stroke-width="2" fill="none"><path d="M32 48V8M32 22L22 13M32 29L42 18M32 36L21 27M32 41L42 32"/></g><g fill="#e9c45b"><ellipse cx="21" cy="12" rx="3" ry="6" transform="rotate(-35 21 12)"/><ellipse cx="42" cy="17" rx="3" ry="6" transform="rotate(35 42 17)"/><ellipse cx="20" cy="26" rx="3" ry="6" transform="rotate(-35 20 26)"/><ellipse cx="43" cy="31" rx="3" ry="6" transform="rotate(35 43 31)"/><ellipse cx="32" cy="7" rx="3" ry="6"/></g>`;
+  else if(key==='milho') fruit=`<path d="M37 27Q50 27 48 47Q45 57 37 49Z" fill="#f5c52e" stroke="#b78a17" stroke-width="1.5"/><path d="M37 29Q27 37 36 54Q39 43 37 29Z" fill="#4a9b42"/><path d="M40 32v17M44 32v15" stroke="#fff0a0" stroke-width="1"/>`;
+  else if(key==='tomate') fruit=`${round(20,47,7,7,'#e43d32','#9e251f')}${round(44,49,7,7,'#e43d32','#9e251f')}${round(33,58,7,6,'#d9322d','#9e251f')}<path d="M20 39l-3 3 4-1 3 2 1-4M44 41l-3 3 4-1 3 2 1-4" fill="#398b3e"/>`;
+  else if(key==='alface'||key==='brocolis') fruit=`<g fill="${key==='brocolis'?'#267b3b':'#6fbd4f'}" stroke="#347c35" stroke-width="1.3">${[0,1,2,3,4,5,6].map((_,i)=>`<ellipse cx="${32+Math.cos(i*Math.PI/3)*11}" cy="${43+Math.sin(i*Math.PI/3)*8}" rx="9" ry="12" transform="rotate(${i*50} ${32+Math.cos(i*Math.PI/3)*11} ${43+Math.sin(i*Math.PI/3)*8})"/>`).join('')}</g>`;
+  else if(key==='morango') fruit=`<path d="M20 43Q13 33 24 32Q33 27 38 36Q43 47 28 59Q22 54 20 43Z" fill="#e93648" stroke="#a51d32" stroke-width="1.4"/><path d="M19 35l-5-4 8 1 3-5 3 6 7-2-4 7" fill="#398b3e"/><g fill="#ffd77b"><circle cx="23" cy="41" r="1"/><circle cx="31" cy="40" r="1"/><circle cx="27" cy="48" r="1"/><circle cx="24" cy="53" r="1"/></g>`;
+  else if(key==='abobora'||key==='melancia') fruit=key==='abobora'?`${round(33,51,14,11,'#f28b22','#a95619')}<path d="M33 40Q27 51 33 62M33 40Q40 51 33 62" stroke="#d56d1c" stroke-width="1.5" fill="none"/><path d="M32 40q-2-7 3-9" stroke="#39783a" stroke-width="3" fill="none"/>`:`${round(34,51,16,10,'#4b9d43','#286b35')}<path d="M22 48q12 8 25 0M22 53q12 8 25 0" stroke="#b9d98b" stroke-width="1.5" fill="none"/>`;
+  else if(key==='pimenta') fruit=`<path d="M21 39Q29 35 35 42Q39 51 27 60Q17 55 21 39Z" fill="#d83a2f" stroke="#9d241f" stroke-width="1.3"/><path d="M34 42q6-7 9-4" stroke="#39783a" stroke-width="3" fill="none"/>`;
+  else if(key==='berinjela') fruit=`<path d="M20 43Q26 32 42 39Q52 47 37 57Q23 62 20 43Z" fill="#71439a" stroke="#43265f" stroke-width="1.5"/><path d="M21 41l-6-4 9 1 3-5 3 6" fill="#438b43"/>`;
+  else if(key==='uva') fruit=`<g fill="#7442a0" stroke="#4c286e" stroke-width="1">${[[29,43],[38,44],[24,51],[33,52],[42,52],[29,60],[38,60]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5"/>`).join('')}</g>`;
+  else if(key==='abacaxi') fruit=`<path d="M22 39Q20 30 27 25Q25 17 32 11Q38 18 36 26Q45 29 42 39Z" fill="#4c9a42"/><path d="M22 40Q32 34 42 40L39 59Q32 64 25 58Z" fill="#d8a92c" stroke="#9a7120" stroke-width="1.5"/><path d="M25 43l12 13M38 43L26 56M24 49h16" stroke="#f6d76c" stroke-width="1.3"/>`;
+  else if(key==='girassol') fruit=`<circle cx="32" cy="25" r="10" fill="#75441f"/>${Array.from({length:10},(_,i)=>`<ellipse cx="32" cy="12" rx="4" ry="8" fill="#f5c52e" transform="rotate(${i*36} 32 25)"/>`).join('')}<circle cx="32" cy="25" r="7" fill="#75441f"/>`;
+  else if(key==='manga') fruit=`<path d="M24 39Q40 32 44 47Q45 60 29 60Q18 55 24 39Z" fill="#f2a52d" stroke="#b96a20" stroke-width="1.4"/><path d="M25 40q6-8 15-4" stroke="#e65a32" stroke-width="4" fill="none"/>`;
+  else if(key==='coco') fruit=`${round(32,51,12,12,'#8b5932','#56351e')}<path d="M24 45q8-7 16 0" stroke="#b98551" stroke-width="2" fill="none"/>`;
+  const plant=dead?`<path d="M32 52Q22 38 12 43M32 52Q44 35 52 43M32 48Q28 31 23 27" stroke="#806b4d" stroke-width="3" fill="none" stroke-linecap="round"/>${round(32,58,4,2,'#8a6947','#705339')}`:`${leaves}${fruit}`;
+  return `<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><ellipse cx="32" cy="63" rx="19" ry="3.5" fill="#3a2518" opacity=".25"/><g transform="translate(0 ${Math.round((1-p)*15)}) scale(${(.62+p*.38).toFixed(2)})" style="transform-origin:32px 58px">${plant}</g></svg>`;
+}
 function paint(x,cls,em,tm,bw,ct=''){
   x.ct.textContent=ct;
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
@@ -313,12 +350,13 @@ function help(){
   <div id="helptext">
     <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
     <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione para regar manualmente um canteiro que esteja pedindo água.</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando aparecerem estrelinhas, a planta já pode ser colhida. O aviso “🍂” mostra quanto tempo falta para ela murchar. Colha antes que o tempo acabe!</small></span></div>
     <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais.</small></span></div>
     <div class="help-row"><span class="i">🌱</span><span><b>Plantar</b><small>Planta a semente selecionada em todos os canteiros vazios, respeitando suas moedas.</small></span></div>
     <div class="help-row"><span class="i">🚿</span><span><b>Água automática</b><small>Regas são feitas automaticamente quando a planta pedir água. Cada rega custa ${WC} moedas.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Consome 1 fertilizante ao iniciar cada plantio e acelera o crescimento em 50%.</small></span></div>
     <div class="help-row"><span class="i">🛒</span><span><b>Loja</b><small>Compre terrenos, trabalhadores, fertilizantes, melhorias e animais.</small></span></div>
-    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa.</small></span></div>
+    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa. Também há uma conquista por deixar 5 plantas morrerem sem colher.</small></span></div>
     <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste o mapa para se movimentar.</small></span></div>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
   </div>`;
@@ -331,6 +369,7 @@ function ach(){
     else if(id==='sun10'){cur=crops.girassol||0;max=10}
     else if(id==='variety'){cur=Object.values(crops).filter(v=>v>0).length;max=8}
     else if(id==='first'||id==='h25'||id==='h100'||id==='h500'){cur=S.st.h;max=({first:1,h25:25,h100:100,h500:500})[id]}
+    else if(id==='dead5'){cur=S.st.dead||0;max=5}
     else if(id==='w10'){cur=S.st.w;max=10}
     else if(id==='e20'){cur=S.st.e;max=20}
     else if(id==='l5'||id==='l10'){cur=S.lv;max=id==='l5'?5:10}
@@ -366,6 +405,7 @@ function tick(){
     else if(p.th){if(S.auto&&S.coins>=WC){S.coins-=WC;water(p,cm[key]&&cm[key].d)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
+  for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
   AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,x=pens.find(z=>z.m===m);
     earn(g);if(m.k==='hen')S.st.e+=a.q;a.q=0;a.a=0;pop(x&&x.d,`+${g} 💰`)});
   pump();
@@ -384,8 +424,8 @@ function ui(){
     if(p&&p.c){
       const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,rem=p.rt?DEAD-(n-p.rt):0;ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
-      else if(p.rt){if(rem>0){em=k.e;bw=rem/DEAD;tm=fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em='🥀';cls+=' dead';ct=''}}
-      else{em=p.g/tot>.5?'🌿':'🌱';bw=p.g/tot;if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
+      else if(p.rt){if(rem>0){em=cropArt(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropArt(p.c,1,true);cls+=' dead';ct=''}}
+      else{bw=p.g/tot;em=cropArt(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
     paint(x,cls,em,tm,bw,ct);
