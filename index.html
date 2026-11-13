@@ -15,8 +15,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #view{position:fixed;inset:0;touch-action:none;cursor:grab}
 #map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
 .plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
-.tm{position:absolute;top:1px;left:5px;font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
-.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.crop-svg{width:62px;height:66px;overflow:visible;filter:drop-shadow(0 2px 1px #26170c55);animation:plantSway 3.2s ease-in-out infinite alternate}.ready .crop-svg{animation:plantSway 2.2s ease-in-out infinite alternate}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}@keyframes plantSway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+.tm{position:absolute;top:auto;bottom:13px;left:50%;transform:translateX(-50%);font-size:10px;line-height:14px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:3;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 4px;white-space:nowrap;box-shadow:0 1px 3px #0006}
+.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible;filter:drop-shadow(0 2px 1px #26170c55);animation:plantSway 3.2s ease-in-out infinite alternate}.ready .crop-svg{animation:plantSway .85s ease-in-out infinite alternate}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}@keyframes plantSway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
@@ -25,13 +25,12 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .fert{box-shadow:0 0 0 3px #b07cff}
 #ttl{position:absolute;left:50%;top:-30px;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none;background:linear-gradient(135deg,#fff4c4,#ffe08a);color:#68451d;border:2px solid #b98535;border-radius:14px;padding:4px 12px;box-shadow:0 3px 0 #68451d55,0 5px 12px #0002;font-size:14px;font-weight:700;text-shadow:0 1px #fff8}
 #ttl small{display:block;font-size:9px;font-weight:600;opacity:.8;text-shadow:none}
-.ready{box-shadow:0 0 0 3px var(--sun),0 0 14px 5px #ffcf3380;animation:glow 1.8s ease-in-out infinite alternate}
+.ready{box-shadow:0 0 0 3px var(--sun),0 0 20px 8px #ffcf33b0;animation:glow .62s ease-in-out infinite alternate}
 .ready .bar u{background:#ffb02e}
-.ready::before,.ready::after{content:'✦';position:absolute;z-index:3;color:#fff8a8;text-shadow:0 0 5px #fff,0 0 10px #ffdf45;pointer-events:none;animation:twinkle .9s ease-in-out infinite alternate}
-.ready::before{top:5px;right:7px;font-size:17px}
-.ready::after{content:'✧';bottom:12px;left:7px;font-size:15px;animation-delay:.45s}
-.ready .tm{left:0;right:0;text-align:center;width:100%;font-size:9px;line-height:13px;background:#9b4b16d9;border-radius:6px;padding:0 2px;text-shadow:0 1px 2px #000}
-@keyframes twinkle{from{opacity:.35;transform:scale(.7) rotate(-15deg)}to{opacity:1;transform:scale(1.2) rotate(15deg)}}
+.ready .tm{left:50%;right:auto;width:auto;max-width:62px;text-align:center;font-size:9px;line-height:13px;background:#9b4b16ed;border-radius:7px;padding:0 4px;text-shadow:0 1px 2px #000}
+/* Partículas únicas: pontinhos dourados que nascem na planta e sobem */
+.ready .em::after{content:"";position:absolute;left:8%;bottom:2px;width:84%;height:100%;pointer-events:none;z-index:4;background-image:radial-gradient(circle,#fff2a8 0 1.7px,transparent 2.2px);background-size:13px 15px;background-position:2px 0;animation:plantParticles .58s linear infinite;filter:drop-shadow(0 0 2px #ffe65c)}
+@keyframes plantParticles{0%{transform:translateY(8px);opacity:0;background-position:2px 12px}18%{opacity:1}100%{transform:translateY(-13px);opacity:0;background-position:2px -5px}}
 .late .bar u{animation:blink .5s steps(2) infinite}
 .dead{filter:grayscale(.8) brightness(.8)}
 .dead .bar{display:none}
@@ -58,7 +57,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 @keyframes blink{50%{opacity:.2}}
 @keyframes splash{40%{box-shadow:0 0 0 12px #3ab8f099;transform:scale(1.07)}}
 .p{background:var(--panel);border:3px solid var(--line);border-radius:14px;padding:5px 10px;position:fixed;z-index:5}
-#lv{top:var(--top);left:calc(env(safe-area-inset-left,0px) + 8px);min-width:128px;font-weight:700}
+#lv{top:var(--top);left:calc(env(safe-area-inset-left,0px) + 8px);min-width:128px;font-weight:700}#lv .lv-star{display:inline-block;color:#f5b900;font-size:17px;margin-right:4px;text-shadow:0 1px 0 #8b5b00,0 0 5px #ffdf62;vertical-align:-1px}
 #lv small{display:block;height:7px;border-radius:5px;background:#0003;margin-top:3px;overflow:hidden}
 #lv u{display:block;height:100%;width:0;background:var(--sun)}
 #co{top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);font-weight:700;font-size:19px}
@@ -89,7 +88,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px var(--sheetb)}
 .box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:2px solid var(--line)}
-.row .i{font-size:28px}.row .t{flex:1}.row small{display:block;opacity:.8}
+.row .i{font-size:28px}.level-ach-icon{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;position:relative;border-radius:11px;background:linear-gradient(145deg,#fff1a8,#f7c33d);border:2px solid #c58a17;color:#68430c;box-shadow:0 2px 0 #986a13}.level-ach-icon b{font-size:17px;line-height:1}.level-ach-icon span{position:absolute;right:-5px;top:-7px;font-size:17px;color:#f5b900;text-shadow:0 1px 1px #68430c,0 0 3px #fff}.row .t{flex:1}.row small{display:block;opacity:.8}
 .box button{font:inherit;cursor:pointer;color:#3b2a14;background:var(--sun);border:0;border-radius:10px;padding:7px 12px;font-weight:600}
 .box button:disabled{opacity:.4;cursor:not-allowed}
 .row.lock{opacity:.6}.row.lock .i{filter:grayscale(1)}
@@ -104,13 +103,13 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bn.on{opacity:1;transform:translate(-50%,0)}
 .pop{position:fixed;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 1px 3px #000b;z-index:9;animation:up .9s forwards;white-space:nowrap}
 @keyframes up{to{transform:translateY(-44px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready::before,.ready::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
+@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready .em::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
 :focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
 </style>
 </head>
 <body>
 <div id="view"><div id="map"></div></div>
-<div class="p" id="lv"><span id="lvt"></span><small><u id="xpb"></u></small></div>
+<div class="p" id="lv"><span class="lv-star" aria-hidden="true">★</span><span id="lvt"></span><small><u id="xpb"></u></small></div>
 <div class="p" id="wk"><span id="wkt"></span></div>
 <div class="p" id="co">💰 <span id="coins">0</span></div>
 <button class="fab l" id="bw" aria-label="Regar">💧</button>
@@ -127,7 +126,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <div id="bn"></div>
 <div id="sheet"><div class="box" id="box"></div></div>
 <script>
-const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=3e5,WC=2,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
+const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=9e5,WC=2,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
 
 // ---------- Dados ----------
 const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
@@ -145,6 +144,22 @@ const AM=[ // animais: k, nome, emoji, produto, emoji prod, valor, intervalo(s),
  ['bee','Colmeia','🐝','Mel','🍯',200,120,4,2,14,1500,800]
 ].map(([k,n,e,pn,pe,val,every,cap,max,lv,base,step])=>({k,n,e,pn,pe,val,every,cap,max,lv,base,step}));
 const A=[ // id, emoji, nome, descrição, teste, prêmio
+ ['l2','🌱','Primeiros passos','Chegue ao nível 2',()=>S.lv>=2,15],
+ ['l3','🪴','Aprendiz do campo','Chegue ao nível 3',()=>S.lv>=3,20],
+ ['l4','🌿','Mão verde','Chegue ao nível 4',()=>S.lv>=4,30],
+ ['l6','✨','Cultivador dedicado','Chegue ao nível 6',()=>S.lv>=6,50],
+ ['l7','🧑‍🌾','Pequeno agricultor','Chegue ao nível 7',()=>S.lv>=7,60],
+ ['l8','🌻','Jardineiro experiente','Chegue ao nível 8',()=>S.lv>=8,75],
+ ['l9','🏵️','Às portas do nível 10','Chegue ao nível 9',()=>S.lv>=9,90],
+ ['l12','🌾','Agricultor promissor','Chegue ao nível 12',()=>S.lv>=12,180],
+ ['l18','🚜','Especialista rural','Chegue ao nível 18',()=>S.lv>=18,350],
+ ['l22','🏡','Orgulho do sítio','Chegue ao nível 22',()=>S.lv>=22,650],
+ ['l28','🌳','Mestre das sementes','Chegue ao nível 28',()=>S.lv>=28,1200],
+ ['l45','🏆','Veterano da lavoura','Chegue ao nível 45',()=>S.lv>=45,3200],
+ ['l55','🌟','Celebridade do campo','Chegue ao nível 55',()=>S.lv>=55,4800],
+ ['l70','💎','Diamante rural','Chegue ao nível 70',()=>S.lv>=70,8000],
+ ['l80','🌈','Lenda entre fazendeiros','Chegue ao nível 80',()=>S.lv>=80,11000],
+ ['l90','👑','Mestre supremo','Chegue ao nível 90',()=>S.lv>=90,13000],
  ['first','🥇','Primeira colheita','Colha 1 planta',()=>S.st.h>=1,10],
  ['w10','💧','Chuva de verão','Regue 10 vezes',()=>S.st.w>=10,15],
  ['hen','🐔','Galinheiro','Compre uma galinha',()=>cnt('hen')>=1,25],
@@ -169,7 +184,26 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
   ['sun1','🌻','Primeiro girassol','Plante 1 girassol',()=>((S.st.planted||{}).girassol||0)>=1,100],
   ['sun10','🌞','Campo dourado','Colha 10 girassóis',()=>((S.st.crops||{}).girassol||0)>=10,300],
   ['variety','🥗','Horta diversificada','Colha 8 tipos diferentes de alimentos',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=8,250],
-  ['dead5','🥀','Descuido na horta','Deixe 5 plantas morrerem sem colher',()=>((S.st.dead||0)>=5),50]];
+  ['dead5','🥀','Descuido na horta','Deixe 5 plantas morrerem sem colher',()=>((S.st.dead||0)>=5),50],
+  ['dead10','💀','Cemitério verde','Deixe 10 plantas morrerem',()=>((S.st.dead||0)>=10),100],
+  ['dead25','🪦','Mão de alface','Deixe 25 plantas morrerem',()=>((S.st.dead||0)>=25),250],
+  ['l15','🚜','Mestre agricultor','Chegue ao nível 15',()=>S.lv>=15,250],
+  ['l20','👑','Lenda rural','Chegue ao nível 20',()=>S.lv>=20,500],
+  ['l25','🏅','Lenda da fazenda','Chegue ao nível 25',()=>S.lv>=25,1000],
+  ['l30','🌿','Guardião das plantações','Chegue ao nível 30',()=>S.lv>=30,1500],
+  ['l35','🛖','Mestre do sítio','Chegue ao nível 35',()=>S.lv>=35,2000],
+  ['l40','🌳','Rei da agricultura','Chegue ao nível 40',()=>S.lv>=40,2500],
+  ['l50','👑','Imperador rural','Chegue ao nível 50',()=>S.lv>=50,4000],
+  ['l60','🏰','Lenda do campo','Chegue ao nível 60',()=>S.lv>=60,6000],
+  ['l75','💫','Ícone da fazenda','Chegue ao nível 75',()=>S.lv>=75,9000],
+  ['l100','🌎','Herói da agricultura','Chegue ao nível 100',()=>S.lv>=100,15000],
+  ['h1000','🌾','Mar de plantações','Colha 1.000 plantas',()=>S.st.h>=1000,600],
+  ['h2500','🚛','Colheita lendária','Colha 2.500 plantas',()=>S.st.h>=2500,1500],
+  ['w50','🌧️','Chuva abençoada','Regue 50 vezes',()=>S.st.w>=50,100],
+  ['w100','🌊','Guardião da água','Regue 100 vezes',()=>S.st.w>=100,250],
+  ['variety12','🌈','Arco-íris da horta','Colha 12 tipos diferentes de plantas',()=>Object.values(S.st.crops||{}).filter(v=>v>0).length>=12,500],
+  ['plant10','🌱','Colecionador de sementes','Plante 10 tipos diferentes de plantas',()=>Object.values(S.st.planted||{}).filter(v=>v>0).length>=10,350],
+  ['r100','💰','Tesouro do campo','Ganhe 100.000 moedas',()=>S.st.g>=100000,1500]];
 
 // ---------- Estado ----------
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
@@ -227,6 +261,9 @@ function cropArt(key,progress,dead=false){
   else if(key==='coco') fruit=`${round(32,51,12,12,'#8b5932','#56351e')}<path d="M24 45q8-7 16 0" stroke="#b98551" stroke-width="2" fill="none"/>`;
   const plant=dead?`<path d="M32 52Q22 38 12 43M32 52Q44 35 52 43M32 48Q28 31 23 27" stroke="#806b4d" stroke-width="3" fill="none" stroke-linecap="round"/>${round(32,58,4,2,'#8a6947','#705339')}`:`${leaves}${fruit}`;
   return `<svg viewBox="0 0 64 68" aria-hidden="true" class="crop-svg"><ellipse cx="32" cy="63" rx="19" ry="3.5" fill="#3a2518" opacity=".25"/><g transform="translate(0 ${Math.round((1-p)*15)}) scale(${(.62+p*.38).toFixed(2)})" style="transform-origin:32px 58px">${plant}</g></svg>`;
+}
+function cropCluster(key,progress,dead=false){
+  return Array.from({length:6},()=>cropArt(key,progress,dead)).join('');
 }
 function paint(x,cls,em,tm,bw,ct=''){
   x.ct.textContent=ct;
@@ -350,13 +387,13 @@ function help(){
   <div id="helptext">
     <p>🌱 Plante, cuide das plantações, colha e venda para ganhar moedas e XP. Suba de nível para liberar sementes, animais e melhorias.</p>
     <div class="help-row"><span class="i">💧</span><span><b>Regar</b><small>Selecione para regar manualmente um canteiro que esteja pedindo água.</small></span></div>
-    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando aparecerem estrelinhas, a planta já pode ser colhida. O aviso “🍂” mostra quanto tempo falta para ela murchar. Colha antes que o tempo acabe!</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Planta pronta</b><small>Quando aparecerem estrelinhas, a planta já pode ser colhida. O aviso “🍂” mostra quanto tempo falta para ela murchar: você tem 15 minutos após ficar pronta para colher!</small></span></div>
     <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Coloca na fila a colheita de todas as plantas prontas e a coleta dos produtos dos animais.</small></span></div>
-    <div class="help-row"><span class="i">🌱</span><span><b>Plantar</b><small>Planta a semente selecionada em todos os canteiros vazios, respeitando suas moedas.</small></span></div>
+    <div class="help-row"><span class="i">🌱</span><span><b>Plantar</b><small>Planta a semente selecionada em todos os canteiros vazios, respeitando suas moedas. Cada canteiro mostra 6 plantinhas da mesma semente.</small></span></div>
     <div class="help-row"><span class="i">🚿</span><span><b>Água automática</b><small>Regas são feitas automaticamente quando a planta pedir água. Cada rega custa ${WC} moedas.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Adubo automático</b><small>Consome 1 fertilizante ao iniciar cada plantio e acelera o crescimento em 50%.</small></span></div>
     <div class="help-row"><span class="i">🛒</span><span><b>Loja</b><small>Compre terrenos, trabalhadores, fertilizantes, melhorias e animais.</small></span></div>
-    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa. Também há uma conquista por deixar 5 plantas morrerem sem colher.</small></span></div>
+    <div class="help-row"><span class="i">🏆</span><span><b>Conquistas</b><small>Complete objetivos, acompanhe o que falta e resgate as moedas de recompensa. Há conquistas por colheitas, níveis até 100, regas, variedade de plantas e até por deixar plantas morrerem.</small></span></div>
     <div class="help-row"><span class="i">＋ / −</span><span><b>Zoom</b><small>Aproxime ou afaste o mapa quando tiver muitos canteiros. Arraste o mapa para se movimentar.</small></span></div>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Trabalhadores executam plantios, colheitas e coletas. Se a fila estiver grande, aguarde ou use Cancelar.</small></span></div>
   </div>`;
@@ -369,16 +406,21 @@ function ach(){
     else if(id==='sun10'){cur=crops.girassol||0;max=10}
     else if(id==='variety'){cur=Object.values(crops).filter(v=>v>0).length;max=8}
     else if(id==='first'||id==='h25'||id==='h100'||id==='h500'){cur=S.st.h;max=({first:1,h25:25,h100:100,h500:500})[id]}
-    else if(id==='dead5'){cur=S.st.dead||0;max=5}
+    else if(id==='dead5'||id==='dead10'||id==='dead25'){cur=S.st.dead||0;max=({dead5:5,dead10:10,dead25:25})[id]}
+    else if(id==='h1000'||id==='h2500'){cur=S.st.h;max=id==='h1000'?1000:2500}
+    else if(id==='w50'||id==='w100'){cur=S.st.w;max=id==='w50'?50:100}
+    else if(id==='variety12'){cur=Object.values(crops).filter(v=>v>0).length;max=12}
+    else if(id==='plant10'){cur=Object.values(S.st.planted||{}).filter(v=>v>0).length;max=10}
+    else if(id==='r100'){cur=S.st.g;max=100000}
     else if(id==='w10'){cur=S.st.w;max=10}
     else if(id==='e20'){cur=S.st.e;max=20}
-    else if(id==='l5'||id==='l10'){cur=S.lv;max=id==='l5'?5:10}
+    else if(/^l(\d+)$/.test(id)){cur=S.lv;max=Number(id.slice(1))}
     else if(id==='wk3'||id==='wk6'||id==='wk10'){cur=S.wk;max=Number(id.slice(2))}
     else if(id==='r1'||id==='r3'||id==='r6'||id==='r10'||id==='r30'){cur=S.st.g;max=Number(id.slice(1))*1000}
     else if(id==='hen'||id==='cow'||id==='sheep'||id==='bee'){cur=cnt(id);max=1}
     else if(id==='land'){cur=S.cols*S.rows;max=36}
     return max?` · ${Math.min(cur,max)}/${max} (faltam ${Math.max(0,max-cur)})`:''};
-  const R=(a,c,r)=>`<div class="row ${c}"><span class="i">${a[1]}</span><span class="t"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`;
+  const R=(a,c,r)=>{const lm=a[0].match(/^l(\d+)$/),ico=lm?`<span class=\"level-ach-icon\"><b>${lm[1]}</b><span>★</span></span>`:a[1];return `<div class=\"row ${c}\"><span class=\"i\">${ico}</span><span class=\"t\"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`};
   $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <span>${cl?'<button data-a="claimall">Coletar tudo</button> ':''}<button data-a="x">Fechar</button></span></h2>`+
    L.map(a=>[R(a,'claim',`<button data-a="claim:${a[0]}">Coletar +${a[5]} 💰</button>`),R(a,'pend',`<span class="tag gold">${a[5]} 💰</span>`),R(a,'done',`<span class="tag">+${a[5]} 💰</span><span class="ok">✓</span>`)][st(a)]).join('')}
 const claim=id=>{const a=A.find(x=>x[0]===id);if(a&&S.ach[id]&&!S.clm[id]){S.clm[id]=1;S.coins+=a[5];return a[5]}return 0};
@@ -424,8 +466,8 @@ function ui(){
     if(p&&p.c){
       const k=C[p.c],tot=k.t*1000,rt=p.f?1.5:1,rem=p.rt?DEAD-(n-p.rt):0;ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
-      else if(p.rt){if(rem>0){em=cropArt(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropArt(p.c,1,true);cls+=' dead';ct=''}}
-      else{bw=p.g/tot;em=cropArt(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
+      else if(p.rt){if(rem>0){em=cropCluster(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
+      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else tm=fmt(Math.ceil((tot-p.g)/rt/1000));if(p.f)cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
     paint(x,cls,em,tm,bw,ct);
