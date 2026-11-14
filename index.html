@@ -15,8 +15,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #view{position:fixed;inset:0;touch-action:none;cursor:grab}
 #map{position:absolute;left:0;top:0;display:grid;gap:6px;padding:10px;background:#0002;border:4px solid var(--soil2);border-radius:18px;will-change:transform}
 .plot{width:74px;height:74px;border-radius:12px;position:relative;display:grid;place-items:center;font-size:36px;border:3px solid var(--soil2);background:repeating-linear-gradient(90deg,var(--soil) 0 10px,var(--soil2) 10px 12px)}
-.tm{position:absolute;top:auto;bottom:13px;left:50%;transform:translateX(-50%);font-size:10px;line-height:14px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:3;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 4px;white-space:nowrap;box-shadow:0 1px 3px #0006}
-.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible;filter:drop-shadow(0 1px 1px #26170c44)}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}
+.tm:empty{display:none}.tm{position:absolute;top:auto;bottom:13px;left:50%;transform:translateX(-50%);font-size:10px;line-height:14px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:3;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 4px;white-space:nowrap;box-shadow:0 1px 3px #0006}
+.em{position:relative;z-index:1;display:grid;place-items:center;width:64px;height:64px;pointer-events:none}.em:has(.crop-svg){width:66px;height:52px;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(2,26px);gap:0;align-content:center;justify-content:center;overflow:visible}.crop-svg{width:28px;height:32px;overflow:visible}.dead .crop-svg{filter:grayscale(.75) sepia(.25) opacity(.85)}
 .bar{position:absolute;left:7px;right:7px;bottom:5px;height:6px;border-radius:4px;background:#0006;overflow:hidden;z-index:2}
 .bar u{display:block;height:100%;width:0;background:#7ddc5a}
 .thirst{background:repeating-linear-gradient(90deg,#b98b5a 0 10px,#a0764a 10px 12px);box-shadow:0 0 0 3px var(--water)}
@@ -79,7 +79,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 @keyframes blink{50%{opacity:.2}}
 @keyframes splash{40%{box-shadow:0 0 0 12px #3ab8f099;transform:scale(1.07)}}
 .p{background:var(--panel);border:3px solid var(--line);border-radius:14px;padding:5px 10px;position:fixed;z-index:5}
-#lv{top:var(--top);left:calc(env(safe-area-inset-left,0px) + 8px);min-width:128px;font-weight:700}#lv .lv-star{display:inline-block;color:#f5b900;font-size:17px;margin-right:4px;text-shadow:0 1px 0 #8b5b00,0 0 5px #ffdf62;vertical-align:-1px}
+#lv{top:var(--top);left:calc(env(safe-area-inset-left,0px) + 8px);min-width:128px;font-weight:700}#lv .lv-star{display:inline-block;color:#2e8bff;font-size:17px;margin-right:4px;text-shadow:0 1px 0 #0b3a7a,0 0 5px #9cc9ff;vertical-align:-1px}
 #lv small{display:block;height:7px;border-radius:5px;background:#0003;margin-top:3px;overflow:hidden}
 #lv u{display:block;height:100%;width:0;background:var(--sun)}
 #co{top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);font-weight:700;font-size:19px}
@@ -113,7 +113,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .box{background:var(--panel);width:100%;max-width:520px;margin:0 auto;max-height:78dvh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px var(--sheetb)}
 .box h2{margin:0 0 10px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:2px solid var(--line)}
-.row .i{font-size:28px}.level-ach-icon{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;position:relative;border-radius:11px;background:linear-gradient(145deg,#fff1a8,#f7c33d);border:2px solid #c58a17;color:#68430c;box-shadow:0 2px 0 #986a13}.level-ach-icon b{font-size:17px;line-height:1}.level-ach-icon span{position:absolute;right:-5px;top:-7px;font-size:17px;color:#f5b900;text-shadow:0 1px 1px #68430c,0 0 3px #fff}.row .t{flex:1}.row small{display:block;opacity:.8}
+.row .i{font-size:28px}.level-ach-icon{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;position:relative;border-radius:11px;background:linear-gradient(145deg,#fff1a8,#f7c33d);border:2px solid #c58a17;color:#68430c;box-shadow:0 2px 0 #986a13}.level-ach-icon b{font-size:17px;line-height:1}.level-ach-icon span{position:absolute;right:-5px;top:-7px;font-size:17px;color:#2e8bff;text-shadow:0 1px 1px #0b3a7a,0 0 3px #fff}.row .t{flex:1}.row small{display:block;opacity:.8}
 .box button{font:inherit;cursor:pointer;color:#3b2a14;background:var(--sun);border:0;border-radius:10px;padding:7px 12px;font-weight:600}
 .box button:disabled{opacity:.4;cursor:not-allowed}
 .row.lock{opacity:.6}.row.lock .i{filter:grayscale(1)}
@@ -271,7 +271,7 @@ const clr=p=>Object.assign(p,{c:null,g:0,w:0,th:0,f:0,rt:0,died:0,fm:0,fl:0,fe:0
 const isT=()=>sel==='agua'||['f1','f2','f3'].includes(sel);
 const AN=k=>S.an[k]||(S.an[k]={n:0,q:0,t:0,a:0}),cnt=k=>AN(k).n;
 const item=(k,n=1)=>{S.items[k]=(S.items[k]||0)+n};
-const fertilizerInfo={f1:{name:'Adubo x1 simples',mult:1.2,dur:120000,cost:60},f2:{name:'Adubo x2 médio',mult:1.3,dur:180000,cost:130},f3:{name:'Adubo x3 premium',mult:1.4,dur:240000,cost:250}};
+const fertilizerInfo={f1:{name:'Adubo x1 simples',mult:1.2,dur:120000,cost:60},f2:{name:'Adubo x2 médio',mult:1.3,dur:180000,cost:130},f3:{name:'Adubo x3 premium',mult:1.4,dur:480000,cost:250}};
 const rarityInfo={gold:{name:'Dourada',mult:3,emoji:'✨'},magic:{name:'Mágica',mult:5,emoji:'🔮'},rainbow:{name:'Arco-íris',mult:10,emoji:'🌈'},crystal:{name:'Cristal',mult:1,emoji:'💎'}};
 function rollRarity(){const r=Math.random();const boost=(1+(S.upgrades.rare||0)*.15)*(S.plotTier===3?1.5:1);if(r<.00035*boost)return 'rainbow';if(r<.0012*boost)return 'crystal';if(r<.003*boost)return 'magic';if(r<.012*boost)return 'gold';return ''}
 function useFertilizer(p,preferred=''){const keys=preferred?[preferred]:['f3','f2','f1'];const k=keys.find(x=>S.items[x]>0);if(!k)return false;S.items[k]--;p.fm=fertilizerInfo[k].mult;p.fl=Number(k.slice(1));p.fe=Date.now()+fertilizerInfo[k].dur;p.fertUsed=1;S.daily.fert=(S.daily.fert||0)+1;return true}
@@ -352,7 +352,7 @@ function buildDock(){
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
-    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}">${c.e}<small>${c.cost}→${c.sell}</small></button>`).join('');
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip" data-k="${c.k}" title="Custa ${c.cost}, vende por ${c.sell}, dá ${c.xp} XP">${c.e}<small>${c.cost}→${c.sell} · ${c.xp}XP</small></button>`).join('');
 }
 let suppressDockClick=false;
 $('#dock').onclick=e=>{
@@ -379,7 +379,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.2 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.3 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -505,7 +505,7 @@ function help(){
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
     <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador.</small></span></div>
     <h3>🧰 Ferramentas e recursos</h3>
-    <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 4 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Auto adubo aplica automaticamente o melhor disponível (nível 3, depois 2 e 1) ao plantar.</small></span></div>
+    <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Auto adubo aplica automaticamente o melhor disponível (nível 3, depois 2 e 1) ao plantar.</small></span></div>
     <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta. Limpe a planta morta tocando nela ou usando Colher para receber composto. Cada nível de Compostagem aumenta o composto recebido. Troque 5 compostos por 3 adubos simples na loja.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Poção</b><small>A poção adianta instantaneamente 15% do crescimento de uma planta. Compre pacotes na loja e selecione na barra inferior para usar.</small></span></div>
     <div class="help-row"><span class="i">📅</span><span><b>Missões e conquistas</b><small>Missões diárias: colha 15 plantas (100 moedas), regue 10 vezes (80 moedas) e use 2 adubos (120 moedas). Elas reiniciam à meia-noite no horário local. Conquistas dão moedas por metas de nível, colheita, animais, qualidade, raridades e muito mais; algumas são secretas.</small></span></div>
@@ -557,7 +557,7 @@ function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
 function rkDraw(lista){
   const el=$('#rk-list');if(!el)return;const me=lsGet(RK_ME);
   if(!lista.length){el.innerHTML='<p class="rk-vazio">Ninguém no ranking ainda. Seja o primeiro!</p>';return}
-  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b">⭐ Nv ${r.lv}</span><span class="rk-b">💰 ${Number(r.moedas).toLocaleString('pt-BR')}</span></div>`).join('')}
+  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> Nv ${r.lv}</span><span class="rk-b">💰 ${Number(r.moedas).toLocaleString('pt-BR')}</span></div>`).join('')}
 async function rkLoad(){
   try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)throw 0;rkDraw((await r.json()).ranking||[])}
   catch(e){const el=$('#rk-list');if(el)el.textContent='Ranking indisponível no momento.'}}
@@ -625,7 +625,7 @@ function ui(){
       const k=C[p.c],tot=k.t*1000,rt=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1))*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1);ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
       else if(p.rt){if(!p.died){em=cropCluster(p.c,1);bw=1;tm='';cls+=' ready'}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
-      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm=(boosted?'⚡ ':'')+fmt(Math.ceil((tot-p.g)/1000));if(boosted){const tt=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;if(x.tm.title!==tt)x.tm.title=tt}else if(x.tm.hasAttribute('title'))x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
+      else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm='';if(boosted){const tt=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;if(x.tm.title!==tt)x.tm.title=tt}else if(x.tm.hasAttribute('title'))x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
     if(cls.includes(' ready'))nr++;if(cls.includes(' work'))nw++;
