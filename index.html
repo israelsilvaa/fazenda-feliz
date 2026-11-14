@@ -152,7 +152,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <div id="bn"></div>
 <div id="sheet"><div class="box" id="box"></div></div>
 <script>
-const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',DEAD=9e5,WC=0,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
+const $=s=>document.querySelector(s),KEY='fazenda-feliz-v2',WC=0,TH=k=>k.t>=140?[.35,.7]:[.5],WL=[1,2,3,4,6,8,10,12,14,16];
 
 // ---------- Dados ----------
 const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
@@ -334,7 +334,7 @@ function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
 // ---------- Dock ----------
 function buildDock(){
   const tools=[
-    ['f1','⚡','Adubo nível 1'],['f2','⚡','Adubo nível 2'],['f3','⚡','Adubo nível 3'],
+    ['f1','⚡','Adubo'],['f2','⚡','Adubo'],['f3','⚡','Adubo'],
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
@@ -365,7 +365,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v11 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.1 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -401,7 +401,7 @@ function start(t){
     const k=C[t.c];if(p.c||p.a)return;
     if(S.coins<k.cost)return bn('Faltam moedas para plantar');
     S.coins-=k.cost;const e=n+pt(k);const useFert=!!(S.autoFert&&(S.items.f3||S.items.f2||S.items.f1));const rare=rollRarity();S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,fm:0,fe:0,rt:0,died:0,rare,q:0,shieldUntil:0,a:{t:'p',s:n,e}});if(useFert){useFertilizer(p);}pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
-  }else if(p.c&&!p.a&&p.rt&&n-p.rt<DEAD)p.a={t:'h',s:n,e:n+HT()};
+  }else if(p.c&&!p.a&&p.rt&&!p.died)p.a={t:'h',s:n,e:n+HT()};
 }
 const pump=()=>{while(S.q.length&&free()>0)start(S.q.shift())};
 const queued=k=>S.q.some(t=>t.k===k);
@@ -419,7 +419,7 @@ function act(key,d){
     if(p.c&&sel==='veneno'&&!p.died){if(!S.items.poison)bn('Sem veneno. Compre na loja');else{S.items.poison--;p.died=1;p.rt=Date.now();p.g=C[p.c].t*1000;p.a=0;S.st.dead=(S.st.dead||0)+1;S.st.poison=(S.st.poison||0)+1;pop(d,'☠️ Planta eliminada');buzz()}done();return}
     
     if(!p.c){if(isT())return pop(d,'Plante antes');run({k:key,t:'p',c:sel},d)}
-    else if(p.rt){if(p.died||n-p.rt>=DEAD){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p);pop(d,'♻️ +composto')}else run({k:key,t:'h'},d)}
+    else if(p.rt){if(p.died){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p);pop(d,'♻️ +composto')}else run({k:key,t:'h'},d)}
     else if(sel==='agua')p.th?water(p,d):pop(d,'Não precisa de água');
     else if(['f1','f2','f3'].includes(sel)){if(p.fm&&Date.now()<p.fe)pop(d,'Esta planta já está adubada');else if(useFertilizer(p,sel)){const f=fertilizerInfo[sel];pop(d,`${sel==='f1'?'🌿':sel==='f2'?'🌱':'🌟'} ${f.name}: crescimento ${f.mult.toFixed(1)}x por ${f.dur/60000} min`);bn(`${f.name} aplicado! +${Math.round((f.mult-1)*100)}% de velocidade por ${f.dur/60000} min.`);buzz()}else bn(`Sem ${fertilizerInfo[sel].name.toLowerCase()}. Compre na loja.`)}
     else if(sel==='veneno'){if(!S.items.poison)bn('Sem veneno. Compre na loja');else if(p.rt||p.g>0){S.items.poison--;p.died=1;p.rt=Date.now();p.g=C[p.c].t*1000;p.a=0;S.st.dead=(S.st.dead||0)+1;S.st.poison=(S.st.poison||0)+1;pop(d,'☠️ Planta eliminada');buzz()}else pop(d,'Planta ainda não cresceu')}
@@ -439,7 +439,7 @@ function bulk(kind){
     ts.splice(can);
   }else{
     cells.forEach(x=>{const p=S.pl[x.key];if(!p||!p.c||p.a||!p.rt)return;
-      if(p.died||n-p.rt>=DEAD){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p)}else ts.push({k:x.key,t:'h'})});
+      if(p.died){S.st.compost=(S.st.compost||0)+1+(S.upgrades.compost||0);clr(p)}else ts.push({k:x.key,t:'h'})});
     pens.forEach(x=>{const a=AN(x.m.k);if(a.q&&!a.a)ts.push({k:'pen:'+x.m.k,t:'c'})});
     if(!ts.length)return bn('Nada para colher');
   }
@@ -461,7 +461,7 @@ const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'compost_trade',i:'♻️',t:'Trocar 5 compostos por 3 adubos simples',s:`Você tem ${S.st.compost||0} compostos`,p:0,lv:3,full:(S.st.compost||0)<5,buy(){S.st.compost-=5;item('f1',3)}},
   {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 500 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(500)}},
   ...[{id:'soil',i:'🌿',name:'Solo fértil',desc:'+5% de velocidade por nível',cost:[250,500,900,1500,2400]},{id:'worker',i:'🧤',name:'Mãos rápidas',desc:'Trabalhadores 5% mais rápidos por nível',cost:[300,600,1100,1800,2800]},{id:'quality',i:'🌟',name:'Olho de agricultor',desc:'Melhora a chance de colheitas de qualidade',cost:[400,800,1400,2300,3500]},{id:'rare',i:'🔮',name:'Sorte no jardim',desc:'+15% de chance de planta rara por nível',cost:[600,1200,2200,3600,5500]},{id:'compost',i:'♻️',name:'Compostagem',desc:'+1 composto extra ao limpar uma planta morta por nível',cost:[350,700,1200,2000,3200]}].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${S.upgrades[u.id]}/5)`,s:u.desc,p:u.cost[S.upgrades[u.id]],lv:Math.min(25,8+S.upgrades[u.id]*3),full:S.upgrades[u.id]>=5,buy(){S.upgrades[u.id]++}})),
-  ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente e proteção de 2 minutos',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
+  ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
   ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 💰. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
 function row(it){
   const lk=S.lv<(it.lv||1),dis=lk||it.full||S.coins<it.p;
@@ -477,15 +477,15 @@ function help(){
     <h3>🌱 Plantio e crescimento</h3>
     <div class="help-row"><span class="i">🌱</span><span><b>Sementes</b><small>Escolha uma semente na barra inferior e toque em um canteiro vazio. O plantio custa as moedas mostradas no botão da semente. Plantar tudo preenche os canteiros livres com a semente selecionada, limitado pelo seu saldo. A barra inferior pode ser rolada para os lados.</small></span></div>
     <div class="help-row"><span class="i">🌿</span><span><b>Fases e tempo</b><small>As plantas passam por quatro aparências de crescimento. O tempo-base de cada semente aparece na lista de sementes. O trabalhador faz o plantio antes do crescimento começar; botas e melhorias de trabalhadores aceleram as tarefas.</small></span></div>
-    <div class="help-row"><span class="i">💧</span><span><b>Regar: a planta pausa, não morre</b><small>Cada planta precisa de uma rega quando chega a cerca de 50% do crescimento. Sementes com tempo-base de 140 segundos ou mais pedem duas regas: aproximadamente em 35% e 70%. Quando aparece a gota, o crescimento pausa até regar. A planta não morre por esperar água; só murcha depois de ficar pronta e passar o prazo de colheita. Selecione 💧 e toque no canteiro. A rega automática é grátis; o aspersor comprado na loja também rega de graça. Com Auto ligado, as plantas sedentas são regadas automaticamente.</small></span></div>
-    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Quando o canteiro fica com contorno dourado, está pronto. Toque nele ou use Colher para enfileirar as colheitas prontas e a coleta dos produtos dos animais. A planta pronta pode ser colhida por 15 minutos; depois murcha. Uma planta murcha pode ser limpa para receber composto, mas não rende a venda normal.</small></span></div>
+    <div class="help-row"><span class="i">💧</span><span><b>Regar: a planta pausa, não morre</b><small>Cada planta precisa de uma rega quando chega a cerca de 50% do crescimento. Sementes com tempo-base de 140 segundos ou mais pedem duas regas: aproximadamente em 35% e 70%. Quando aparece a gota, o crescimento pausa até regar. A planta não morre por esperar água nem por ficar pronta: só morre se você usar veneno. Selecione 💧 e toque no canteiro. A rega automática é grátis; o aspersor comprado na loja também rega de graça. Com Auto ligado, as plantas sedentas são regadas automaticamente.</small></span></div>
+    <div class="help-row"><span class="i">🧺</span><span><b>Colher</b><small>Quando o canteiro fica com contorno dourado, está pronto. Toque nele ou use Colher para enfileirar as colheitas prontas e a coleta dos produtos dos animais. A planta pronta fica no canteiro para sempre, sem prazo para colher. Uma planta eliminada com veneno pode ser limpa para receber composto, mas não rende a venda normal.</small></span></div>
     <h3>⭐ Qualidade, combo e raridades</h3>
     <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>Existem quatro qualidades: comum (×1), boa (×1,2), excelente (×1,5) e perfeita (×2). Regar todas as vezes necessárias garante pelo menos qualidade boa. A melhoria Olho de agricultor aumenta a chance de excelente; colher uma planta adubada concede qualidade perfeita. O multiplicador é aplicado ao valor de venda.</small></span></div>
     <div class="help-row"><span class="i">🔥</span><span><b>Combo</b><small>Colheitas feitas em sequência, com intervalo máximo de 30 segundos, aumentam o combo. A partir de 5 colheitas o bônus é +2%; com 10 é +5%; com 20 é +10%. Se passar 30 segundos sem colher, o combo recomeça.</small></span></div>
     <div class="help-row"><span class="i">✨</span><span><b>Plantas raras</b><small>Uma planta pode nascer Dourada (×3 no valor), Mágica (×5), Arco-íris (×10) ou Cristal (×1). A planta de cristal também concede 1 cristal ao colher; troque-o na loja por 500 moedas. A melhoria Sorte no jardim aumenta a chance relativa de raridade; o canteiro mágico também aumenta essa chance. Probabilidades-base aproximadas: 0,9% dourada, 0,18% mágica, 0,085% cristal e 0,035% arco-íris.</small></span></div>
     <h3>🛒 Loja e evolução</h3>
     <div class="help-row"><span class="i">🛒</span><span><b>As cinco melhorias permanentes</b><small>Solo fértil: +5% de velocidade de crescimento por nível. Mãos rápidas: trabalhadores 5% mais rápidos por nível. Olho de agricultor: aumenta a chance de qualidade excelente. Sorte no jardim: +15% de chance relativa de raridade por nível. Compostagem: +1 composto extra ao limpar uma planta morta por nível. Cada melhoria tem até 5 níveis.</small></span></div>
-    <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá mais 2 minutos antes de a planta pronta murchar; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
+    <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá um visual resistente; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
     <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>Amplie o terreno pela loja até o limite de 10×10 (100 canteiros). Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
     <h3>🧑‍🌾 Trabalhadores, fila e animais</h3>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
@@ -553,7 +553,6 @@ function tick(){
     else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,false)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
-  for(const key in S.pl){const p=S.pl[key];if(p.c&&p.rt&&!p.died&&n-p.rt>=DEAD+(S.plotTier===1?120000:0)&&n>=(p.shieldUntil||0)){p.died=1;S.st.dead=(S.st.dead||0)+1;pop(cm[key]&&cm[key].d,'🥀 Planta morreu!')}}
   AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,x=pens.find(z=>z.m===m);
     earn(g);if(m.k==='hen')S.st.e+=a.q;a.q=0;a.a=0;pop(x&&x.d,`+${g} 💰`)});
   pump();
@@ -574,9 +573,9 @@ function ui(){
     const p=S.pl[x.key];let cls='plot '+tierClass,em='',tm='',bw=0,r,ct='';
     if(p&&p.c){
       if(p.rare)cls+=' rare-'+p.rare;
-      const k=C[p.c],tot=k.t*1000,rt=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1))*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),rem=p.rt?Math.max(DEAD+(S.plotTier===1?120000:0)-(n-p.rt),(p.shieldUntil||0)-n):0;ct='+'+k.sell;
+      const k=C[p.c],tot=k.t*1000,rt=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1))*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1);ct='+'+k.sell;
       if(p.a){[r,em,tm,bw]=work(p.a,k.e);cls+=r}
-      else if(p.rt){if(rem>0&&!p.died){em=cropCluster(p.c,1);bw=rem/DEAD;tm='🍂 '+fmt(Math.ceil(rem/1000));cls+=' ready'+(bw<.3?' late':'')}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
+      else if(p.rt){if(!p.died){em=cropCluster(p.c,1);bw=1;tm='';cls+=' ready'}else{em=cropCluster(p.c,1,true);cls+=' dead';ct=''}}
       else{bw=p.g/tot;em=cropCluster(p.c,Math.max(.18,bw));if(p.th){tm='Água!';cls+=' thirst'}else{const boosted=p.fm&&n<(p.fe||0);tm=(boosted?'⚡ ':'')+fmt(Math.ceil((tot-p.g)/1000));if(boosted){const tt=`Adubo nível ${p.fl||1}: ${fmt(Math.max(0,Math.ceil((p.fe-n)/1000)))} restantes · crescimento ${Math.round((p.fm-1)*100)}% mais rápido`;if(x.tm.title!==tt)x.tm.title=tt}else if(x.tm.hasAttribute('title'))x.tm.removeAttribute('title')}if(p.f||(p.fm&&n<(p.fe||0)))cls+=' fert'}
     }
     if(qs.has(x.key))cls+=' qd';
