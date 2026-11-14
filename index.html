@@ -130,6 +130,19 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 @keyframes up{to{transform:translateY(-44px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready .em::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
 :focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
+/* ranking global */
+.rk-nota{margin:0 0 8px;font-size:13px;opacity:.8}
+.rk-form{display:grid;gap:8px;margin-bottom:10px}
+.rk-form button{padding:10px}
+#rk-nome{width:100%;font:inherit;font-size:16px;padding:8px 10px;border-radius:10px;border:2px solid var(--line);background:#fff;color:#3b2a14;user-select:text;-webkit-user-select:text}
+#rk-msg{margin:0;min-height:1.3em;font-size:14px}
+.rk-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:7px 4px;border-top:2px solid var(--line)}
+.rk-row.eu{background:#ffcf3340;border-radius:10px}
+.rk-pos{min-width:30px;text-align:center;font-weight:700}
+.rk-nome{flex:1;min-width:90px;font-weight:600;overflow-wrap:anywhere}
+.rk-nome small{font-weight:400;opacity:.6}
+.rk-b{background:#0002;border-radius:999px;padding:1px 9px;font-size:13px;font-weight:700;white-space:nowrap}
+.rk-vazio{margin:8px 0;opacity:.8}
 </style>
 </head>
 <body>
@@ -146,6 +159,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 <button class="fab r" id="ba" style="--n:1" aria-label="Conquistas">🏆<span id="bak"></span></button>
 <button class="fab r" id="bc" style="--n:2" aria-label="Cancelar fila"><span id="bcn"></span><small>Cancelar</small></button>
 <button class="fab r" id="bf" style="--n:3" aria-label="Adubo automático">🧪<small>Auto adubo</small></button>
+<button class="fab r" id="brank" style="--n:5" aria-label="Ranking global">👑<small>Ranking</small></button>
 <button class="fab r" id="bhelp" style="--n:4" aria-label="Ajuda">❔<small>Ajuda</small></button>
 <div id="zoom"><button id="zout" aria-label="Diminuir zoom">−</button><button id="zin" aria-label="Aumentar zoom">+</button></div>
 <div id="dock"></div>
@@ -365,7 +379,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.1 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.2 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -531,10 +545,45 @@ function ach(){
 const claim=id=>{const a=A.find(x=>x[0]===id);if(a&&S.ach[id]&&!S.clm[id]){S.clm[id]=1;S.coins+=a[5];return a[5]}return 0};
 function open(f){fn=f;f();$('#sheet').classList.add('on')}
 $('#bs').onclick=()=>open(shop);$('#ba').onclick=()=>open(ach);
+
+// ---------- Ranking global ----------
+const RANK_API='/api/fazenda-ranking',RK_ID='fazenda-rank-token',RK_NAME='fazenda-rank-nome',RK_ME='fazenda-rank-me';
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const rkEsc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
+  let t=lsGet(RK_ID);
+  if(!/^[a-f0-9]{64}$/.test(t||'')){t=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');lsSet(RK_ID,t)}
+  return t}
+function rkDraw(lista){
+  const el=$('#rk-list');if(!el)return;const me=lsGet(RK_ME);
+  if(!lista.length){el.innerHTML='<p class="rk-vazio">Ninguém no ranking ainda. Seja o primeiro!</p>';return}
+  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b">⭐ Nv ${r.lv}</span><span class="rk-b">💰 ${Number(r.moedas).toLocaleString('pt-BR')}</span></div>`).join('')}
+async function rkLoad(){
+  try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)throw 0;rkDraw((await r.json()).ranking||[])}
+  catch(e){const el=$('#rk-list');if(el)el.textContent='Ranking indisponível no momento.'}}
+async function rkSave(){
+  const inp=$('#rk-nome'),msg=$('#rk-msg'),btn=$('#rk-btn'),nome=inp.value.trim();
+  if(!nome){msg.textContent='Digite seu nome.';inp.focus();return}
+  btn.disabled=true;msg.textContent='Salvando…';
+  try{
+    const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins)})});
+    const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.erro||'falhou');
+    lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkDraw(d.ranking);
+    msg.textContent=!d.posicao?'Atualizado, mas você ainda não entrou no ranking.':d.posicao<=50?`Atualizado! Você está em ${d.posicao}º lugar.`:`Atualizado! Você está em ${d.posicao}º (o painel mostra o top 50).`;
+  }catch(e){msg.textContent='Erro: '+e.message}
+  finally{btn.disabled=false}}
+function rankGlobal(){
+  $('#box').innerHTML=`<h2>👑 Fazendeiros mais ricos <button data-a="x">Fechar</button></h2>
+  <p class="rk-nota">Top 50. Ordem: maior nível primeiro; empate no nível, quem tem mais moedas. O ranking só muda quando você toca em Atualizar.</p>
+  <div class="rk-form"><input id="rk-nome" type="text" maxlength="20" autocomplete="nickname" placeholder="Seu nome" value="${rkEsc(lsGet(RK_NAME)||'')}"><button id="rk-btn" data-a="rk-save">Atualizar meus dados (Nv ${S.lv} · 💰 ${Math.floor(S.coins)})</button><p id="rk-msg" aria-live="polite"></p></div>
+  <div id="rk-list">Carregando…</div>`;
+  rkLoad()}
+$('#brank').onclick=()=>open(rankGlobal);
 $('#sheet').onclick=e=>{
   const sh=$('#sheet'),a=e.target.dataset.a;
   if(e.target.id==='sheet'||a==='x')return sh.classList.remove('on');
   if(!a)return;
+  if(a==='rk-save'){rkSave();return}
   if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';buildMap();buildDock();sh.classList.remove('on')}}
   else if(a.startsWith('claim')){const t=a==='claimall'?A.reduce((s,x)=>s+claim(x[0]),0):claim(a.slice(6));if(t)bn(`🏆 +${t} 💰`)}
   else if(a.startsWith('daily:')){const t=dailyClaim(a.slice(6));if(t)bn(`📅 Missão concluída! +${t} 💰`);shop();save();return}
