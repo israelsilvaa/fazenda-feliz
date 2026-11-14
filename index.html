@@ -96,8 +96,8 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bcn{font-size:17px;font-weight:700}
 #dock{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 76px);right:calc(env(safe-area-inset-right,0px) + 76px);bottom:var(--bot);display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 8px;scrollbar-width:thin;scrollbar-color:#d6a52b #6b432655;cursor:grab;overscroll-behavior-x:contain;touch-action:pan-x}
 #dock::-webkit-scrollbar{height:7px}#dock::-webkit-scrollbar-track{background:#6b432655;border-radius:8px}#dock::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#f6d76c,#c18a19);border:1px solid #fff5;border-radius:8px}#dock.dragging{cursor:grabbing;user-select:none}
-.chip{position:relative;flex:0 0 auto;min-width:66px;height:56px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 4px;cursor:pointer}
-.chip.crop{display:grid;grid-template-columns:auto auto;grid-template-rows:1fr auto;align-items:center;column-gap:8px;min-width:84px;padding:2px 6px}.chip.crop small{margin:0;white-space:nowrap}.chip.crop .ce{text-align:left}.chip.crop .cx{text-align:right;align-self:start;padding-top:2px}.chip.crop .cb{text-align:left}.chip.crop .cs{text-align:right}.chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
+.chip{position:relative;flex:0 0 auto;min-width:66px;height:70px;border-radius:14px;border:3px solid var(--line);background:var(--panel);color:inherit;font:inherit;font-size:24px;line-height:1;padding:2px 4px;cursor:pointer}
+.chip.crop{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto auto;align-items:center;column-gap:8px;min-width:84px;padding:2px 6px}.chip.crop small{margin:0;white-space:nowrap}.chip.crop .ce{text-align:left;grid-row:1/3;grid-column:1;align-self:center}.chip.crop .ck{text-align:right;grid-column:2}.chip.crop .cx{grid-column:2;grid-row:1}.chip.crop .cb{grid-row:3;grid-column:1}.chip.crop .cs{grid-row:3;grid-column:2}.chip.crop .cx{text-align:right;align-self:start;padding-top:2px}.chip.crop .cb{text-align:left}.chip.crop .cs{text-align:right}.chip small{display:block;font-size:11px;font-weight:600;margin-top:2px}
 .chip.on{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
 .chip.lock{background:#0003;border-style:dashed}
 .chip.lock .g{filter:grayscale(1);opacity:.35}
@@ -142,7 +142,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .rk-nome{flex:1;min-width:80px;font-weight:600;overflow-wrap:anywhere}
 .rk-nome small{font-weight:400;opacity:.6}
 .rk-b{background:#0002;border-radius:999px;padding:0 7px;font-size:12px;font-weight:700;white-space:nowrap}
-.rk-t{flex-basis:100%;text-align:right;font-size:10px;opacity:.6;margin-top:-2px}.rk-vazio{margin:8px 0;opacity:.8}
+.rk-vazio{margin:8px 0;opacity:.8}
 </style>
 </head>
 <body>
@@ -350,7 +350,7 @@ function buildDock(){
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
-    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${c.cost}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="cb">🪙${c.cost}</small><small class="cs">💲${c.sell}</small></button>`).join('');
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${c.cost}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🪙${c.cost}</small><small class="cs">💲${c.sell}</small></button>`).join('');
 }
 let suppressDockClick=false;
 $('#dock').onclick=e=>{
@@ -377,7 +377,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.0 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.1 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -552,14 +552,11 @@ function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
   let t=lsGet(RK_ID);
   if(!/^[a-f0-9]{64}$/.test(t||'')){t=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');lsSet(RK_ID,t)}
   return t}
-function rkWhen(t){t=Number(t);if(!t)return '';const d=new Date(t),hm=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return d.toDateString()===new Date().toDateString()?hm:d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+hm}
 function rkDraw(lista){
   const el=$('#rk-list');if(!el)return;const me=lsGet(RK_ME);
   if(!lista.length){el.innerHTML='<p class="rk-vazio">Ninguém no ranking ainda. Seja o primeiro!</p>';return}
-  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> ${r.lv}</span><span class="rk-b">🏆 ${r.conq!=null?r.conq:r.id===me?rkConq():'?'}/${A.length}</span><span class="rk-b">🪙 ${money(r.moedas)}</span><small class="rk-t">${rkWhen(r.at||(r.id===me?Number(lsGet(RK_TS)):0))}</small></div>`).join('')}
-const RK_TS='fazenda-rank-ts';
+  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> ${r.lv}</span><span class="rk-b">🏆 ${r.conq!=null?r.conq:r.id===me?rkConq():'–'}/${A.length}</span><span class="rk-b">🪙 ${money(r.moedas)}</span></div>`).join('')}
 const rkConq=()=>A.filter(a=>S.clm[a[0]]).length;
-function rkStamp(){lsSet(RK_TS,String(Date.now()))}
 async function rkLoad(){
   try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)throw 0;rkDraw((await r.json()).ranking||[])}
   catch(e){const el=$('#rk-list');if(el)el.textContent='Ranking indisponível no momento.'}}
@@ -568,17 +565,17 @@ async function rkSave(){
   if(!nome){msg.textContent='Digite seu nome.';inp.focus();return}
   btn.disabled=true;msg.textContent='Salvando…';
   try{
-    const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length,at:Date.now()})});
+    const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length})});
     const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.erro||'falhou');
-    lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkStamp();rkDraw(d.ranking);
+    lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkDraw(d.ranking);
     msg.textContent=!d.posicao?'Atualizado, mas você ainda não entrou no ranking.':d.posicao<=50?`Atualizado! Você está em ${d.posicao}º lugar.`:`Atualizado! Você está em ${d.posicao}º (o painel mostra o top 50).`;
   }catch(e){msg.textContent='Erro: '+e.message}
   finally{btn.disabled=false}}
 let rkBusy=0;
 async function rkAuto(){
   const nome=(lsGet(RK_NAME)||'').trim();if(!nome||rkBusy)return;rkBusy=1;
-  try{const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length,at:Date.now()})});
-    const d=await r.json();if(r.ok&&d.ok){lsSet(RK_ME,d.id);rkStamp();if($('#rk-list'))rkDraw(d.ranking)}}
+  try{const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length})});
+    const d=await r.json();if(r.ok&&d.ok){lsSet(RK_ME,d.id);if($('#rk-list'))rkDraw(d.ranking)}}
   catch(e){}finally{rkBusy=0}}
 setInterval(rkAuto,30000);
 function rankGlobal(){
