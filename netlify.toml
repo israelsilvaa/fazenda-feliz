@@ -1,13 +1,3 @@
 [build]
   publish = "."
   functions = "netlify/functions"
-
-[[redirects]]
-  from = "/rank-reset"
-  to = "/rank-reset.html"
-  status = 200
-
-[[redirects]]
-  from = "/fazenda"
-  to = "/fazenda.html"
-  status = 200
