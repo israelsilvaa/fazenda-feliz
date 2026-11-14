@@ -350,7 +350,7 @@ function buildDock(){
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
-    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${c.cost}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🪙${c.cost}</small><small class="cs">💲${c.sell}</small></button>`).join('');
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${c.cost}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🌱${c.cost}</small><small class="cs">🪙${c.sell}</small></button>`).join('');
 }
 let suppressDockClick=false;
 $('#dock').onclick=e=>{
@@ -377,7 +377,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.1 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.3 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
