@@ -27,7 +27,7 @@ const sha256 = async (t) =>
 const ordenar = (a, b) => b.lv - a.lv || b.moedas - a.moedas || a.ts - b.ts;
 
 const publico = (lista) =>
-  lista.map((e) => ({ id: e.id.slice(0, 16), nome: e.nome, lv: e.lv, moedas: e.moedas }));
+  lista.map((e) => ({ id: e.id.slice(0, 16), nome: e.nome, lv: e.lv, moedas: e.moedas, conq: e.conq ?? null }));
 
 export default async (req) => {
   if (req.method === 'OPTIONS') return json({ ok: true });
@@ -65,13 +65,17 @@ export default async (req) => {
   if (!Number.isFinite(lv) || lv < 1 || lv > 1000) return json({ ok: false, erro: 'Nível inválido.' }, 400);
   if (!Number.isFinite(moedas) || moedas < 0 || moedas > 1e12) return json({ ok: false, erro: 'Moedas inválidas.' }, 400);
 
+  // conquistas coletadas (opcional; clientes antigos não enviam)
+  let conq = Math.floor(Number(b.conq));
+  if (!Number.isFinite(conq) || conq < 0 || conq > 1000) conq = null;
+
   const id = await sha256(token);
 
   // ler -> alterar -> gravar; se outra pessoa gravou no meio, tenta de novo
   for (let i = 0; i < 5; i++) {
     const atual = await store.getWithMetadata(KEY, { type: 'json' });
     const lista = (atual && atual.data) || [];
-    const reg = { id, nome, lv, moedas, ts: Date.now() };
+    const reg = { id, nome, lv, moedas, conq, ts: Date.now() };
     const idx = lista.findIndex((e) => e.id === id);
     if (idx >= 0) lista[idx] = reg;
     else lista.push(reg); // hash novo = registro novo, mesmo que o nome já exista
