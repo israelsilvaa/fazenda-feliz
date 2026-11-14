@@ -142,7 +142,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .rk-nome{flex:1;min-width:80px;font-weight:600;overflow-wrap:anywhere}
 .rk-nome small{font-weight:400;opacity:.6}
 .rk-b{background:#0002;border-radius:999px;padding:0 7px;font-size:12px;font-weight:700;white-space:nowrap}
-.rk-vazio{margin:8px 0;opacity:.8}
+.rk-t{flex-basis:100%;text-align:right;font-size:10px;opacity:.6;margin-top:-2px}.rk-vazio{margin:8px 0;opacity:.8}
 </style>
 </head>
 <body>
@@ -249,6 +249,7 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
  ['secret_sun','🤫','Segredo ensolarado','Colha 5 girassóis perfeitos',()=>((S.st.perfectSun||0)>=5),1200,true]];
 
 // ---------- Estado ----------
+const money=v=>{v=Math.floor(Number(v)||0);const f=(x,u)=>(Math.floor(x*100)/100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' '+u;return v>=1e9?f(v/1e9,'Bi'):v>=1e6?f(v/1e6,'Mi'):v.toLocaleString('pt-BR')};
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp*(.95**(S.upgrades?.worker||0)),HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
 const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
@@ -376,7 +377,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.7 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
     own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
@@ -551,14 +552,14 @@ function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
   let t=lsGet(RK_ID);
   if(!/^[a-f0-9]{64}$/.test(t||'')){t=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');lsSet(RK_ID,t)}
   return t}
+function rkWhen(t){t=Number(t);if(!t)return '';const d=new Date(t),hm=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return d.toDateString()===new Date().toDateString()?hm:d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+hm}
 function rkDraw(lista){
   const el=$('#rk-list');if(!el)return;const me=lsGet(RK_ME);
   if(!lista.length){el.innerHTML='<p class="rk-vazio">Ninguém no ranking ainda. Seja o primeiro!</p>';return}
-  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> ${r.lv}</span>${r.conq!=null?`<span class="rk-b">🏆 ${r.conq}</span>`:''}<span class="rk-b">🪙 ${Number(r.moedas).toLocaleString('pt-BR')}</span></div>`).join('')}
+  el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> ${r.lv}</span><span class="rk-b">🏆 ${r.conq!=null?r.conq:r.id===me?rkConq():'?'}/${A.length}</span><span class="rk-b">🪙 ${money(r.moedas)}</span><small class="rk-t">${rkWhen(r.at||(r.id===me?Number(lsGet(RK_TS)):0))}</small></div>`).join('')}
 const RK_TS='fazenda-rank-ts';
 const rkConq=()=>A.filter(a=>S.clm[a[0]]).length;
-function rkStamp(){lsSet(RK_TS,String(Date.now()));rkShowTs()}
-function rkShowTs(){const el=$('#rk-upd'),t=Number(lsGet(RK_TS));if(!el)return;el.textContent=t?'Última atualização: '+new Date(t).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'Ainda não atualizado'}
+function rkStamp(){lsSet(RK_TS,String(Date.now()))}
 async function rkLoad(){
   try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)throw 0;rkDraw((await r.json()).ranking||[])}
   catch(e){const el=$('#rk-list');if(el)el.textContent='Ranking indisponível no momento.'}}
@@ -567,7 +568,7 @@ async function rkSave(){
   if(!nome){msg.textContent='Digite seu nome.';inp.focus();return}
   btn.disabled=true;msg.textContent='Salvando…';
   try{
-    const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq()})});
+    const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length,at:Date.now()})});
     const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.erro||'falhou');
     lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkStamp();rkDraw(d.ranking);
     msg.textContent=!d.posicao?'Atualizado, mas você ainda não entrou no ranking.':d.posicao<=50?`Atualizado! Você está em ${d.posicao}º lugar.`:`Atualizado! Você está em ${d.posicao}º (o painel mostra o top 50).`;
@@ -576,16 +577,16 @@ async function rkSave(){
 let rkBusy=0;
 async function rkAuto(){
   const nome=(lsGet(RK_NAME)||'').trim();if(!nome||rkBusy)return;rkBusy=1;
-  try{const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq()})});
+  try{const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length,at:Date.now()})});
     const d=await r.json();if(r.ok&&d.ok){lsSet(RK_ME,d.id);rkStamp();if($('#rk-list'))rkDraw(d.ranking)}}
   catch(e){}finally{rkBusy=0}}
 setInterval(rkAuto,30000);
 function rankGlobal(){
   $('#box').innerHTML=`<h2>👑 Fazendeiros mais ricos <button data-a="x">Fechar</button></h2>
   <p class="rk-nota">Top 50. Ordem: maior nível primeiro; empate no nível, quem tem mais moedas. Depois de salvar seu nome, seus dados são enviados automaticamente a cada 30s.</p>
-  <div class="rk-form"><input id="rk-nome" type="text" maxlength="20" autocomplete="nickname" placeholder="Seu nome" value="${rkEsc(lsGet(RK_NAME)||'')}"><button id="rk-btn" data-a="rk-save">Atualizar meus dados (Nv ${S.lv} · 🪙 ${Math.floor(S.coins)})</button><p id="rk-msg" aria-live="polite"></p><p id="rk-upd" class="rk-nota"></p></div>
+  <div class="rk-form"><input id="rk-nome" type="text" maxlength="20" autocomplete="nickname" placeholder="Seu nome" value="${rkEsc(lsGet(RK_NAME)||'')}"><button id="rk-btn" data-a="rk-save">Atualizar meus dados (Nv ${S.lv} · 🪙 ${money(S.coins)})</button><p id="rk-msg" aria-live="polite"></p></div>
   <div id="rk-list">Carregando…</div>`;
-  rkShowTs();rkLoad()}
+  rkLoad()}
 $('#brank').onclick=()=>open(rankGlobal);
 $('#sheet').onclick=e=>{
   const sh=$('#sheet'),a=e.target.dataset.a;
@@ -617,7 +618,7 @@ function tick(){
 function ui(){
   const resetTimer=$('#dailyResetTimer');if(resetTimer)resetTimer.textContent=dailyResetRemaining();
   const n=Date.now(),qs=new Set(S.q.map(t=>t.k)),ql=S.q.length;
-  $('#coins').textContent=S.coins;$('#compostCount').textContent='♻️ '+(S.st.compost||0);$('#crystalCount').textContent='💎 '+(S.st.crystals||0);$('#lvt').textContent='Nível '+S.lv;$('#map').classList.toggle('sprinkler-on',!!S.sprinkler);$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
+  $('#coins').textContent=money(S.coins);$('#compostCount').textContent='♻️ '+(S.st.compost||0);$('#crystalCount').textContent='💎 '+(S.st.crystals||0);$('#lvt').textContent='Nível '+S.lv;$('#map').classList.toggle('sprinkler-on',!!S.sprinkler);$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
   $('#bw').classList.toggle('on',sel==='agua');$('#bu').classList.toggle('on',!!S.auto);$('#bf').classList.toggle('on',!!S.autoFert);
