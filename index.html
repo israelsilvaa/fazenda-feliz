@@ -84,7 +84,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #places{position:absolute;inset:0;z-index:3;pointer-events:none}
 .bld .bi{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:23px;height:23px;border-radius:50%;background:#fff7dc;border:2px solid var(--c);display:grid;place-items:center;font-size:12px;line-height:1;font-style:normal}
 .bld .bl{position:absolute;left:50%;top:44px;transform:translateX(-50%);white-space:nowrap;font-size:11px;line-height:14px;font-weight:700;color:#3b2a14;background:#fff7dce6;border:1.5px solid #8a6a2f;border-radius:8px;padding:0 6px}
-.bld .b1{position:absolute;left:50%;top:60px;transform:translateX(-50%);max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:13px;font-weight:700;color:#4b2d08;background:#ffd95a;border:1.5px solid #8d5a12;border-radius:8px;padding:0 6px}.bld .b1:empty{display:none}
+.bld .b1{position:absolute;left:50%;top:62px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;white-space:nowrap;text-align:center;color:#4b2d08;background:linear-gradient(180deg,#fff0a6,#ffd13f 55%,#f0b21c);border:2px solid #8d5a12;border-radius:11px;padding:3px 10px 3px;box-shadow:0 2px 0 #a9761a,0 3px 6px #0004;pointer-events:none}.bld .b1:empty{display:none}
+.bld .b1 .n{font-size:12px;line-height:15px;font-weight:800;letter-spacing:.2px;text-shadow:0 1px 0 #fff8}
+.bld .b1 .l{font-size:10px;line-height:12px;font-weight:700;color:#fff;background:#2e6fd0;border:1px solid #17407f;border-radius:7px;padding:0 7px}
+.sign{position:absolute;pointer-events:none;text-align:center;white-space:nowrap;padding:3px 10px 4px;border-radius:7px;background:linear-gradient(180deg,#e9bf7c,#c9964f);border:2px solid #6b4420;box-shadow:0 2px 0 #4a2f14,0 4px 6px #0004}
+.sign::before,.sign::after{content:"";position:absolute;bottom:-9px;width:4px;height:8px;background:#6b4420;border-radius:0 0 2px 2px}.sign::before{left:12px}.sign::after{right:12px}
+.sign small{display:block;font-size:8px;line-height:10px;font-weight:700;color:#5a3a17;text-transform:uppercase;letter-spacing:.6px}
+.sign .sn{display:block;font-size:12px;line-height:14px;font-weight:800;color:#3b2410;text-shadow:0 1px 0 #fff6}
 .bld .bdg{position:absolute;right:-6px;top:-12px;display:none;min-width:17px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;font-size:10px;line-height:14px;font-weight:700;text-align:center;padding:0 3px;font-style:normal}
 .rdw{position:absolute;z-index:0;border-radius:8px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/14px 14px,#d6b47e}
 .pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
@@ -484,7 +490,12 @@ function buildMap(){
   BD.forEach((b,i)=>{let cx,cy;
     if(two){const sx=i%2?46:-46,sy=i<2?-1:1;let ok=0;cx=xc+sx;for(let dy=100;dy<=240&&!ok;dy+=20){cy=hy+sy*dy;ok=!hit([cx-32,cy-34,cx+32,cy+40])}if(!ok)cy=hy+sy*104}
     else{cx=hx+[-100,100,-180,180][i];cy=hy-10-BH/2}
-    bp.push([cx-32,cy-34,cx+32,cy+40]);ex.push([cx-34,cy-36,cx+34,cy+54]);b.push(cx,cy)});
+    if(b[0]==='brank'){ // casa do ranking: lá no alto do mapa, longe do casarão
+      const fx=ex.slice(0,rects.length).concat(bp,[[hx-72,hy-58,hx+72,hy+58]]),hr=q=>fx.some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
+      cx=two?xc+46:hx+100;let found=0;for(let y=74;y<=cy&&!found;y+=8){found=!hr([cx-40,y-34,cx+40,y+74]);if(found)cy=y}}
+    bp.push([cx-32,cy-34,cx+32,cy+(b[0]==='brank'?74:40)]);ex.push([cx-40,cy-36,cx+40,cy+(b[0]==='brank'?78:54)]);b.push(cx,cy)});
+  ex.push([hx+34,hy+8,hx+150,hy+58]);
+  tv.push([hy+44,`<div class="sign" style="left:${(hx+40).toFixed(0)}px;top:${(hy+14).toFixed(0)}px;z-index:${Math.round(hy)+62}"><small>Fazenda de</small><span class="sn"></span></div>`]);
   const placesHtml='<div id="places">'+BD.map(([go,nm,ic,col,cx,cy])=>`<div class="bld" data-go="${go}" style="left:${(cx-BW/2).toFixed(0)}px;top:${(cy-BH/2).toFixed(0)}px;--c:${col}"><svg viewBox="0 0 64 56"><use href="#hut"/></svg><b class="bi">${ic}</b><span class="bl">${nm}</span>${go==='brank'?'<span class="b1"></span>':''}${go==='ba'?'<em class="bdg"></em>':''}</div>`).join('')+'</div>';
   for(let y=14,a=1;y<Hp;y+=sp*.8)for(let x=10;x<Wp;x+=sp,a++){
     const px=x+(rng(a)-.5)*sp*.8,py=y+(rng(a+7000)-.5)*sp*.6,u=rng(a+20000),t=u<.36?'oak':u<.62?'pine':u<.82?'bush':u<.93?'tuft':'flw',z=rng(a+30000),v=rng(a+40000);
@@ -680,7 +691,9 @@ function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
   let t=lsGet(RK_ID);
   if(!/^[a-f0-9]{64}$/.test(t||'')){t=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');lsSet(RK_ID,t)}
   return t}
-function rkShow(){document.querySelectorAll('.b1').forEach(e=>{e.textContent=top1?'👑 '+top1.nome+' · Nv '+top1.lv:''})}
+function rkNome(){try{return(localStorage.getItem('fazenda-rank-nome')||'').trim()}catch(e){return''}}
+function rkShow(){document.querySelectorAll('.b1').forEach(e=>{e.textContent='';if(!top1)return;const n=document.createElement('span'),l=document.createElement('span');n.className='n';n.textContent='👑 '+top1.nome;l.className='l';l.textContent='★ Nível '+top1.lv;e.append(n,l)});
+  const nm=rkNome()||'Fazendeiro';document.querySelectorAll('.sign .sn').forEach(e=>e.textContent=nm)}
 async function rkTop(){try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)return;top1=((await r.json()).ranking||[])[0]||null;rkShow()}catch(e){}}
 setTimeout(rkTop,800);setInterval(rkTop,60000);
 function rkDraw(lista){if(lista&&lista[0]){top1=lista[0];rkShow()}
@@ -698,7 +711,7 @@ async function rkSave(){
   try{
     const r=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:rkToken(),nome,lv:S.lv,moedas:Math.floor(S.coins),conq:rkConq(),total:A.length})});
     const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.erro||'falhou');
-    lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkDraw(d.ranking);
+    lsSet(RK_NAME,nome);lsSet(RK_ME,d.id);rkDraw(d.ranking);rkShow();
     msg.textContent=!d.posicao?'Atualizado, mas você ainda não entrou no ranking.':d.posicao<=50?`Atualizado! Você está em ${d.posicao}º lugar.`:`Atualizado! Você está em ${d.posicao}º (o painel mostra o top 50).`;
   }catch(e){msg.textContent='Erro: '+e.message}
   finally{btn.disabled=false}}
