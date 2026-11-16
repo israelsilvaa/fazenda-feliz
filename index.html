@@ -143,6 +143,26 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .rk-nome small{font-weight:400;opacity:.6}
 .rk-b{background:#0002;border-radius:999px;padding:0 7px;font-size:12px;font-weight:700;white-space:nowrap}
 .rk-vazio{margin:8px 0;opacity:.8}
+
+/* currais */
+.plot.pen.corral{width:156px;height:118px;padding:0;display:block;border:3px solid #6b4326;border-radius:12px;background:repeating-linear-gradient(90deg,#c08a4a 0 12px,#8d5d2c 12px 15px)}
+.corral .em::after{display:none!important}
+.corral .em{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.corral .tm{bottom:14px}
+.yard{position:absolute;inset:7px;border-radius:7px;overflow:hidden;z-index:0;pointer-events:none;box-shadow:inset 0 0 0 2px #0002}
+.yard .gnd{position:absolute;inset:0;background-color:var(--yc,#9fd884);background-image:radial-gradient(#0000001a 1.5px,transparent 2px);background-size:14px 14px}
+.yard .pond{position:absolute;right:7%;bottom:9%;width:38%;height:34%;border-radius:50%;background:#59b8e6;opacity:.75;box-shadow:inset 0 0 0 3px #ffffff55}
+.yard .mud{position:absolute;right:8%;bottom:10%;width:36%;height:32%;border-radius:50%;background:#7a5230;opacity:.7}
+.an{position:absolute;left:0;top:0;line-height:1;pointer-events:none;will-change:transform}
+.an .sp{display:block;transform-origin:50% 100%}
+.an .sp.walk{animation:hopw .3s ease-in-out infinite alternate}
+.an.hive .bz{position:absolute;right:-4px;top:-2px;font-size:11px;animation:buzz 1.6s ease-in-out infinite}
+@keyframes hopw{to{transform:translateY(-3px)}}
+@keyframes buzz{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,-4px)}50%{transform:translate(2px,-7px)}75%{transform:translate(5px,-2px)}}
+.lbl{position:absolute;left:6px;top:5px;z-index:2;font-size:10px;line-height:14px;font-weight:700;color:#fff;background:#342416d9;border:1px solid #fff8;border-radius:7px;padding:0 5px;white-space:nowrap;pointer-events:none;box-shadow:0 1px 3px #0006}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .yard .gnd{filter:brightness(.7)}}
+:root[data-theme="dark"] .yard .gnd{filter:brightness(.7)}
+@media (prefers-reduced-motion:reduce){.an .sp.walk,.an.hive .bz{animation:none}}
 </style>
 </head>
 <body>
@@ -179,9 +199,11 @@ const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
 ].map(([k,n,e,cost,sell,t,lv])=>({k,n,e,cost,sell,t,lv,xp:Math.round(t*.4)}));
 const C=Object.fromEntries(CR.map(c=>[c.k,c]));
 const AM=[ // animais: k, nome, emoji, produto, emoji prod, valor, intervalo(s), capacidade, máx, nível, preço base, passo
- ['hen','Galinha','🐔','Ovo','🥚',8,15,12,6,2,60,40],['cow','Vaca','🐄','Leite','🥛',40,40,6,3,5,250,150],
- ['sheep','Ovelha','🐑','Lã','🧶',70,60,6,3,8,500,300],['pig','Porco','🐖','Bacon','🥓',120,90,5,3,11,900,500],
- ['bee','Colmeia','🐝','Mel','🍯',200,120,4,2,14,1500,800]
+ ['hen','Galinha','🐔','Ovo','🥚',8,15,12,6,2,60,40],['duck','Pato','🦆','Ovo de pato','🥚',12,20,10,5,3,110,70],
+ ['rabbit','Coelho','🐇','Pelo','🧶',25,30,8,5,4,160,100],['cow','Vaca','🐄','Leite','🥛',40,40,6,3,5,250,150],
+ ['goat','Cabra','🐐','Queijo','🧀',55,50,6,4,6,350,220],['sheep','Ovelha','🐑','Lã','🧶',70,60,6,3,8,500,300],
+ ['pony','Pônei','🐴','Passeio','🎠',100,75,5,4,9,700,400],['pig','Porco','🐖','Bacon','🥓',120,90,5,3,11,900,500],
+ ['turkey','Peru','🦃','Pena','🪶',160,100,5,4,12,1200,650],['bee','Colmeia','🐝','Mel','🍯',200,120,4,2,14,1500,800]
 ].map(([k,n,e,pn,pe,val,every,cap,max,lv,base,step])=>({k,n,e,pn,pe,val,every,cap,max,lv,base,step}));
 const A=[ // id, emoji, nome, descrição, teste, prêmio
  ['l2','🌱','Primeiros passos','Chegue ao nível 2',()=>S.lv>=2,15],
@@ -212,6 +234,7 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
  ['h100','🚜','Mão na terra','Colha 100 plantas',()=>S.st.h>=100,80],
  ['land','🌳','Terra grande','Tenha 36 canteiros',()=>S.cols*S.rows>=36,90],
  ['sheep','🐑','Pastor','Compre uma ovelha',()=>cnt('sheep')>=1,100],
+ ['pony','🐴','Domador de pôneis','Compre um pônei',()=>cnt('pony')>=1,180],
  ['r3','🏦','Fazendeiro rico','Ganhe 3.000 moedas',()=>S.st.g>=3e3,120],
  ['wk6','👷','Mutirão','Tenha 6 trabalhadores',()=>S.wk>=6,150],
  ['l10','🌟','Nível 10','Chegue ao nível 10',()=>S.lv>=10,150],
@@ -380,7 +403,7 @@ function buildMap(){
   map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.3 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k));
   if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
-    own.forEach(m=>{const x=mk('plot pen');x.d.dataset.pen=m.k;x.m=m;w.append(x.d);pens.push(x)})}
+    own.forEach(m=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);w.append(x.d);pens.push(x)})}
   map.style.gridTemplateColumns=`repeat(${S.cols},74px)`;
   for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
     const x=mk('plot'),key=r+','+c;x.d.dataset.key=key;x.key=key;map.append(x.d);cells.push(cm[key]=x)}
@@ -501,6 +524,7 @@ function help(){
     <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>Amplie o terreno pela loja até o limite de 10×10 (100 canteiros). Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
     <h3>🧑‍🌾 Trabalhadores, fila e animais</h3>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
+    <div class="help-row"><span class="i">🐴</span><span><b>Currais</b><small>Cada animal que você compra ganha um curral no topo do mapa, onde os bichinhos passeiam sozinhos. A quantidade de animais aparece no curral. As colmeias ficam paradas. Toque no curral para coletar os produtos.</small></span></div>
     <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador.</small></span></div>
     <h3>🧰 Ferramentas e recursos</h3>
     <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Auto adubo aplica automaticamente o melhor disponível (nível 3, depois 2 e 1) ao plantar.</small></span></div>
@@ -534,7 +558,7 @@ function ach(){
     else if(/^l(\d+)$/.test(id)){cur=S.lv;max=Number(id.slice(1))}
     else if(id==='wk3'||id==='wk6'||id==='wk10'){cur=S.wk;max=Number(id.slice(2))}
     else if(id==='r1'||id==='r3'||id==='r6'||id==='r10'||id==='r30'){cur=S.st.g;max=Number(id.slice(1))*1000}
-    else if(id==='hen'||id==='cow'||id==='sheep'||id==='bee'){cur=cnt(id);max=1}
+    else if(id==='hen'||id==='cow'||id==='sheep'||id==='pony'||id==='bee'){cur=cnt(id);max=1}
     else if(id==='land'){cur=S.cols*S.rows;max=36}
     return max?` · ${Math.min(cur,max)}/${max} (faltam ${Math.max(0,max-cur)})`:''};
   const R=(a,c,r)=>{const lm=a[0].match(/^l(\d+)$/),ico=lm?`<span class=\"level-ach-icon\"><b>${lm[1]}</b><span>★</span></span>`:a[1];return `<div class=\"row ${c}\"><span class=\"i\">${ico}</span><span class=\"t\"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`};
@@ -639,14 +663,70 @@ function ui(){
   });
   const mp=$('#map');mp.classList.toggle('many-ready',nr>8);
   pens.forEach(x=>{
-    const m=x.m,a=AN(m.k);let cls='plot pen '+tierClass,em=m.e,tm='',bw=0,r;
+    const m=x.m,a=AN(m.k);let cls='plot pen corral',em='',tm='',bw=0,r;
     if(a.a){[r,em,tm,bw]=work(a.a,m.pe);cls+=r}else if(a.q)cls+=' ready';
     if(qs.has('pen:'+m.k))cls+=' qd';
     if(cls.includes(' work'))nw++;
+    const lt=m.e+' '+m.n+' ×'+cnt(m.k);if(x.llt!==lt){x.lbl.textContent=lt;x.llt=lt}
     paint(x,cls,em,tm,bw,m.pe+a.q+'/'+m.cap);
   });
   mp.classList.toggle('many-work',nw>6);
 }
+
+// ---------- Currais: animais andando ----------
+const YC={hen:'#e6d28e',duck:'#a3d9a0',rabbit:'#b9e38d',cow:'#92d273',goat:'#cfc794',sheep:'#9fd884',pony:'#b9dc8c',pig:'#d2ad86',turkey:'#dcbf86',bee:'#c2e47f'};
+const SZ={hen:21,duck:21,rabbit:20,turkey:25,goat:24,sheep:25,pig:25,cow:30,pony:29};
+const HIVE='<svg viewBox="0 0 40 44" width="34" height="38" aria-hidden="true"><ellipse cx="20" cy="41" rx="15" ry="3" fill="#0003"/><path d="M6 38Q4 22 20 4Q36 22 34 38Z" fill="#f2b83a" stroke="#a8741a" stroke-width="2"/><path d="M8 31Q20 34 32 31M10 23Q20 26 30 23M14 15Q20 17 26 15" stroke="#a8741a" stroke-width="2" fill="none"/><ellipse cx="20" cy="35" rx="4.5" ry="3.5" fill="#4a2c0c"/></svg>';
+function setupCorral(x){
+  const m=x.m,y=document.createElement('div');y.className='yard';y.style.setProperty('--yc',YC[m.k]||'#9fd884');
+  y.innerHTML='<i class="gnd"></i>'+(m.k==='duck'?'<i class="pond"></i>':m.k==='pig'?'<i class="mud"></i>':'');
+  x.yard=y;x.ents=[];x.d.prepend(y);
+  const l=document.createElement('span');l.className='lbl';x.d.append(l);x.lbl=l;
+}
+function yardSize(x){return[x.yard.clientWidth,x.yard.clientHeight]}
+function pickTarget(e,x){
+  const [W,H]=yardSize(x),mx=Math.max(0,W-e.s),my=Math.max(0,H-e.s);
+  e.tx=Math.min(mx,Math.max(0,e.x+(Math.random()-.5)*110));e.ty=Math.min(my,Math.max(0,e.y+(Math.random()-.5)*80));
+  e.v=12+Math.random()*16;if(Math.abs(e.tx-e.x)>2)e.f=e.tx>e.x?-1:1;
+  e.sp.classList.add('walk');e.moving=true;
+}
+function placeEnt(e){e.el.style.transform=`translate3d(${e.x.toFixed(1)}px,${e.y.toFixed(1)}px,0) scaleX(${e.f})`;e.el.style.zIndex=Math.round(e.y)}
+function addEnt(x){
+  const m=x.m,el=document.createElement('span'),sp=document.createElement('span'),hive=m.k==='bee',s=hive?38:(SZ[m.k]||24);
+  el.className='an'+(hive?' hive':'');sp.className='sp';el.style.fontSize=s+'px';
+  if(hive){sp.innerHTML=HIVE;el.append(sp);el.insertAdjacentHTML('beforeend','<span class="bz">🐝</span>')}
+  else{sp.textContent=m.e;el.append(sp)}
+  x.yard.append(el);
+  const [W,H]=yardSize(x),e={el,sp,s,x:Math.random()*Math.max(0,W-s),y:Math.random()*Math.max(0,H-s),tx:0,ty:0,v:0,f:1,w:Math.random()*2.5,moving:false};
+  x.ents.push(e);placeEnt(e);
+}
+function layoutHives(x){
+  const [W,H]=yardSize(x),n=x.ents.length;
+  x.ents.forEach((e,i)=>{e.x=(i+1)/(n+1)*W-17;e.y=H/2-19+(i%2?7:-5);e.f=1;placeEnt(e)});
+}
+let anLast=0;
+function anLoop(t){
+  requestAnimationFrame(anLoop);
+  if(document.hidden){anLast=t;return}
+  const dt=Math.min(.1,Math.max(0,(t-anLast)/1000));anLast=t;
+  for(const x of pens){
+    if(!x.yard||!x.yard.clientWidth)continue;
+    const want=cnt(x.m.k),hive=x.m.k==='bee';let changed=false;
+    while(x.ents.length<want){addEnt(x);changed=true}
+    while(x.ents.length>want){x.ents.pop().el.remove();changed=true}
+    if(hive){if(changed||!x.laid){layoutHives(x);x.laid=1}continue}
+    for(const e of x.ents){
+      if(!e.moving){
+        e.w-=dt;if(e.w<=0)pickTarget(e,x);
+        continue}
+      const dx=e.tx-e.x,dy=e.ty-e.y,d=Math.hypot(dx,dy),st=e.v*dt;
+      if(d<=st){e.x=e.tx;e.y=e.ty;e.moving=false;e.w=.6+Math.random()*3.2;e.sp.classList.remove('walk')}
+      else{e.x+=dx/d*st;e.y+=dy/d*st}
+      placeEnt(e);
+    }
+  }
+}
+requestAnimationFrame(anLoop);
 buildMap();buildDock();tick();chk();ui();
 setInterval(()=>{if(document.hidden)return;tick();chk();if(++tickN%2===0)ui();if(tickN%20===0)save()},250);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){save();return}tick();chk();ui();save()});
