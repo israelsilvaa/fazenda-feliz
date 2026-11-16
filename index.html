@@ -80,7 +80,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #field{position:relative;display:grid;grid-auto-rows:74px;gap:5px;padding:64px}#forest{position:absolute;inset:0;z-index:0;pointer-events:none}.tr{position:absolute;display:block}
 .patch{margin:-12px;border-radius:44%;background:radial-gradient(#0000001f 1.5px,transparent 2px) 0 0/18px 18px,#a8763f;box-shadow:inset 0 0 0 3px #0002,0 0 0 5px #6f8f3a}
 .pcol{position:relative;display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:12px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/16px 16px,#b9d77a;box-shadow:inset 0 0 0 2px #0002}
-.pcol::after{content:"";position:absolute;top:6px;bottom:6px;width:24px;border-radius:5px;background:repeating-linear-gradient(0deg,#d6b47e 0 14px,#c9a46c 14px 20px)}#pL::after{right:-24px}#pR::after{left:-24px}.rdw{position:absolute;z-index:0;border-radius:8px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/14px 14px,#d6b47e}
+.pcol::after{content:"";position:absolute;top:6px;bottom:6px;width:24px;border-radius:5px;background:repeating-linear-gradient(0deg,#d6b47e 0 14px,#c9a46c 14px 20px)}#pL::after{right:-24px}#pR::after{left:-24px}.bld{position:absolute;width:52px;height:46px;pointer-events:auto;cursor:pointer}.bld svg{display:block;width:52px;height:46px;color:var(--c)}.bld:active{transform:scale(.96)}
+#places{position:absolute;inset:0;z-index:3;pointer-events:none}
+.bld .bi{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:23px;height:23px;border-radius:50%;background:#fff7dc;border:2px solid var(--c);display:grid;place-items:center;font-size:12px;line-height:1;font-style:normal}
+.bld .bl{position:absolute;left:50%;top:44px;transform:translateX(-50%);white-space:nowrap;font-size:11px;line-height:14px;font-weight:700;color:#3b2a14;background:#fff7dce6;border:1.5px solid #8a6a2f;border-radius:8px;padding:0 6px}
+.bld .b1{position:absolute;left:50%;top:60px;transform:translateX(-50%);max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:13px;font-weight:700;color:#4b2d08;background:#ffd95a;border:1.5px solid #8d5a12;border-radius:8px;padding:0 6px}.bld .b1:empty{display:none}
+.bld .bdg{position:absolute;right:-6px;top:-12px;display:none;min-width:17px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;font-size:10px;line-height:14px;font-weight:700;text-align:center;padding:0 3px;font-style:normal}
+.rdw{position:absolute;z-index:0;border-radius:8px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/14px 14px,#d6b47e}
 .pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
 .cnt{position:absolute;top:1px;right:4px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
 @keyframes sweep{to{transform:rotate(1turn)}}
@@ -178,7 +184,8 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .ib{position:relative;width:46px;height:46px;border-radius:14px;border:2px solid var(--line);background:var(--panel);color:inherit;font-size:22px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003;display:grid;place-items:center}
 .ab-shop{background:linear-gradient(145deg,#ffe58a,#f6c33a);border-color:#c58a17;color:#3b2a14}
 #bak{position:absolute;top:-6px;right:-6px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;min-width:17px;font-size:10px;line-height:13px;font-weight:700;padding:0 3px;display:none;text-align:center}
-#zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:calc(var(--top) + 54px);display:flex;gap:5px}
+#menu,#bs{display:none!important}
+#zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:var(--top);display:flex;gap:5px}
 #zoom button{width:44px;height:44px;border-radius:13px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:22px;font-weight:700;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003}
 #bar{position:fixed;z-index:6;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;gap:4px;padding:3px;border-radius:16px;background:var(--panel);border:2px solid var(--line);box-shadow:0 3px 8px #0003}
 .ab{width:54px;height:50px;border-radius:14px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:22px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
@@ -304,7 +311,7 @@ const money=v=>{v=Math.floor(Number(v)||0);const f=(x,u)=>(Math.floor(x*100)/100
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp*(.95**(S.upgrades?.worker||0)),HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
 const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
-let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
+let top1=null;let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
 S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
   Object.values(S.pl).forEach(p=>{if(p.c&&p.g===undefined){const k=C[p.c],tot=k.t*1000,g=Math.max(0,Math.min(tot,Date.now()-(p.p||0)));Object.assign(p,{g,w:TH(k).filter(x=>x*tot<=g).length,th:0,f:0,rt:g>=tot?(p.p||0)+tot:0})}});
@@ -472,6 +479,13 @@ function buildMap(){
   rd.forEach(([x0,y0,x1,y1])=>ex.push([x0-RW/2-8,y0-RW/2-8,x1+RW/2+8,y1+RW/2+8]));ex.push([hx-72,hy-58,hx+72,hy+58]);
   const rdH=rd.map(([x0,y0,x1,y1])=>`<i class="rdw" style="left:${(x0-RW/2).toFixed(0)}px;top:${(y0-RW/2).toFixed(0)}px;width:${(x1-x0+RW).toFixed(0)}px;height:${(y1-y0+RW).toFixed(0)}px"></i>`).join('');
   tv.push([hy+40,`<svg class="tr" viewBox="0 0 96 80" style="left:${(hx-60).toFixed(0)}px;top:${(hy-62).toFixed(0)}px;width:120px;height:100px;z-index:${Math.round(hy)+60}"><use href="#house"/></svg>`]);
+  // prédios clicáveis: Loja, Ranking, Conquistas e Ajuda (substituem os botões da tela)
+  const BW=52,BH=46,BD=[['bs','Loja','🛒','#e0a21b'],['brank','Ranking','👑','#2e86c1'],['ba','Conquistas','🏆','#8e44ad'],['bhelp','Ajuda','❔','#27ae60']],bp=[],hit=q=>ex.concat(bp).some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
+  BD.forEach((b,i)=>{let cx,cy;
+    if(two){const sx=i%2?46:-46,sy=i<2?-1:1;let ok=0;cx=xc+sx;for(let dy=100;dy<=240&&!ok;dy+=20){cy=hy+sy*dy;ok=!hit([cx-32,cy-34,cx+32,cy+40])}if(!ok)cy=hy+sy*104}
+    else{cx=hx+[-100,100,-180,180][i];cy=hy-10-BH/2}
+    bp.push([cx-32,cy-34,cx+32,cy+40]);ex.push([cx-34,cy-36,cx+34,cy+54]);b.push(cx,cy)});
+  const placesHtml='<div id="places">'+BD.map(([go,nm,ic,col,cx,cy])=>`<div class="bld" data-go="${go}" style="left:${(cx-BW/2).toFixed(0)}px;top:${(cy-BH/2).toFixed(0)}px;--c:${col}"><svg viewBox="0 0 64 56"><use href="#hut"/></svg><b class="bi">${ic}</b><span class="bl">${nm}</span>${go==='brank'?'<span class="b1"></span>':''}${go==='ba'?'<em class="bdg"></em>':''}</div>`).join('')+'</div>';
   for(let y=14,a=1;y<Hp;y+=sp*.8)for(let x=10;x<Wp;x+=sp,a++){
     const px=x+(rng(a)-.5)*sp*.8,py=y+(rng(a+7000)-.5)*sp*.6,u=rng(a+20000),t=u<.36?'oak':u<.62?'pine':u<.82?'bush':u<.93?'tuft':'flw',z=rng(a+30000),v=rng(a+40000);
     let wd=t==='oak'||t==='pine'?(z<.18?72+v*18:z<.55?44+v*12:26+v*8):t==='bush'?24+v*10:16+v*6;
@@ -481,9 +495,10 @@ function buildMap(){
   const flat=pick.flat();let k=0;for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
     const x=mk('plot'),key=r+','+c,q=flat[k++],id=r*97+c;x.d.dataset.key=key;x.key=key;x.d.style.gridColumn=q[0]+' / span 2';x.d.style.gridRow=q[1];
     x.d.style.translate=`${((rng(id)-.5)*8).toFixed(1)}px ${((rng(id+500)-.5)*8).toFixed(1)}px`;x.d.style.rotate=`${((rng(id+900)-.5)*3).toFixed(1)}deg`;F.append(x.d);cells.push(cm[key]=x)}
+  F.insertAdjacentHTML('beforeend',placesHtml);rkShow();
   if(L.children.length)map.append(L);map.append(F);if(R.children.length)map.append(R);
   const dc=document.createElement('div');dc.id='decor';
-  const SPR='<svg width="0" height="0" style="position:absolute"><defs><g id="oak"><rect x="24" y="36" width="8" height="24" rx="2" fill="#7a4d24"/><rect x="27" y="38" width="2.5" height="20" fill="#9a6735"/><circle cx="16" cy="32" r="13" fill="#2e7d32"/><circle cx="40" cy="32" r="13" fill="#2e7d32"/><circle cx="28" cy="18" r="16" fill="#2e7d32"/><circle cx="22" cy="27" r="12" fill="#43a047"/><circle cx="36" cy="28" r="12" fill="#43a047"/><circle cx="28" cy="19" r="11" fill="#4caf50"/><circle cx="22" cy="16" r="5" fill="#7bc67e"/><circle cx="35" cy="22" r="4" fill="#7bc67e"/></g><g id="pine"><rect x="25" y="48" width="6" height="12" fill="#6b4326"/><polygon points="28,2 46,26 10,26" fill="#1b6b32"/><polygon points="28,14 50,42 6,42" fill="#23863c"/><polygon points="28,28 54,56 2,56" fill="#2e9c47"/><polygon points="28,28 28,56 2,56" fill="#0000001c"/><polygon points="28,2 28,26 10,26" fill="#0000001c"/></g><g id="bush"><circle cx="17" cy="52" r="10" fill="#2f7d32"/><circle cx="39" cy="52" r="10" fill="#2f7d32"/><circle cx="28" cy="46" r="12" fill="#3f9a42"/><circle cx="24" cy="43" r="5" fill="#6cbf6f"/></g><g id="tuft" stroke="#3a8f3a" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M12 60L8 42M22 60L21 36M32 60L35 38M42 60L48 44M50 60L54 52"/></g><g id="flw"><path d="M28 60V44" stroke="#3a8f3a" stroke-width="3.5"/><circle cx="28" cy="38" r="9" fill="#ff7aa8"/><circle cx="28" cy="38" r="3.5" fill="#ffd54a"/></g><g id="house"><rect x="62" y="6" width="9" height="20" fill="#8a5a35"/><rect x="16" y="34" width="64" height="36" fill="#f3e2b8" stroke="#b79b62" stroke-width="2"/><polygon points="8,37 48,8 88,37" fill="#c0392b" stroke="#8e2a1f" stroke-width="2"/><circle cx="48" cy="25" r="4.5" fill="#8fd3f4" stroke="#7a4d24" stroke-width="1.5"/><rect x="41" y="48" width="14" height="22" rx="1.5" fill="#7a4d24"/><rect x="22" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="61" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="36" y="70" width="24" height="5" fill="#bdb6a6"/></g></defs></svg>',
+  const SPR='<svg width="0" height="0" style="position:absolute"><defs><g id="oak"><rect x="24" y="36" width="8" height="24" rx="2" fill="#7a4d24"/><rect x="27" y="38" width="2.5" height="20" fill="#9a6735"/><circle cx="16" cy="32" r="13" fill="#2e7d32"/><circle cx="40" cy="32" r="13" fill="#2e7d32"/><circle cx="28" cy="18" r="16" fill="#2e7d32"/><circle cx="22" cy="27" r="12" fill="#43a047"/><circle cx="36" cy="28" r="12" fill="#43a047"/><circle cx="28" cy="19" r="11" fill="#4caf50"/><circle cx="22" cy="16" r="5" fill="#7bc67e"/><circle cx="35" cy="22" r="4" fill="#7bc67e"/></g><g id="pine"><rect x="25" y="48" width="6" height="12" fill="#6b4326"/><polygon points="28,2 46,26 10,26" fill="#1b6b32"/><polygon points="28,14 50,42 6,42" fill="#23863c"/><polygon points="28,28 54,56 2,56" fill="#2e9c47"/><polygon points="28,28 28,56 2,56" fill="#0000001c"/><polygon points="28,2 28,26 10,26" fill="#0000001c"/></g><g id="bush"><circle cx="17" cy="52" r="10" fill="#2f7d32"/><circle cx="39" cy="52" r="10" fill="#2f7d32"/><circle cx="28" cy="46" r="12" fill="#3f9a42"/><circle cx="24" cy="43" r="5" fill="#6cbf6f"/></g><g id="tuft" stroke="#3a8f3a" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M12 60L8 42M22 60L21 36M32 60L35 38M42 60L48 44M50 60L54 52"/></g><g id="flw"><path d="M28 60V44" stroke="#3a8f3a" stroke-width="3.5"/><circle cx="28" cy="38" r="9" fill="#ff7aa8"/><circle cx="28" cy="38" r="3.5" fill="#ffd54a"/></g><g id="hut"><rect x="9" y="24" width="46" height="30" fill="#f3e2b8" stroke="#b79b62" stroke-width="2"/><polygon points="3,27 32,5 61,27" fill="currentColor" stroke="#0004" stroke-width="2"/><rect x="26" y="38" width="12" height="16" rx="1.5" fill="#7a4d24"/></g><g id="house"><rect x="62" y="6" width="9" height="20" fill="#8a5a35"/><rect x="16" y="34" width="64" height="36" fill="#f3e2b8" stroke="#b79b62" stroke-width="2"/><polygon points="8,37 48,8 88,37" fill="#c0392b" stroke="#8e2a1f" stroke-width="2"/><circle cx="48" cy="25" r="4.5" fill="#8fd3f4" stroke="#7a4d24" stroke-width="1.5"/><rect x="41" y="48" width="14" height="22" rx="1.5" fill="#7a4d24"/><rect x="22" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="61" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="36" y="70" width="24" height="5" fill="#bdb6a6"/></g></defs></svg>',
   T=(t,p,w)=>`<svg viewBox="0 0 56 64" style="position:absolute;${p};width:${w}px;height:${w*64/56}px"><use href="#${t}"/></svg>`,
   E=(e,p)=>`<i style="${p}">${e}</i>`;
   dc.innerHTML=SPR+[T('oak','left:-4px;top:-8px',58),T('pine','right:-2px;top:-6px',54),T('pine','left:-6px;bottom:-6px',56),T('oak','right:-4px;bottom:-8px',60),
@@ -514,7 +529,7 @@ const ZMIN=.25,ZMAX=2,zset=z=>{zoom=Math.min(ZMAX,Math.max(ZMIN,+z.toFixed(3)));
 $('#zin').onclick=()=>zset(zoom*1.2);
 $('#zout').onclick=()=>zset(zoom/1.2);
 $('#zfit').onclick=()=>{const vw=view.clientWidth,vh=view.clientHeight;zset(Math.min(1.2,(vw-2*SIDE)/mapW,(vh-TOPM-BOTM)/mapH))};
-map.onclick=e=>{if(moved)return;const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
+map.onclick=e=>{if(moved)return;const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
 
 // ---------- Trabalhadores e fila ----------
 function start(t){
@@ -665,7 +680,10 @@ function rkToken(){ // 64 caracteres hex; identifica este navegador no ranking
   let t=lsGet(RK_ID);
   if(!/^[a-f0-9]{64}$/.test(t||'')){t=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');lsSet(RK_ID,t)}
   return t}
-function rkDraw(lista){
+function rkShow(){document.querySelectorAll('.b1').forEach(e=>{e.textContent=top1?'👑 '+top1.nome+' · Nv '+top1.lv:''})}
+async function rkTop(){try{const r=await fetch(RANK_API,{cache:'no-store'});if(!r.ok)return;top1=((await r.json()).ranking||[])[0]||null;rkShow()}catch(e){}}
+setTimeout(rkTop,800);setInterval(rkTop,60000);
+function rkDraw(lista){if(lista&&lista[0]){top1=lista[0];rkShow()}
   const el=$('#rk-list');if(!el)return;const me=lsGet(RK_ME);
   if(!lista.length){el.innerHTML='<p class="rk-vazio">Ninguém no ranking ainda. Seja o primeiro!</p>';return}
   el.innerHTML=lista.map((r,i)=>`<div class="rk-row${r.id===me?' eu':''}"><span class="rk-pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="rk-nome">${rkEsc(r.nome)} <small>#${rkEsc(r.id.slice(0,4))}</small></span><span class="rk-b"><span style="color:#2e8bff">★</span> ${r.lv}</span><span class="rk-b">🏆 ${r.conq!=null?r.conq:r.id===me?rkConq():'–'}/${A.length}</span><span class="rk-b">🪙 ${money(r.moedas)}</span></div>`).join('')}
@@ -732,7 +750,7 @@ function ui(){
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
   $('#bu').classList.toggle('on',!!(S.auto||S.autoFert));
-  const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';
+  const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';document.querySelectorAll('.bdg').forEach(e=>{e.textContent=cl;e.style.display=cl?'block':'none'});
   chips.forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
   const tierClass=['','tier-stone','tier-fertile','tier-magic','tier-gold'][Math.min(4,S.plotTier||0)];
   const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
