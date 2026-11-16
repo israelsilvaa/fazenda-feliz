@@ -86,7 +86,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #hud .p{position:static;pointer-events:auto}
 #lv{display:flex;align-items:center;gap:6px;padding:2px 8px 2px 3px;font-weight:700;border-radius:999px}
 #lv .lvb{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#63b8ff,#2a66d9);border:2px solid #0b3a7a;color:#fff;font-size:13px;line-height:1;box-shadow:0 1px 3px #0005;text-shadow:0 1px 1px #0b3a7a}
-#lv .xpw{position:relative;display:block;min-width:76px;height:15px;border-radius:9px;background:#0004;overflow:hidden}
+#lv .xpw{position:relative;display:block;min-width:66px;height:15px;border-radius:9px;background:#0004;overflow:hidden}
 #lv u{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(180deg,#ffdc5a,#f2b01c)}
 #lv i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:10px;line-height:1;font-weight:700;color:#fff;text-shadow:0 1px 2px #000c,0 0 2px #000a;white-space:nowrap}
 #hud #co,#hud #wk{font-weight:700;font-size:14px;line-height:1.25;padding:2px 9px;border-radius:999px;white-space:nowrap}
@@ -163,20 +163,21 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 
 /* ===== layout v2: menu no topo, barra de ações e dock compactos ===== */
 #hud .hrow{display:flex;align-items:center;gap:4px}
+#hud #wk{padding:5px 8px}
 #menu{position:fixed;z-index:6;top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);display:flex;gap:5px}
 .ib{position:relative;width:36px;height:36px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:inherit;font-size:17px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003;display:grid;place-items:center}
 .ib-shop{background:linear-gradient(145deg,#ffe58a,#f6c33a);border-color:#c58a17}
 #bak{position:absolute;top:-6px;right:-6px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;min-width:17px;font-size:10px;line-height:13px;font-weight:700;padding:0 3px;display:none;text-align:center}
 #zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:calc(var(--top) + 44px);display:flex;gap:5px}
 #zoom button{width:32px;height:32px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:17px;font-weight:700;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003}
-#bar{position:fixed;z-index:6;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 16px);bottom:var(--barb);display:flex;gap:6px;padding:4px;border-radius:18px;background:var(--panel);border:2px solid var(--line);box-shadow:0 3px 8px #0003}
-.ab{width:56px;height:44px;border-radius:13px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:19px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+#bar{position:fixed;z-index:6;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;gap:4px;padding:3px;border-radius:16px;background:var(--panel);border:2px solid var(--line);box-shadow:0 3px 8px #0003}
+.ab{width:46px;height:42px;border-radius:13px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:19px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
 .ab small{display:block;font-size:9.5px;font-weight:600;margin-top:2px}
 .ab.on{background:var(--water);border-color:#fff;color:#fff;box-shadow:0 0 0 2px var(--water)}
 #bu.on{background:var(--ok);box-shadow:0 0 0 2px var(--ok)}
 #bu.on small::after{content:' ✓'}
 .ab:active,.ib:active,#zoom button:active{transform:scale(.93)}
-#bc{display:none;position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 10px);bottom:calc(var(--barb) + 62px);height:30px;padding:0 12px;border-radius:15px;border:2px solid #e57a6a;background:#ffd6d0;color:#7a1d10;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 4px #0003}
+#bc{display:none;position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 10px);bottom:var(--barb);height:30px;padding:0 12px;border-radius:15px;border:2px solid #e57a6a;background:#ffd6d0;color:#7a1d10;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 4px #0003}
 #bc.on{display:block}
 /* mapa grande: brilho simples (sem blur) nos canteiros prontos */
 #map.large .ready:not([class*="rare-"]),#map.many-ready .ready:not([class*="rare-"]){box-shadow:0 0 0 3px var(--sun)}
@@ -184,7 +185,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 </head>
 <body>
 <div id="view"><div id="map"></div></div>
-<div id="hud"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="hrow"><div class="p" id="co">🪙 <span id="coins">0</span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
+<div id="hud"><div class="hrow"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div class="p" id="co">🪙 <span id="coins">0</span></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
 <div id="menu">
 <button class="ib ib-shop" id="bs" aria-label="Loja" title="Loja">🛒</button>
 <button class="ib" id="ba" aria-label="Conquistas" title="Conquistas">🏆<span id="bak"></span></button>
@@ -274,6 +275,7 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
   ['l60','🏰','Lenda do campo','Chegue ao nível 60',()=>S.lv>=60,6000],
   ['l75','💫','Ícone da fazenda','Chegue ao nível 75',()=>S.lv>=75,9000],
   ['l100','🌎','Herói da agricultura','Chegue ao nível 100',()=>S.lv>=100,15000],
+  ['l1000','🌌','Lenda do universo','Chegue ao nível 1000',()=>S.lv>=1000,150000],
   ['h1000','🌾','Mar de plantações','Colha 1.000 plantas',()=>S.st.h>=1000,600],
   ['h2500','🚛','Colheita lendária','Colha 2.500 plantas',()=>S.st.h>=2500,1500],
   ['w50','🌧️','Chuva abençoada','Regue 50 vezes',()=>S.st.w>=50,100],
@@ -447,7 +449,7 @@ function buildMap(){
   metrics();fit();
 }
 const SIDE=10;let TOPM=106,BOTM=200,mapW=0,mapH=0;
-function metrics(){mapW=map.offsetWidth;mapH=map.offsetHeight;const vh=view.clientHeight,bar=$('#bar').getBoundingClientRect(),hud=$('#hud').getBoundingClientRect();if(bar.height)BOTM=Math.max(110,Math.ceil(vh-bar.top)+8);if(hud.height)TOPM=Math.max(90,Math.ceil(hud.bottom)+6)}
+function metrics(){mapW=map.offsetWidth;mapH=map.offsetHeight;const vh=view.clientHeight,bar=$('#dock').getBoundingClientRect(),hud=$('#hud').getBoundingClientRect();if(bar.height)BOTM=Math.max(110,Math.ceil(vh-bar.top)+8);if(hud.height)TOPM=Math.max(90,Math.ceil(hud.bottom)+6)}
 function fit(){
   const vw=view.clientWidth,vh=view.clientHeight,mw=mapW*zoom,mh=mapH*zoom,T=TOPM,B=BOTM,ah=vh-T-B;
   px=mw+SIDE*2<=vw?(vw-mw)/2:Math.min(SIDE,Math.max(vw-mw-SIDE,px));
@@ -535,7 +537,7 @@ const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'potion',i:'🧪',t:`Poção de crescimento (${S.items.potion||0})`,s:'Avança instantaneamente 15% do crescimento. Pacote com 2',p:180,lv:7,buy(){item('potion',2)}},
   {id:'sprinkler',i:'🚿',t:`Aspersor automático ${S.sprinkler?'(comprado)':''}`,s:'Regas automáticas gratuitas em todos os canteiros',p:1800,lv:12,full:!!S.sprinkler,buy(){S.sprinkler=1}},
   {id:'compost_trade',i:'♻️',t:'Trocar 5 compostos por 3 adubos simples',s:`Você tem ${S.st.compost||0} compostos`,p:0,lv:3,full:(S.st.compost||0)<5,buy(){S.st.compost-=5;item('f1',3)}},
-  {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 500 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(500)}},
+  {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 100.000 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(100000)}},
   ...[{id:'soil',i:'🌿',name:'Solo fértil',desc:'+5% de velocidade por nível',cost:[250,500,900,1500,2400]},{id:'worker',i:'🧤',name:'Mãos rápidas',desc:'Trabalhadores 5% mais rápidos por nível',cost:[300,600,1100,1800,2800]},{id:'quality',i:'🌟',name:'Olho de agricultor',desc:'Melhora a chance de colheitas de qualidade',cost:[400,800,1400,2300,3500]},{id:'rare',i:'🔮',name:'Sorte no jardim',desc:'+15% de chance de planta rara por nível',cost:[600,1200,2200,3600,5500]},{id:'compost',i:'♻️',name:'Compostagem',desc:'+1 composto extra ao limpar uma planta morta por nível',cost:[350,700,1200,2000,3200]}].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${S.upgrades[u.id]}/5)`,s:u.desc,p:u.cost[S.upgrades[u.id]],lv:Math.min(25,8+S.upgrades[u.id]*3),full:S.upgrades[u.id]>=5,buy(){S.upgrades[u.id]++}})),
   ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
   ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 🪙. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
@@ -558,7 +560,7 @@ function help(){
     <h3>⭐ Qualidade, combo e raridades</h3>
     <div class="help-row"><span class="i">⭐</span><span><b>Qualidade da colheita</b><small>Existem quatro qualidades: comum (×1), boa (×1,2), excelente (×1,5) e perfeita (×2). Regar todas as vezes necessárias garante pelo menos qualidade boa. A melhoria Olho de agricultor aumenta a chance de excelente; colher uma planta adubada concede qualidade perfeita. O multiplicador é aplicado ao valor de venda.</small></span></div>
     <div class="help-row"><span class="i">🔥</span><span><b>Combo</b><small>Colheitas feitas em sequência, com intervalo máximo de 30 segundos, aumentam o combo. A partir de 5 colheitas o bônus é +2%; com 10 é +5%; com 20 é +10%. Se passar 30 segundos sem colher, o combo recomeça.</small></span></div>
-    <div class="help-row"><span class="i">✨</span><span><b>Plantas raras</b><small>Uma planta pode nascer Dourada (×3 no valor), Mágica (×5), Arco-íris (×10) ou Cristal (×1). A planta de cristal também concede 1 cristal ao colher; troque-o na loja por 500 moedas. A melhoria Sorte no jardim aumenta a chance relativa de raridade; o canteiro mágico também aumenta essa chance. Probabilidades-base aproximadas: 0,9% dourada, 0,18% mágica, 0,085% cristal e 0,035% arco-íris.</small></span></div>
+    <div class="help-row"><span class="i">✨</span><span><b>Plantas raras</b><small>Uma planta pode nascer Dourada (×3 no valor), Mágica (×5), Arco-íris (×10) ou Cristal (×1). A planta de cristal também concede 1 cristal ao colher; troque-o na loja por 100.000 moedas. A melhoria Sorte no jardim aumenta a chance relativa de raridade; o canteiro mágico também aumenta essa chance. Probabilidades-base aproximadas: 0,9% dourada, 0,18% mágica, 0,085% cristal e 0,035% arco-íris.</small></span></div>
     <h3>🛒 Loja e evolução</h3>
     <div class="help-row"><span class="i">🛒</span><span><b>As cinco melhorias permanentes</b><small>Solo fértil: +5% de velocidade de crescimento por nível. Mãos rápidas: trabalhadores 5% mais rápidos por nível. Olho de agricultor: aumenta a chance de qualidade excelente. Sorte no jardim: +15% de chance relativa de raridade por nível. Compostagem: +1 composto extra ao limpar uma planta morta por nível. Cada melhoria tem até 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá um visual resistente; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
@@ -602,7 +604,7 @@ function ach(){
     else if(id==='hen'||id==='cow'||id==='sheep'||id==='pony'||id==='bee'){cur=cnt(id);max=1}
     else if(id==='land'){cur=S.cols*S.rows;max=36}
     return max?` · ${Math.min(cur,max)}/${max} (faltam ${Math.max(0,max-cur)})`:''};
-  const R=(a,c,r)=>{const lm=a[0].match(/^l(\d+)$/),ico=lm?`<span class=\"level-ach-icon\"><b>${lm[1]}</b><span>★</span></span>`:a[1];return `<div class=\"row ${c}\"><span class=\"i\">${ico}</span><span class=\"t\"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`};
+  const R=(a,c,r)=>{const lm=a[0].match(/^l(\d+)$/),ico=lm?`<span class=\"level-ach-icon\"><b${lm[1].length>3?' style=\"font-size:12px\"':''}>${lm[1]}</b><span>★</span></span>`:a[1];return `<div class=\"row ${c}\"><span class=\"i\">${ico}</span><span class=\"t\"><b>${a[2]}</b><small>${a[3]}${prog(a)}</small></span>${r}</div>`};
   $('#box').innerHTML=`<h2>Conquistas ${n}/${A.length} <span>${cl?'<button data-a="claimall">Coletar tudo</button> ':''}<button data-a="x">Fechar</button></span></h2>`+
    L.map(a=>[R(a,'claim',`<button data-a="claim:${a[0]}">Coletar +${a[5]} 🪙</button>`),R(a,'pend',`<span class="tag gold">${a[5]} 🪙</span>`),R(a,'done',`<span class="tag">+${a[5]} 🪙</span><span class="ok">✓</span>`)][st(a)]).join('')}
 const claim=id=>{const a=A.find(x=>x[0]===id);if(a&&S.ach[id]&&!S.clm[id]){S.clm[id]=1;S.coins+=a[5];return a[5]}return 0};
