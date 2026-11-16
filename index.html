@@ -80,7 +80,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #field{position:relative;display:grid;grid-auto-rows:74px;gap:5px;padding:64px}#forest{position:absolute;inset:0;z-index:0;pointer-events:none}.tr{position:absolute;display:block}
 .patch{margin:-12px;border-radius:44%;background:radial-gradient(#0000001f 1.5px,transparent 2px) 0 0/18px 18px,#a8763f;box-shadow:inset 0 0 0 3px #0002,0 0 0 5px #6f8f3a}
 .pcol{position:relative;display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:12px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/16px 16px,#b9d77a;box-shadow:inset 0 0 0 2px #0002}
-.pcol::after{content:"";position:absolute;top:6px;bottom:6px;width:10px;border-radius:5px;background:repeating-linear-gradient(0deg,#d6b47e 0 14px,#c19c63 14px 20px)}#pL::after{right:-17px}#pR::after{left:-17px}
+.pcol::after{content:"";position:absolute;top:6px;bottom:6px;width:24px;border-radius:5px;background:repeating-linear-gradient(0deg,#d6b47e 0 14px,#c9a46c 14px 20px)}#pL::after{right:-24px}#pR::after{left:-24px}.rdw{position:absolute;z-index:0;border-radius:8px;background:radial-gradient(#0000001a 1.5px,transparent 2px) 0 0/14px 14px,#d6b47e}
 .pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
 .cnt{position:absolute;top:1px;right:4px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
 @keyframes sweep{to{transform:rotate(1turn)}}
@@ -447,7 +447,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl"><span class="ver">v1.9.3</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl"><span class="ver">v2.0.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k)),col=id=>{const w=document.createElement('div');w.className='pcol';w.id=id;return w},L=col('pL'),R=col('pR'),F=document.createElement('div');F.id='field';map.style.minWidth='';
   own.forEach((m,i)=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);(i%2?R:L).append(x.d);pens.push(x)});
   // mesma quantidade de canteiros, em grupos separados por florestas
@@ -457,25 +457,33 @@ function buildMap(){
   const ks=N<=24?2:N<=48?3:4,PR=[[.55,.45],[.4,.33,.27],[.3,.27,.24,.19]][ks-2],sz=PR.map(p=>Math.round(N*p));sz[ks-1]+=N-sz.reduce((p,q)=>p+q,0);
   const cl=sz.map(n=>{const w=blob(n);return{w,gm:Math.max(...w),gh:w.length}}),cols=(ks<4?[[0,1,2]]:[[0,2],[1,3]]).map(a=>a.filter(i=>i<ks)),FG=6,RG=2,two=cols.length>1;
   const cw=cols.map(c=>Math.max(...c.map(i=>cl[i].gm))),ch=cols.map(c=>c.reduce((t,i)=>t+cl[i].gh,0)+RG*(c.length-1)),ro=two?[Math.max(0,(ch[1]-ch[0])>>1),Math.max(0,(ch[0]-ch[1])>>1)+1]:[0];
-  const tu=two?cw[0]*2+FG+cw[1]*2:cw[0]*2+2,tr=Math.max(...cols.map((_,ci)=>ro[ci]+ch[ci])),pick=[],rects=[];
+  const tu=two?cw[0]*2+FG+cw[1]*2:cw[0]*2+2,tr=Math.max(...cols.map((_,ci)=>ro[ci]+ch[ci])),pick=[],rects=[],gaps=[],PD=64;
   F.style.gridTemplateColumns=`repeat(${tu},34.5px)`;F.style.gridTemplateRows=`repeat(${tr},74px)`;
   cols.forEach((c,ci)=>{let row=ro[ci];c.forEach((i,ix)=>{const{w,gm,gh}=cl[i],cu=(ci?cw[0]*2+FG:0)+cw[ci]-gm+(!two&&ix%2?2:0),p=document.createElement('div');
-    rects.push([cu,row,gm*2,gh]);p.className='patch';p.style.gridColumn=(cu+1)+' / span '+gm*2;p.style.gridRow=(row+1)+' / span '+gh;F.append(p);pick[i]=[];
+    rects.push([cu,row,gm*2,gh,ci]);if(ix<c.length-1)gaps.push([ci,PD+(row+gh+RG/2)*79-2.5]);p.className='patch';p.style.gridColumn=(cu+1)+' / span '+gm*2;p.style.gridRow=(row+1)+' / span '+gh;F.append(p);pick[i]=[];
     w.forEach((n,j)=>{for(let q=0;q<n;q++)pick[i].push([cu+(gm-n)+2*q+1,row+j+1])});row+=gh+RG})});
   // floresta: árvores grandes e pequenas, arbustos e mato (estáticos, sem sombra), fora dos grupos de canteiros
-  const PD=64,Wp=PD*2+tu*39.5-5,Hp=PD*2+tr*79-5,ex=rects.map(([cu,rr,wu,h])=>[PD+cu*39.5-16,PD+rr*79-16,PD+(cu+wu)*39.5+11,PD+(rr+h)*79+11]),sp=Math.max(46,Math.sqrt(Wp*Hp/150)),tv=[];
+  const Wp=PD*2+tu*39.5-5,Hp=PD*2+tr*79-5,ex=rects.map(([cu,rr,wu,h])=>[PD+cu*39.5-16,PD+rr*79-16,PD+(cu+wu)*39.5+11,PD+(rr+h)*79+11]),sp=Math.max(46,Math.sqrt(Wp*Hp/150)),tv=[];
+  // estradas de terra ligando casarão, grupos de canteiros e currais (as laterais encostam nas colunas de animais)
+  const rd=[],RW=20,xc=PD+(cw[0]*2+FG/2)*39.5-2.5,hx=two?xc:Wp/2,hy=two?Hp/2:gaps[(gaps.length-1)>>1][1];
+  if(two){rd.push([xc,0,xc,Hp]);gaps.forEach(([ci,y])=>rd.push(ci?[xc,y,Wp,y]:[0,y,xc,y]));
+    rects.forEach(([cu,rr,wu,h,ci])=>{const y=PD+(rr+h/2)*79-2.5;rd.push(ci?[xc,y,PD+cu*39.5,y]:[PD+(cu+wu)*39.5-5,y,xc,y])})}
+  else{gaps.forEach(([,y])=>rd.push([0,y,Wp,y]));if(gaps.length>1)rd.push([PD-32,gaps[0][1],PD-32,gaps[gaps.length-1][1]])}
+  rd.forEach(([x0,y0,x1,y1])=>ex.push([x0-RW/2-8,y0-RW/2-8,x1+RW/2+8,y1+RW/2+8]));ex.push([hx-72,hy-58,hx+72,hy+58]);
+  const rdH=rd.map(([x0,y0,x1,y1])=>`<i class="rdw" style="left:${(x0-RW/2).toFixed(0)}px;top:${(y0-RW/2).toFixed(0)}px;width:${(x1-x0+RW).toFixed(0)}px;height:${(y1-y0+RW).toFixed(0)}px"></i>`).join('');
+  tv.push([hy+40,`<svg class="tr" viewBox="0 0 96 80" style="left:${(hx-60).toFixed(0)}px;top:${(hy-62).toFixed(0)}px;width:120px;height:100px;z-index:${Math.round(hy)+60}"><use href="#house"/></svg>`]);
   for(let y=14,a=1;y<Hp;y+=sp*.8)for(let x=10;x<Wp;x+=sp,a++){
     const px=x+(rng(a)-.5)*sp*.8,py=y+(rng(a+7000)-.5)*sp*.6,u=rng(a+20000),t=u<.36?'oak':u<.62?'pine':u<.82?'bush':u<.93?'tuft':'flw',z=rng(a+30000),v=rng(a+40000);
     let wd=t==='oak'||t==='pine'?(z<.18?72+v*18:z<.55?44+v*12:26+v*8):t==='bush'?24+v*10:16+v*6;
     if(px<6||px>Wp-6||py>Hp-2||ex.some(q=>px+wd*.3>q[0]&&px-wd*.3<q[2]&&py>q[1]&&py-6<q[3]))continue;
-    tv.push([py,`<svg class="tr" viewBox="0 0 56 64" style="left:${(px-wd/2).toFixed(0)}px;top:${(py-wd*64/56*.94).toFixed(0)}px;width:${wd.toFixed(0)}px;height:${(wd*64/56).toFixed(0)}px;z-index:${Math.round(py)}"><use href="#${t}"/></svg>`])}
-  F.insertAdjacentHTML('afterbegin','<div id="forest">'+tv.sort((p,q)=>p[0]-q[0]).map(q=>q[1]).join('')+'</div>');
+    tv.push([py,`<svg class="tr" viewBox="0 0 56 64" style="left:${(px-wd/2).toFixed(0)}px;top:${(py-wd*64/56*.94).toFixed(0)}px;width:${wd.toFixed(0)}px;height:${(wd*64/56).toFixed(0)}px;z-index:${Math.round(py)+2}"><use href="#${t}"/></svg>`])}
+  F.insertAdjacentHTML('afterbegin','<div id="forest">'+rdH+tv.sort((p,q)=>p[0]-q[0]).map(q=>q[1]).join('')+'</div>');
   const flat=pick.flat();let k=0;for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
     const x=mk('plot'),key=r+','+c,q=flat[k++],id=r*97+c;x.d.dataset.key=key;x.key=key;x.d.style.gridColumn=q[0]+' / span 2';x.d.style.gridRow=q[1];
     x.d.style.translate=`${((rng(id)-.5)*8).toFixed(1)}px ${((rng(id+500)-.5)*8).toFixed(1)}px`;x.d.style.rotate=`${((rng(id+900)-.5)*3).toFixed(1)}deg`;F.append(x.d);cells.push(cm[key]=x)}
   if(L.children.length)map.append(L);map.append(F);if(R.children.length)map.append(R);
   const dc=document.createElement('div');dc.id='decor';
-  const SPR='<svg width="0" height="0" style="position:absolute"><defs><g id="oak"><rect x="24" y="36" width="8" height="24" rx="2" fill="#7a4d24"/><rect x="27" y="38" width="2.5" height="20" fill="#9a6735"/><circle cx="16" cy="32" r="13" fill="#2e7d32"/><circle cx="40" cy="32" r="13" fill="#2e7d32"/><circle cx="28" cy="18" r="16" fill="#2e7d32"/><circle cx="22" cy="27" r="12" fill="#43a047"/><circle cx="36" cy="28" r="12" fill="#43a047"/><circle cx="28" cy="19" r="11" fill="#4caf50"/><circle cx="22" cy="16" r="5" fill="#7bc67e"/><circle cx="35" cy="22" r="4" fill="#7bc67e"/></g><g id="pine"><rect x="25" y="48" width="6" height="12" fill="#6b4326"/><polygon points="28,2 46,26 10,26" fill="#1b6b32"/><polygon points="28,14 50,42 6,42" fill="#23863c"/><polygon points="28,28 54,56 2,56" fill="#2e9c47"/><polygon points="28,28 28,56 2,56" fill="#0000001c"/><polygon points="28,2 28,26 10,26" fill="#0000001c"/></g><g id="bush"><circle cx="17" cy="52" r="10" fill="#2f7d32"/><circle cx="39" cy="52" r="10" fill="#2f7d32"/><circle cx="28" cy="46" r="12" fill="#3f9a42"/><circle cx="24" cy="43" r="5" fill="#6cbf6f"/></g><g id="tuft" stroke="#3a8f3a" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M12 60L8 42M22 60L21 36M32 60L35 38M42 60L48 44M50 60L54 52"/></g><g id="flw"><path d="M28 60V44" stroke="#3a8f3a" stroke-width="3.5"/><circle cx="28" cy="38" r="9" fill="#ff7aa8"/><circle cx="28" cy="38" r="3.5" fill="#ffd54a"/></g></defs></svg>',
+  const SPR='<svg width="0" height="0" style="position:absolute"><defs><g id="oak"><rect x="24" y="36" width="8" height="24" rx="2" fill="#7a4d24"/><rect x="27" y="38" width="2.5" height="20" fill="#9a6735"/><circle cx="16" cy="32" r="13" fill="#2e7d32"/><circle cx="40" cy="32" r="13" fill="#2e7d32"/><circle cx="28" cy="18" r="16" fill="#2e7d32"/><circle cx="22" cy="27" r="12" fill="#43a047"/><circle cx="36" cy="28" r="12" fill="#43a047"/><circle cx="28" cy="19" r="11" fill="#4caf50"/><circle cx="22" cy="16" r="5" fill="#7bc67e"/><circle cx="35" cy="22" r="4" fill="#7bc67e"/></g><g id="pine"><rect x="25" y="48" width="6" height="12" fill="#6b4326"/><polygon points="28,2 46,26 10,26" fill="#1b6b32"/><polygon points="28,14 50,42 6,42" fill="#23863c"/><polygon points="28,28 54,56 2,56" fill="#2e9c47"/><polygon points="28,28 28,56 2,56" fill="#0000001c"/><polygon points="28,2 28,26 10,26" fill="#0000001c"/></g><g id="bush"><circle cx="17" cy="52" r="10" fill="#2f7d32"/><circle cx="39" cy="52" r="10" fill="#2f7d32"/><circle cx="28" cy="46" r="12" fill="#3f9a42"/><circle cx="24" cy="43" r="5" fill="#6cbf6f"/></g><g id="tuft" stroke="#3a8f3a" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M12 60L8 42M22 60L21 36M32 60L35 38M42 60L48 44M50 60L54 52"/></g><g id="flw"><path d="M28 60V44" stroke="#3a8f3a" stroke-width="3.5"/><circle cx="28" cy="38" r="9" fill="#ff7aa8"/><circle cx="28" cy="38" r="3.5" fill="#ffd54a"/></g><g id="house"><rect x="62" y="6" width="9" height="20" fill="#8a5a35"/><rect x="16" y="34" width="64" height="36" fill="#f3e2b8" stroke="#b79b62" stroke-width="2"/><polygon points="8,37 48,8 88,37" fill="#c0392b" stroke="#8e2a1f" stroke-width="2"/><circle cx="48" cy="25" r="4.5" fill="#8fd3f4" stroke="#7a4d24" stroke-width="1.5"/><rect x="41" y="48" width="14" height="22" rx="1.5" fill="#7a4d24"/><rect x="22" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="61" y="44" width="13" height="13" fill="#8fd3f4" stroke="#7a4d24" stroke-width="2"/><rect x="36" y="70" width="24" height="5" fill="#bdb6a6"/></g></defs></svg>',
   T=(t,p,w)=>`<svg viewBox="0 0 56 64" style="position:absolute;${p};width:${w}px;height:${w*64/56}px"><use href="#${t}"/></svg>`,
   E=(e,p)=>`<i style="${p}">${e}</i>`;
   dc.innerHTML=SPR+[T('oak','left:-4px;top:-8px',58),T('pine','right:-2px;top:-6px',54),T('pine','left:-6px;bottom:-6px',56),T('oak','right:-4px;bottom:-8px',60),
