@@ -203,7 +203,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <button class="ab" id="bu" aria-label="Rega e adubo automáticos" title="Liga/desliga rega e adubo automáticos">🚿<small>Auto</small></button>
 <button class="ab" id="bp" aria-label="Plantar tudo">🌱<small>Plantar</small></button>
 <button class="ab" id="bh" aria-label="Colher tudo">🧺<small>Colher</small></button>
-<button class="ab ab-shop" id="bs" aria-label="Comprar (loja)" title="Loja">🛒<small>Loja</small></button>
+<button class="ab ab-shop" id="bs" aria-label="Comprar (loja)" title="Loja">🛒<small>Comprar</small></button>
 </div>
 <div id="dock"></div>
 <div id="bn"></div>
@@ -443,7 +443,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl"><span class="ver">v1.9.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl"><span class="ver">v1.8.3</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k)),pc=Math.min(5,own.length);map.style.minWidth=pc?(pc*144+(pc-1)*6+28)+'px':'';
   if(own.length){const w=document.createElement('div');w.id='pens';w.style.setProperty('--pc',pc);map.append(w);
     own.forEach(m=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);w.append(x.d);pens.push(x)})}
@@ -907,7 +907,7 @@ function setupCorral(x){
   x.yard=y;x.ents=[];x.d.prepend(y);
   const l=document.createElement('span');l.className='lbl';x.d.append(l);x.lbl=l;
 }
-const VMAX=3; // máx. de bichos DESENHADOS por curral (a contagem real continua valendo para produção e para o ×N)
+// bichos desenhados no curral = quantidade comprada (limitada ao máximo de cada animal na loja)
 function pickTarget(e,x){
   const [W,H]=x.ys,mx=Math.max(0,W-e.sw),my=Math.max(0,H-e.sh);
   e.tx=Math.min(mx,Math.max(0,e.x+(Math.random()-.5)*110));e.ty=Math.min(my,Math.max(0,e.y+(Math.random()-.5)*70));
@@ -941,7 +941,7 @@ function anLoop(t){
   const paused=(shEl||(shEl=$('#sheet'))).classList.contains('on'); // loja/menu aberto: bichos parados
   for(const x of pens){
     if(!x.ys){const w=x.yard&&x.yard.clientWidth;if(!w)continue;x.ys=[w,x.yard.clientHeight]} // tamanho do curral lido uma vez só
-    const want=Math.min(cnt(x.m.k),VMAX),hive=x.m.k==='bee';let changed=false;
+    const want=Math.min(cnt(x.m.k),x.m.max),hive=x.m.k==='bee';let changed=false;
     while(x.ents.length<want){addEnt(x);changed=true}
     while(x.ents.length>want){x.ents.pop().el.remove();changed=true}
     if(hive){if(changed||!x.laid){layoutHives(x);x.laid=1}continue}
