@@ -59,15 +59,16 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .work{box-shadow:0 0 0 3px #fff8}
 .work .bar u{background:#fff}
 /* radar */
-.rd{position:absolute;inset:5px;border-radius:50%;display:none;overflow:hidden;border:2px solid #9fffb0aa;background:radial-gradient(circle,#0000 0 28%,#9fffb055 29% 31%,#0000 32% 58%,#9fffb044 59% 61%,#0000 62%),#0a2a10aa}
+@property --pg{syntax:'<angle>';inherits:false;initial-value:0deg}
+.rd{position:absolute;inset:0;border-radius:inherit;display:none;overflow:hidden;z-index:0;pointer-events:none;transition:--pg .5s linear;
+ background:conic-gradient(from calc(var(--pg) - 2.5deg),#eaffeed9 0 2.5deg,#0000 2.5deg),conic-gradient(from 0deg,#9fffb08a var(--pg),#0000 var(--pg)),radial-gradient(circle,#0000 0 28%,#9fffb04d 29% 31%,#0000 32% 58%,#9fffb03d 59% 61%,#0000 62%),#0a2a1099}
 .work .rd{display:block}
-.rd::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#0000 0 70%,#9fffb0e0 100%);}
 /* fazendeiro */
 .em svg{width:44px;height:44px;overflow:visible}
 .bd{animation:hop .55s ease-in-out infinite alternate}
 .hoe{transform-origin:30px 27px;animation:swing .55s ease-in-out infinite alternate}
 .tl{position:absolute;right:-8px;top:-8px;font-size:16px;font-style:normal;animation:bob .55s ease-in-out infinite}
-#pens{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+#pens{grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--pc,5),144px);gap:6px;width:max-content;justify-self:center}#map{justify-content:center}
 .pen{background:repeating-linear-gradient(0deg,#c99a4b 0 9px,#b5863c 9px 11px);border-color:#7a5420}
 .cnt{position:absolute;top:1px;right:4px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000;z-index:2}
 @keyframes sweep{to{transform:rotate(1turn)}}
@@ -128,7 +129,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 #bn.on{opacity:1;transform:translate(-50%,0)}
 .pop{position:fixed;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 1px 3px #000b;z-index:9;animation:up .9s forwards;white-space:nowrap}
 @keyframes up{to{transform:translateY(-44px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready .em::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd::before{animation-duration:3s}}
+@media (prefers-reduced-motion:reduce){.ready,.pop,.thirst::after,.ready .em::after,.late .bar u,.splash,.hoe,.bd,.tl{animation:none}.rd{transition:none}}
 :focus-visible{outline:3px solid #2b7de9;outline-offset:2px}
 /* ranking global */
 .rk-nota{margin:0 0 8px;font-size:13px;opacity:.8}
@@ -145,7 +146,7 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 .rk-vazio{margin:8px 0;opacity:.8}
 
 /* currais */
-.plot.pen.corral{width:156px;height:118px;padding:0;display:block;border:3px solid #6b4326;border-radius:12px;background:repeating-linear-gradient(90deg,#c08a4a 0 12px,#8d5d2c 12px 15px)}
+.plot.pen.corral{width:144px;height:110px;padding:0;display:block;border:3px solid #6b4326;border-radius:12px;background:repeating-linear-gradient(90deg,#c08a4a 0 12px,#8d5d2c 12px 15px)}
 .corral .em::after{display:none!important}
 .corral .em{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .corral .tm{bottom:14px}
@@ -163,6 +164,25 @@ body{font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);user-select:non
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .yard .gnd{filter:brightness(.7)}}
 :root[data-theme="dark"] .yard .gnd{filter:brightness(.7)}
 @media (prefers-reduced-motion:reduce){.an .sp.walk,.an.hive .bz{animation:none}}
+
+.an svg{display:block;width:100%;height:auto;overflow:visible}
+.an .lg,.an .peck,.an .tail{transform-box:fill-box}
+.an .lg{transform-origin:50% 0}
+.an .sp.walk .lg.a{animation:lgA .32s ease-in-out infinite alternate}
+.an .sp.walk .lg.b{animation:lgB .32s ease-in-out infinite alternate}
+.an .sp:not(.walk) .peck{transform-origin:85% 95%;animation:graze 5s ease-in-out infinite;animation-delay:var(--d,0s)}
+.an.bird .sp:not(.walk) .peck{transform-origin:85% 95%;animation:peck 2.6s ease-in-out infinite;animation-delay:var(--d,0s)}
+.an .tail{transform-origin:0 15%;animation:tailw 1.7s ease-in-out infinite alternate}
+.an.big .sp.walk{animation-name:hopS}
+.an.hopper .sp.walk{animation:hopR .42s ease-out infinite alternate}
+@keyframes lgA{from{transform:rotate(-17deg)}to{transform:rotate(17deg)}}
+@keyframes lgB{from{transform:rotate(17deg)}to{transform:rotate(-17deg)}}
+@keyframes graze{0%,35%,100%{transform:rotate(0)}48%,78%{transform:rotate(-8deg)}}
+@keyframes peck{0%,50%,100%{transform:rotate(0)}58%,74%{transform:rotate(-17deg)}66%{transform:rotate(-3deg)}}
+@keyframes tailw{from{transform:rotate(-4deg)}to{transform:rotate(5deg)}}
+@keyframes hopS{to{transform:translateY(-1.5px)}}
+@keyframes hopR{to{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.an .sp.walk .lg,.an .peck,.an .tail{animation:none!important}}
 </style>
 </head>
 <body>
@@ -360,6 +380,7 @@ function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
   if(x.eh!==em){x.eh=em;x.em.innerHTML=em}
   if(x.lastTm!==tm){x.tm.textContent=tm;x.lastTm=tm}if(!fertLevel&&x.tm.hasAttribute('title'))x.tm.removeAttribute('title');const width=(Math.round(bw*100))+'%';if(x.lastWidth!==width){x.u.style.width=width;x.lastWidth=width}
   cls+=x.d.classList.contains('splash')?' splash':'';
+  const pg=cls.includes(' work')?Math.round(Math.max(0,Math.min(1,bw))*360):0;if(x.lpg!==pg){(x.rd||(x.rd=x.d.querySelector('.rd'))).style.setProperty('--pg',pg+'deg');x.lpg=pg}
   if(x.d.className!==cls)x.d.className=cls}
 
 function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
@@ -401,8 +422,8 @@ const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
   map.innerHTML='<div id="ttl">🌻 Fazenda Feliz v1.8.3 🌻<small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
-  const own=AM.filter(m=>cnt(m.k));
-  if(own.length){const w=document.createElement('div');w.id='pens';map.append(w);
+  const own=AM.filter(m=>cnt(m.k)),pc=Math.min(5,own.length);map.style.minWidth=pc?(pc*144+(pc-1)*6+28)+'px':'';
+  if(own.length){const w=document.createElement('div');w.id='pens';w.style.setProperty('--pc',pc);map.append(w);
     own.forEach(m=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);w.append(x.d);pens.push(x)})}
   map.style.gridTemplateColumns=`repeat(${S.cols},74px)`;
   for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
@@ -674,9 +695,186 @@ function ui(){
 }
 
 // ---------- Currais: animais andando ----------
+const ART={
+hen:{w:30,vb:[48,46],svg:`<svg viewBox="0 0 48 46" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="25" cy="43" rx="15" ry="2.5" fill="#0003"/>
+<g class="lg b"><path d="M27 33V40.5" stroke="#c27a0d" stroke-width="2.3" stroke-linecap="round"/><path d="M27 40.5L23.5 42M27 40.5L28.5 42.3M27 40.5L31 41.6" stroke="#c27a0d" stroke-width="1.7" stroke-linecap="round"/></g>
+<path d="M33 24C36 14 44 9 45.5 14C47.5 13 48 19 45 22C48 23.5 45.5 29.5 40 31.5Z" fill="#8f4a22"/>
+<path d="M34 25C37 17 42 13 43 17C44.5 20 42.5 24 38.5 28Z" fill="#b7692f"/>
+<path d="M11 23C11 15 20 12 28 16C36 19 41 27 37 33C33 39 21 39 16 34C12 31 11 27 11 23Z" fill="#cf8341"/>
+<path d="M17 35C23 39.500 33 38.500 37.500 32C35.500 39.500 22 41.500 17 35Z" fill="#a8602a"/>
+<path d="M13 25C13 30 15 33 18 35C14 34 11.500 29 13 25Z" fill="#e6ad6f"/>
+<path d="M19 22C25 19 33 22 34 29C30 34 22 33 19 26Z" fill="#a8602a"/>
+<path d="M22 26Q27 25 31 28M23 29Q27 29 30 31.200" stroke="#7d4520" stroke-width="1" fill="none" stroke-linecap="round"/>
+<g class="lg a"><path d="M21 33V41" stroke="#e8a21c" stroke-width="2.4" stroke-linecap="round"/><path d="M21 41L17.500 42.500M21 41L22.500 42.800M21 41L25 42" stroke="#e8a21c" stroke-width="1.7" stroke-linecap="round"/></g>
+<g class="peck"><path d="M10 25C8 19 8 12.500 12 10C16 8.500 19 12 18.500 18C18 23 15.500 26.500 12.500 27.500Z" fill="#cf8341"/>
+<path d="M10.500 10C10 5.500 12 4 13.500 6C14.500 3.500 17 4.500 16.500 8C18 7.500 18.500 10.500 16 11.500Z" fill="#d93a2b"/>
+<path d="M9.800 12L3 14.300L9.800 16.500Z" fill="#f5b82a"/><path d="M9.800 14.300L3.500 14.300" stroke="#d08c14" stroke-width=".6"/>
+<ellipse cx="10.600" cy="19.200" rx="1.800" ry="2.800" fill="#d93a2b"/>
+<circle cx="12.700" cy="12.800" r="1.400" fill="#2b1a0c"/><circle cx="12.200" cy="12.300" r=".45" fill="#fff"/></g>
+</svg>`},
+duck:{w:32,vb:[56,44],svg:`<svg viewBox="0 0 56 44" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="29" cy="41.500" rx="18" ry="2.300" fill="#0003"/>
+<g class="lg b"><path d="M32 35V39.500" stroke="#d9780e" stroke-width="2.300" stroke-linecap="round"/><path d="M32 39.500L27 41.500H35Z" fill="#d9780e" stroke="#d9780e" stroke-width="1" stroke-linejoin="round"/></g>
+<path d="M13 26C13 19 22 17 30 20C37 22 44 19 51 13C51.500 22 47 33 36 35.500C26 37.500 13 34 13 26Z" fill="#fbf7ec"/>
+<path d="M16 31C24 36.500 38 35.500 45 28C43.500 35 36 38.500 27 37.500C20 36.500 16 34 16 31Z" fill="#e2dac3"/>
+<path d="M48.500 15C51.500 11.500 54 12 53.500 14.500C52.500 17.500 50.500 19.500 47 20.500Z" fill="#fbf7ec"/>
+<path d="M23 24C30 21 38 24 40 29.500C33 33.500 25 31.500 23 24Z" fill="#ebe4d0"/>
+<path d="M26 27.500Q32 26 37 28.500" stroke="#cdc4ab" stroke-width="1" fill="none" stroke-linecap="round"/>
+<g class="lg a"><path d="M26 35V40" stroke="#f08a14" stroke-width="2.300" stroke-linecap="round"/><path d="M26 40L21 42H29Z" fill="#f08a14" stroke="#f08a14" stroke-width="1" stroke-linejoin="round"/></g>
+<g class="peck"><path d="M12 28C9 22.500 9 15 12 11C15 8 21 9 21 15C21 20 19.500 24.500 18.500 29Z" fill="#fbf7ec"/>
+<path d="M10 11.500C4.500 10.500 2 13 3.500 15C5.500 16.800 9 15.800 10.500 14.800Z" fill="#f39a1f"/><path d="M4.500 13.700Q7.500 14.300 10.300 13.800" stroke="#c9770b" stroke-width=".7" fill="none"/>
+<circle cx="13.700" cy="11" r="1.300" fill="#2b1a0c"/><circle cx="13.300" cy="10.500" r=".4" fill="#fff"/></g>
+</svg>`},
+rabbit:{w:30,vb:[48,44],svg:`<svg viewBox="0 0 48 44" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="25" cy="41" rx="16" ry="2.200" fill="#0003"/>
+<circle cx="42" cy="29" r="4.500" fill="#fff"/><circle cx="41" cy="30" r="3.200" fill="#efe9e0"/>
+<g class="lg b"><path d="M16 33H20.500V39.500H16.500Q15 39.500 15 38Z" fill="#a38d76"/><ellipse cx="16.500" cy="39.600" rx="3.200" ry="1.500" fill="#e8dccb"/></g>
+<path d="M14 28C14 19 24 15 32 18C41 20 45 28 43 33C41 38.500 30 39.500 22 38.500C16 37.500 14 33 14 28Z" fill="#b8a38d"/>
+<path d="M20 36C28 39.500 38 38 42 33C41 39 30 40.500 22 39.500Z" fill="#e8dccb"/>
+<ellipse cx="34" cy="30" rx="8.500" ry="8" fill="#a8927a"/>
+<g class="lg a"><path d="M27 37C34 36 42 37 43.500 39.500C43.500 40.500 42 41 40 41H29Q26 40 27 37Z" fill="#a8927a"/></g>
+<g class="lg a"><path d="M13 33H18V39.500H13.500Q12 39.500 12 38Z" fill="#b8a38d"/><ellipse cx="14" cy="39.700" rx="3" ry="1.400" fill="#e8dccb"/></g>
+<path d="M17.500 18C16.500 8 20 2 23.500 4C25.500 7 24 13 22 19Z" fill="#9c8670"/>
+<path d="M12.500 18C8.500 8 10.500 0.500 14.500 1.500C18 4 18 11 17.500 18Z" fill="#b8a38d"/>
+<path d="M13.200 15.500C11.500 8.500 12.200 3.800 14 4C15.500 6 16 11 16 15.500Z" fill="#f0b6b8"/>
+<path d="M8.500 22.500C9 17.500 14 15.500 18 17.500C22 20 21.500 26 19 28.500C16 31.500 9 30.500 8 26.500Z" fill="#b8a38d"/>
+<ellipse cx="10.700" cy="26.500" rx="3.800" ry="3" fill="#e8dccb"/>
+<ellipse cx="7.500" cy="25" rx="1.300" ry="1" fill="#e58a95"/>
+<circle cx="13.500" cy="22" r="1.700" fill="#2b1a0c"/><circle cx="13" cy="21.400" r=".55" fill="#fff"/>
+<path d="M8.800 26.800L3.500 25.500M9 27.800L3.800 28.800" stroke="#fff" stroke-width=".6" stroke-linecap="round" opacity=".9"/>
+</svg>`},
+cow:{w:54,vb:[84,64],svg:`<svg viewBox="0 0 84 64" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="45" cy="60.500" rx="31" ry="3" fill="#0003"/>
+<g class="lg b"><g transform="translate(-7 0)"><path d="M55 40H61.500L61 56H56Z" fill="#d6d0c2"/><path d="M55.800 55H61.200L61.800 59.500H55.200Z" fill="#3a2a1a"/></g></g>
+<g class="lg a"><g transform="translate(7 0)"><path d="M29 40H35.500L35 56H30Z" fill="#d6d0c2"/><path d="M29.800 55H35.200L35.800 59.500H29.200Z" fill="#3a2a1a"/></g></g>
+<path d="M68 19C74.500 21.500 76 32 73.500 44" stroke="#2b2b2b" stroke-width="2.300" fill="none" stroke-linecap="round"/>
+<path d="M73.500 42C69.500 46 70.500 51.500 73.500 54C77 51.500 77.500 46 73.500 42Z" fill="#2b2b2b"/>
+<ellipse cx="55" cy="45" rx="5.800" ry="3.800" fill="#f4a8ae"/><path d="M52 47.500v2.500M55 48v2.500M58 47.500v2.500" stroke="#e48c97" stroke-width="1.800" stroke-linecap="round"/>
+<path d="M19 22C19 15 28 13 40 14C54 13 66 13 69 21C71 27 70.500 36 66 41C62 45 54 44.500 46 44.500L32 44.500C25 44.500 20 40.500 19 33Z" fill="#fbfaf6"/>
+<path d="M24 40.500C32 45.500 56 45.500 66 40.500C64 45.500 54 47.500 44 47.500C34 47.500 26 45.500 24 40.500Z" fill="#dcd6c8"/>
+<path d="M31 14C40 12 43.500 20 38.500 25C33 28.500 27 22 31 14Z" fill="#2b2b2b"/>
+<path d="M52 13C63 12 68.500 19 64.500 27C59 31.500 51 26 52 13Z" fill="#2b2b2b"/>
+<path d="M44 33C50 31 54.500 36 50.500 40.500C46 42.500 42 38 44 33Z" fill="#2b2b2b"/>
+<path d="M22 18C30 16 40 16.500 48 16" stroke="#fff" stroke-width="1.200" opacity=".6" fill="none" stroke-linecap="round"/>
+<g class="lg b"><path d="M61 38H68.500L67.500 56H62.500Z" fill="#fbfaf6"/><path d="M62 55H68L68.500 59.500H61.500Z" fill="#3a2a1a"/></g>
+<g class="lg a"><path d="M22 38H30L29.500 56H23.500Z" fill="#fbfaf6"/><path d="M23 55H29L29.500 59.500H22.500Z" fill="#3a2a1a"/></g>
+<g class="peck"><path d="M21 17C16 14 9 17 7 25C5 31 4 38 8 41C12 43 18 41 21 37C23 31 24 22 21 17Z" fill="#fbfaf6"/>
+<path d="M21 17C16 14 11 17 10 22C14 22.500 18 24.500 21 22.500Z" fill="#2b2b2b"/>
+<path d="M6 33C4 38 6 42 10 42C13.500 41 13.500 37 12.500 33Z" fill="#f4a8ae"/><ellipse cx="8.200" cy="38.500" rx="1" ry="1.400" fill="#b5606a"/>
+<path d="M20.500 21C14 18 10 20 11 23.500C14.500 25.500 18.500 24.500 20.500 21Z" fill="#2b2b2b"/><path d="M18.500 22C15 20.500 13 21.500 13.300 22.600C15 23.500 17 23.200 18.500 22Z" fill="#f0b6b8"/>
+<path d="M19 16C18 11 21 8 24.500 10C22.500 11 21.800 13 22.500 16Z" fill="#efe3c0"/>
+<circle cx="14" cy="27" r="1.700" fill="#2b1a0c"/><circle cx="13.500" cy="26.400" r=".55" fill="#fff"/></g>
+</svg>`},
+goat:{w:42,vb:[64,60],svg:`<svg viewBox="0 -4 64 60" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="34" cy="53" rx="20" ry="2.500" fill="#0003"/>
+<g class="lg b"><path d="M40 35H43.500L43 49H40.500Z" fill="#cfc4ac"/><path d="M40.300 48.500H43.200L43.600 52H40Z" fill="#3a2a1a"/></g>
+<g class="lg a"><path d="M21 35H24.500L24 49H21.500Z" fill="#cfc4ac"/><path d="M21.300 48.500H24.200L24.600 52H21Z" fill="#3a2a1a"/></g>
+<path d="M50 21L54.500 14.500L55.500 22.500Z" fill="#efe6d3"/>
+<path d="M17 24C17 18 26 16 36 17C46 17 52 20 52 27C52 34 47 38 41 38L26 38C20 38 17 31 17 24Z" fill="#efe6d3"/>
+<path d="M24 17.500C34 15.500 46 17 50.500 22C44 24 34 23 24 22.500Z" fill="#c9a074"/>
+<path d="M22 35C28 39 40 39 46 35C44 39.500 38 41 32 41C27 41 23 39 22 35Z" fill="#d6cbb4"/>
+<g class="lg b"><path d="M45.500 35H49L48.500 49H46Z" fill="#efe6d3"/><path d="M45.800 48.500H48.700L49.100 52H45.500Z" fill="#3a2a1a"/></g>
+<g class="lg a"><path d="M26 35H29.500L29 49H26.500Z" fill="#efe6d3"/><path d="M26.300 48.500H29.200L29.600 52H26Z" fill="#3a2a1a"/></g>
+<path d="M20 27C18 21 17 14 19 9L29 11C28.500 17 29 22 31 27Z" fill="#efe6d3"/>
+<g class="peck"><path d="M19 7C15 6 12 8 10 12C8 15 7 19 9 21C11 23 15 22.500 18 20.500C21 17.500 22 11 19 7Z" fill="#efe6d3"/>
+<path d="M20 9C25.500 8 29 11.500 27.500 13.500C24.500 14.500 21 12.500 20 9Z" fill="#c9a074"/>
+<path d="M17.500 7C16.500 1 20 -2 23.500 0C21 0.500 19.500 3 20.500 7Z" fill="#8a7a66"/>
+<path d="M9.500 20C8 25 9 28.500 11 31C12.500 27.500 13 24 14 21Z" fill="#e0d4bb"/>
+<ellipse cx="8.700" cy="17.500" rx="1.300" ry="1.100" fill="#6b4a3a"/>
+<circle cx="14.500" cy="12" r="1.900" fill="#d9a32a"/><ellipse cx="14.500" cy="12" rx=".6" ry="1.500" fill="#2b1a0c"/></g>
+</svg>`},
+sheep:{w:42,vb:[64,54],svg:`<svg viewBox="0 0 64 54" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="35" cy="50.500" rx="21" ry="2.500" fill="#0003"/>
+<g class="lg b"><path d="M42 36H45.500L45 47.500H42.500Z" fill="#3b2f27"/><path d="M42.300 47H45.200L45.600 50.500H42Z" fill="#241a14"/></g>
+<g class="lg a"><path d="M24 36H27.500L27 47.500H24.500Z" fill="#3b2f27"/><path d="M24.300 47H27.200L27.600 50.500H24Z" fill="#241a14"/></g>
+<g fill="#d9d1bd"><circle cx="30" cy="28" r="12"/><circle cx="41" cy="26" r="11"/><circle cx="50" cy="30" r="9.500"/><circle cx="24" cy="33" r="8.500"/><circle cx="36" cy="37" r="9.500"/><circle cx="46" cy="37" r="7.500"/></g>
+<g fill="#f8f5ec"><circle cx="30" cy="26" r="12"/><circle cx="41" cy="24" r="11"/><circle cx="50" cy="28" r="9.500"/><circle cx="24" cy="31" r="8.500"/><circle cx="36" cy="35" r="9.500"/><circle cx="46" cy="35" r="7.500"/><circle cx="21" cy="24" r="6"/></g>
+<g fill="#fff" opacity=".7"><circle cx="34" cy="20" r="4"/><circle cx="45" cy="19" r="3.500"/><circle cx="27" cy="27" r="3"/></g>
+<g class="lg b"><path d="M46 36H49.500L49 47.500H46.500Z" fill="#4a3b30"/><path d="M46.300 47H49.200L49.600 50.500H46Z" fill="#241a14"/></g>
+<g class="lg a"><path d="M28 36H31.500L31 47.500H28.500Z" fill="#4a3b30"/><path d="M28.300 47H31.200L31.600 50.500H28Z" fill="#241a14"/></g>
+<g class="peck"><path d="M18 19C12 19 8 24 8 29.500C8 35 11 38.500 15.500 37.500C20 36.500 22 31 21 25Z" fill="#4a3b30"/>
+<ellipse cx="22" cy="27" rx="5.500" ry="2.600" transform="rotate(30 22 27)" fill="#3a2e25"/><ellipse cx="21.500" cy="27" rx="3" ry="1.200" transform="rotate(30 21.500 27)" fill="#c58b86"/>
+<circle cx="18" cy="19" r="5.500" fill="#f8f5ec"/><circle cx="14" cy="18.500" r="3.500" fill="#fff"/>
+<ellipse cx="9.500" cy="32" rx="2.200" ry="1.600" fill="#8a5a55"/>
+<circle cx="14.500" cy="26.500" r="1.800" fill="#f1dc8a"/><ellipse cx="14.500" cy="26.500" rx=".6" ry="1.400" fill="#2b1a0c"/></g>
+</svg>`},
+pony:{w:56,vb:[84,66],svg:`<svg viewBox="0 -2 84 66" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="46" cy="60.500" rx="30" ry="3" fill="#0003"/>
+<g class="tail"><path d="M64 21C73 20 79 31 75 43C73.500 49 70.500 53 67 57C69.500 49 68 41 63 33Z" fill="#efd49a"/>
+<path d="M65 23C72 26 74.500 35 71 45C71 38.500 68.500 32 64 27Z" fill="#d1ab5e"/>
+<path d="M68 31C72 36 72 43 68 52" stroke="#fff3cf" stroke-width="1.200" fill="none" stroke-linecap="round" opacity=".8"/></g>
+<g class="lg b"><g transform="translate(-9 0)"><path d="M56 37H63L62 52H57Z" fill="#8f4a1f"/><path d="M56.700 50H62.300L62.700 56H56.300Z" fill="#e9e2d3"/><path d="M56 56H63L63.800 60H55.500Z" fill="#2f2118"/></g></g>
+<g class="lg a"><g transform="translate(9 0)"><path d="M29 37H36L35 52H30Z" fill="#8f4a1f"/><path d="M29.700 50H35.300L35.700 56H29.300Z" fill="#e9e2d3"/><path d="M29 56H36L36.800 60H28.500Z" fill="#2f2118"/></g></g>
+<path d="M26 26C25 19 33 17 42 18C52 18.500 61 17 65.500 23.500C69.500 30 64.500 41 54 42L37 42C30 42 26.500 34 26 26Z" fill="#b9692f"/>
+<path d="M32 36C41 40.500 54 40.500 63 35C61.500 41.500 54 43.500 46 43.500C38 43.500 33 41 32 36Z" fill="#8f4a1f" opacity=".75"/>
+<ellipse cx="58.500" cy="28" rx="8.500" ry="8" fill="#c97a3b" opacity=".75"/>
+<ellipse cx="36.500" cy="28.500" rx="7" ry="7.500" fill="#c97a3b" opacity=".6"/>
+<path d="M38 19.500C46 18.800 56 18.500 62 20" stroke="#e2a066" stroke-width="1.500" fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M44 26C47 29 47 33 45 36" stroke="#9a5424" stroke-width="1" fill="none" stroke-linecap="round" opacity=".6"/>
+<g class="lg b"><path d="M54 36H62L61 52H56Z" fill="#b9692f"/><path d="M55 50H61.300L61.800 56H54.700Z" fill="#fbf7ec"/><path d="M54.500 56H62L63 60.500H54Z" fill="#2f2118"/></g>
+<g class="lg a"><path d="M30 36H38L37 52H32Z" fill="#b9692f"/><path d="M31 50H37.300L37.800 56H30.700Z" fill="#fbf7ec"/><path d="M30.500 56H38L39 60.500H30Z" fill="#2f2118"/></g>
+<path d="M24 29C24 21 26 14 30 8.500C33.500 6 39 8 41 12.500C41 18 43 22 46 26C39 29.500 30 31.500 24 29Z" fill="#b9692f"/>
+<path d="M32 12C35 11 38 12.500 39.500 16C40 20 42 23 44 25C40 26 36 24 34 20C33 17 32 14.500 32 12Z" fill="#c97a3b" opacity=".6"/>
+<path d="M33 5C37.500 2 43 7 44 13C45 19 47 23 50 27C45 26.500 41.500 24 39.500 20C40 15.500 38.500 11 35 8.500Z" fill="#efd49a"/>
+<path d="M38 8C43 9 45.500 14 45 19" stroke="#d1ab5e" stroke-width="1.300" fill="none" stroke-linecap="round"/>
+<path d="M36.500 12C41 14 43 18.500 43 23" stroke="#fff3cf" stroke-width="1" fill="none" stroke-linecap="round" opacity=".8"/>
+<path d="M20.500 25C21 30 23 34 26 37L33 35L31 24Z" fill="#b9692f"/>
+<g class="peck"><path d="M31 5.500C35.500 4.500 39.500 8 39.500 12.500C39 17 31 22.500 23 26.500C17.500 29 12.500 27 12.500 22.500C12.500 19 16.500 16.500 21 14.500C25.500 12 27 7 31 5.500Z" fill="#b9692f"/>
+<path d="M21 14.500C25.500 12 27 7 31 5.500C35 4.500 38 7 39 10.500C34 9 27 11 21.500 16.500Z" fill="#c97a3b" opacity=".6"/>
+<path d="M28.500 7C27.500 12 22.500 17 17.500 21.500C15.500 23.500 14 22.500 15 20.500C19.500 17 23.500 12 26.500 6.500Z" fill="#fbf7ec"/>
+<path d="M12.500 22.500C12.500 27 17 29 22 27.500C23 25.500 22.500 24 21.500 23C18 25 14.500 25 13.500 22Z" fill="#6b3a1a"/>
+<ellipse cx="14.800" cy="23.800" rx="1.800" ry="1.200" transform="rotate(30 14.800 23.800)" fill="#2f1a0c"/>
+<path d="M30.500 6.500L32 -1L36.500 5.500Z" fill="#b9692f"/><path d="M32 4.500L33 .8L35 4.300Z" fill="#7a4020"/>
+<path d="M26.500 5.500C30 7.500 30.500 12 27 16C25 12.500 25.500 8.500 26.500 5.500Z" fill="#efd49a"/>
+<ellipse cx="29.500" cy="13" rx="2.300" ry="2.600" fill="#2b1a0c"/><circle cx="28.800" cy="12" r=".8" fill="#fff"/><circle cx="30.200" cy="14.200" r=".4" fill="#fff" opacity=".7"/>
+<path d="M33 19C31 22 27 24.500 23 25.500" stroke="#8f4a1f" stroke-width="1" fill="none" stroke-linecap="round" opacity=".6"/></g>
+</svg>`},
+pig:{w:46,vb:[68,50],svg:`<svg viewBox="0 0 68 50" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="38" cy="46.500" rx="24" ry="2.800" fill="#0003"/>
+<g class="lg b"><g transform="translate(-4 0)"><path d="M46 36H52L51.500 44H46.500Z" fill="#e48c97"/><path d="M46.300 43.500H51.700L52 45.500H46Z" fill="#5a3a30"/></g></g>
+<g class="lg a"><g transform="translate(4 0)"><path d="M26 36H32L31.500 44H26.500Z" fill="#e48c97"/><path d="M26.300 43.500H31.700L32 45.500H26Z" fill="#5a3a30"/></g></g>
+<path d="M61 22C66.500 19.500 68 26.500 63.500 26.500C60 26.500 60.500 23 64 24" stroke="#e48c97" stroke-width="1.800" fill="none" stroke-linecap="round"/>
+<path d="M17 24C17 14 30 11 44 12C58 13 63 21 63 29C63 37 55 40 49 40L27 40C20 40 17 32 17 24Z" fill="#f4a9b0"/>
+<path d="M22 37C30 41.500 50 41.500 58 36C56 41.500 50 43.500 40 43.500C30 43.500 24 41.500 22 37Z" fill="#e48c97"/>
+<path d="M26 15.500C36 11.500 52 12.500 58 19.500C48 15.500 36 15.500 26 17.500Z" fill="#f9c6cb"/>
+<ellipse cx="54" cy="25" rx="7" ry="8" fill="#f7b3b9" opacity=".7"/>
+<g class="lg b"><path d="M49 36H55L54.500 45H49.500Z" fill="#f4a9b0"/><path d="M49.300 44.500H54.700L55 46.500H49Z" fill="#5a3a30"/></g>
+<g class="lg a"><path d="M23 36H29L28.500 45H23.500Z" fill="#f4a9b0"/><path d="M23.300 44.500H28.700L29 46.500H23Z" fill="#5a3a30"/></g>
+<g class="peck"><ellipse cx="15.500" cy="27" rx="11.500" ry="10.500" fill="#f4a9b0"/>
+<ellipse cx="6.500" cy="30" rx="4.300" ry="5.300" fill="#f9bcc2"/><ellipse cx="5.600" cy="28.600" rx=".9" ry="1.400" fill="#a9505c"/><ellipse cx="5.600" cy="32" rx=".9" ry="1.400" fill="#a9505c"/>
+<path d="M13 18.500C15 10.500 23 11 24 17C21 19.500 16 20.500 13 18.500Z" fill="#e48c97"/>
+<circle cx="12.500" cy="25" r="1.500" fill="#2b1a0c"/><circle cx="12" cy="24.500" r=".45" fill="#fff"/>
+<path d="M17 33C20 35 24 35 26 33" stroke="#e48c97" stroke-width="1" fill="none" stroke-linecap="round"/></g>
+</svg>`},
+turkey:{w:44,vb:[64,56],svg:`<svg viewBox="0 0 64 56" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="32" cy="53.500" rx="17" ry="2.500" fill="#0003"/>
+<g class="lg b"><path d="M32 40V50" stroke="#a87a62" stroke-width="2.600" stroke-linecap="round"/><path d="M32 50L27.500 52M32 50L33 52.300M32 50L36.500 51.500" stroke="#a87a62" stroke-width="1.800" stroke-linecap="round"/></g>
+<g transform="translate(46 30)">
+<g transform="rotate(-24)"><ellipse cx="0" cy="-17" rx="4.800" ry="17" fill="#7a4a22"/><ellipse cx="0" cy="-23" rx="3.500" ry="9" fill="#d9b36c"/><ellipse cx="0" cy="-30" rx="2.600" ry="3.500" fill="#f2e3b5"/></g>
+<g transform="rotate(-2)"><ellipse cx="0" cy="-18" rx="4.800" ry="18" fill="#7a4a22"/><ellipse cx="0" cy="-24" rx="3.500" ry="9.500" fill="#d9b36c"/><ellipse cx="0" cy="-31" rx="2.600" ry="3.500" fill="#f2e3b5"/></g>
+<g transform="rotate(20)"><ellipse cx="0" cy="-18" rx="4.800" ry="18" fill="#7a4a22"/><ellipse cx="0" cy="-24" rx="3.500" ry="9.500" fill="#d9b36c"/><ellipse cx="0" cy="-31" rx="2.600" ry="3.500" fill="#f2e3b5"/></g>
+<g transform="rotate(42)"><ellipse cx="0" cy="-17" rx="4.800" ry="17" fill="#7a4a22"/><ellipse cx="0" cy="-23" rx="3.500" ry="9" fill="#d9b36c"/><ellipse cx="0" cy="-30" rx="2.600" ry="3.500" fill="#f2e3b5"/></g>
+<g transform="rotate(64)"><ellipse cx="0" cy="-15" rx="4.500" ry="15" fill="#7a4a22"/><ellipse cx="0" cy="-20" rx="3.200" ry="8" fill="#d9b36c"/><ellipse cx="0" cy="-26" rx="2.400" ry="3" fill="#f2e3b5"/></g>
+<g transform="rotate(86)"><ellipse cx="0" cy="-13" rx="4.200" ry="13" fill="#6b4020"/><ellipse cx="0" cy="-18" rx="3" ry="7" fill="#d9b36c"/></g>
+</g>
+<path d="M14 30C14 22 24 19 34 22C44 24 50 32 46 39C42 46 28 47 21 43C16 40 14 35 14 30Z" fill="#6b4423"/>
+<path d="M20 40C27 46 41 45 46 38C45 45 28 49 20 40Z" fill="#4e3018"/>
+<path d="M19 28q3 3 6 0M26 25q3 3 6 0M33 26q3 3 6 0M23 34q3 3 6 0M31 33q3 3 6 0M39 32q3 3 6 0M28 40q3 3 6 0" stroke="#b58559" stroke-width="1.100" fill="none" stroke-linecap="round"/>
+<path d="M24 29C32 26.500 41 30 42 37C36 42 27 40 24 32Z" fill="#5a3819"/>
+<path d="M27 32q3 2.500 6 0M30 36q3 2.500 6 0" stroke="#9a6a3a" stroke-width="1" fill="none" stroke-linecap="round"/>
+<g class="lg a"><path d="M25 41V50.500" stroke="#c4917a" stroke-width="2.700" stroke-linecap="round"/><path d="M25 50.500L20.500 52.500M25 50.500L26 52.800M25 50.500L29.500 52" stroke="#c4917a" stroke-width="1.800" stroke-linecap="round"/></g>
+<g class="peck"><path d="M16 32C12 26 11 19 12.500 13.500C15 10.500 19 12 19.500 16C19.500 22 21 26 24 29Z" fill="#b8858a"/>
+<ellipse cx="13" cy="10" rx="5" ry="5.200" fill="#6aa6d0"/>
+<path d="M8.500 10L3.500 12L8.500 13.800Z" fill="#e9a23b"/>
+<path d="M9 12.500C7 15.500 7.500 19.500 9.500 21.500C11.500 19.500 12 15.500 11.500 12.500Z" fill="#d9342b"/>
+<path d="M12 14.500C12 18 13 20.500 15 22C16 19.500 16 16.500 15 14.500Z" fill="#c4352c"/>
+<circle cx="12.200" cy="9.200" r="1.300" fill="#2b1a0c"/><circle cx="11.800" cy="8.800" r=".4" fill="#fff"/>
+<path d="M14 5.500C14.500 3.500 17 3.500 17.500 5.500" stroke="#d9342b" stroke-width="1.500" fill="none" stroke-linecap="round"/></g>
+</svg>`},
+bee:{w:36,vb:[40,44],svg:`<svg viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="20" cy="41" rx="16" ry="3" fill="#0003"/><path d="M6 38Q4 22 20 4Q36 22 34 38Z" fill="#f2b83a" stroke="#a8741a" stroke-width="2"/><path d="M8 31Q20 34 32 31M10 23Q20 26 30 23M14 15Q20 17 26 15" stroke="#a8741a" stroke-width="2" fill="none"/><path d="M12 14Q16 8 20 7" stroke="#fff3b0" stroke-width="1.600" fill="none" stroke-linecap="round" opacity=".7"/><ellipse cx="20" cy="35" rx="4.500" ry="3.500" fill="#4a2c0c"/></svg>`}
+};
 const YC={hen:'#e6d28e',duck:'#a3d9a0',rabbit:'#b9e38d',cow:'#92d273',goat:'#cfc794',sheep:'#9fd884',pony:'#b9dc8c',pig:'#d2ad86',turkey:'#dcbf86',bee:'#c2e47f'};
-const SZ={hen:21,duck:21,rabbit:20,turkey:25,goat:24,sheep:25,pig:25,cow:30,pony:29};
-const HIVE='<svg viewBox="0 0 40 44" width="34" height="38" aria-hidden="true"><ellipse cx="20" cy="41" rx="15" ry="3" fill="#0003"/><path d="M6 38Q4 22 20 4Q36 22 34 38Z" fill="#f2b83a" stroke="#a8741a" stroke-width="2"/><path d="M8 31Q20 34 32 31M10 23Q20 26 30 23M14 15Q20 17 26 15" stroke="#a8741a" stroke-width="2" fill="none"/><ellipse cx="20" cy="35" rx="4.5" ry="3.5" fill="#4a2c0c"/></svg>';
 function setupCorral(x){
   const m=x.m,y=document.createElement('div');y.className='yard';y.style.setProperty('--yc',YC[m.k]||'#9fd884');
   y.innerHTML='<i class="gnd"></i>'+(m.k==='duck'?'<i class="pond"></i>':m.k==='pig'?'<i class="mud"></i>':'');
@@ -685,24 +883,25 @@ function setupCorral(x){
 }
 function yardSize(x){return[x.yard.clientWidth,x.yard.clientHeight]}
 function pickTarget(e,x){
-  const [W,H]=yardSize(x),mx=Math.max(0,W-e.s),my=Math.max(0,H-e.s);
-  e.tx=Math.min(mx,Math.max(0,e.x+(Math.random()-.5)*110));e.ty=Math.min(my,Math.max(0,e.y+(Math.random()-.5)*80));
-  e.v=12+Math.random()*16;if(Math.abs(e.tx-e.x)>2)e.f=e.tx>e.x?-1:1;
+  const [W,H]=yardSize(x),mx=Math.max(0,W-e.sw),my=Math.max(0,H-e.sh);
+  e.tx=Math.min(mx,Math.max(0,e.x+(Math.random()-.5)*110));e.ty=Math.min(my,Math.max(0,e.y+(Math.random()-.5)*70));
+  e.v=11+Math.random()*14;if(Math.abs(e.tx-e.x)>2)e.f=e.tx>e.x?-1:1;
   e.sp.classList.add('walk');e.moving=true;
 }
-function placeEnt(e){e.el.style.transform=`translate3d(${e.x.toFixed(1)}px,${e.y.toFixed(1)}px,0) scaleX(${e.f})`;e.el.style.zIndex=Math.round(e.y)}
+function placeEnt(e){e.el.style.transform=`translate3d(${e.x.toFixed(1)}px,${e.y.toFixed(1)}px,0) scaleX(${e.f})`;e.el.style.zIndex=Math.round(e.y+e.sh)}
 function addEnt(x){
-  const m=x.m,el=document.createElement('span'),sp=document.createElement('span'),hive=m.k==='bee',s=hive?38:(SZ[m.k]||24);
-  el.className='an'+(hive?' hive':'');sp.className='sp';el.style.fontSize=s+'px';
-  if(hive){sp.innerHTML=HIVE;el.append(sp);el.insertAdjacentHTML('beforeend','<span class="bz">🐝</span>')}
-  else{sp.textContent=m.e;el.append(sp)}
+  const m=x.m,a=ART[m.k],hive=m.k==='bee',el=document.createElement('span'),sp=document.createElement('span');
+  el.className='an'+(hive?' hive':'')+(['hen','duck','turkey'].includes(m.k)?' bird':'')+(m.k==='rabbit'?' hopper':a.w>=40?' big':'');
+  el.style.width=a.w+'px';el.style.setProperty('--d',(-Math.random()*4).toFixed(2)+'s');
+  sp.className='sp';sp.innerHTML=a.svg;el.append(sp);
+  if(hive)el.insertAdjacentHTML('beforeend','<span class="bz">🐝</span>');
   x.yard.append(el);
-  const [W,H]=yardSize(x),e={el,sp,s,x:Math.random()*Math.max(0,W-s),y:Math.random()*Math.max(0,H-s),tx:0,ty:0,v:0,f:1,w:Math.random()*2.5,moving:false};
+  const sw=a.w,sh=a.w*a.vb[1]/a.vb[0],[W,H]=yardSize(x),e={el,sp,sw,sh,x:Math.random()*Math.max(0,W-sw),y:Math.random()*Math.max(0,H-sh),tx:0,ty:0,v:0,f:Math.random()<.5?1:-1,w:Math.random()*2.5,moving:false};
   x.ents.push(e);placeEnt(e);
 }
 function layoutHives(x){
   const [W,H]=yardSize(x),n=x.ents.length;
-  x.ents.forEach((e,i)=>{e.x=(i+1)/(n+1)*W-17;e.y=H/2-19+(i%2?7:-5);e.f=1;placeEnt(e)});
+  x.ents.forEach((e,i)=>{e.x=(i+1)/(n+1)*W-e.sw/2;e.y=H/2-e.sh/2+(i%2?8:-4);e.f=1;placeEnt(e)});
 }
 let anLast=0;
 function anLoop(t){
@@ -716,11 +915,9 @@ function anLoop(t){
     while(x.ents.length>want){x.ents.pop().el.remove();changed=true}
     if(hive){if(changed||!x.laid){layoutHives(x);x.laid=1}continue}
     for(const e of x.ents){
-      if(!e.moving){
-        e.w-=dt;if(e.w<=0)pickTarget(e,x);
-        continue}
+      if(!e.moving){e.w-=dt;if(e.w<=0)pickTarget(e,x);continue}
       const dx=e.tx-e.x,dy=e.ty-e.y,d=Math.hypot(dx,dy),st=e.v*dt;
-      if(d<=st){e.x=e.tx;e.y=e.ty;e.moving=false;e.w=.6+Math.random()*3.2;e.sp.classList.remove('walk')}
+      if(d<=st){e.x=e.tx;e.y=e.ty;e.moving=false;e.w=.8+Math.random()*3.6;e.sp.classList.remove('walk')}
       else{e.x+=dx/d*st;e.y+=dy/d*st}
       placeEnt(e);
     }
