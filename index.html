@@ -6,7 +6,7 @@
 <title>🌻 Fazenda Feliz</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--ok:#4caf2e;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 64px);--sheetb:calc(env(safe-area-inset-bottom,0px) + 84px);--barb:calc(env(safe-area-inset-bottom,0px) + 73px)}
+:root{--g1:#7fcf6e;--g2:#72c262;--soil:#8a5a35;--soil2:#6b4326;--panel:#fff7dc;--ink:#3b2a14;--line:#e6d79b;--sun:#ffcf33;--water:#3ab8f0;--ok:#4caf2e;--top:calc(env(safe-area-inset-top,0px) + 8px);--bot:calc(env(safe-area-inset-bottom,0px) + 72px);--sheetb:calc(env(safe-area-inset-bottom,0px) + 92px);--barb:calc(env(safe-area-inset-bottom,0px) + 81px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}}
 :root[data-theme="dark"]{--g1:#2f5d2a;--g2:#295426;--soil:#6b4326;--soil2:#52331b;--panel:#2c2a1f;--ink:#f4ead2;--line:#4b4730}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -171,14 +171,14 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #hud .hrow{display:flex;align-items:center;gap:4px}
 #hud #wk{padding:5px 8px}
 #menu{position:fixed;z-index:6;top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);display:flex;gap:5px}
-.ib{position:relative;width:36px;height:36px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:inherit;font-size:17px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003;display:grid;place-items:center}
+.ib{position:relative;width:46px;height:46px;border-radius:14px;border:2px solid var(--line);background:var(--panel);color:inherit;font-size:22px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003;display:grid;place-items:center}
 .ab-shop{background:linear-gradient(145deg,#ffe58a,#f6c33a);border-color:#c58a17;color:#3b2a14}
 #bak{position:absolute;top:-6px;right:-6px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;min-width:17px;font-size:10px;line-height:13px;font-weight:700;padding:0 3px;display:none;text-align:center}
-#zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:calc(var(--top) + 44px);display:flex;gap:5px}
-#zoom button{width:32px;height:32px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:17px;font-weight:700;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003}
+#zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:calc(var(--top) + 54px);display:flex;gap:5px}
+#zoom button{width:44px;height:44px;border-radius:13px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:22px;font-weight:700;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003}
 #bar{position:fixed;z-index:6;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;gap:4px;padding:3px;border-radius:16px;background:var(--panel);border:2px solid var(--line);box-shadow:0 3px 8px #0003}
-.ab{width:46px;height:42px;border-radius:13px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:19px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
-.ab small{display:block;font-size:9.5px;font-weight:600;margin-top:2px}
+.ab{width:54px;height:50px;border-radius:14px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:22px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.ab small{display:block;font-size:10.5px;font-weight:600;margin-top:2px}
 .ab.on{background:var(--water);border-color:#fff;color:#fff;box-shadow:0 0 0 2px var(--water)}
 #bu.on{background:var(--ok);box-shadow:0 0 0 2px var(--ok)}
 #bu.on small::after{content:' ✓'}
@@ -203,7 +203,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <button class="ab" id="bu" aria-label="Rega e adubo automáticos" title="Liga/desliga rega e adubo automáticos">🚿<small>Auto</small></button>
 <button class="ab" id="bp" aria-label="Plantar tudo">🌱<small>Plantar</small></button>
 <button class="ab" id="bh" aria-label="Colher tudo">🧺<small>Colher</small></button>
-<button class="ab ab-shop" id="bs" aria-label="Comprar (loja)" title="Loja">🛒<small>Comprar</small></button>
+<button class="ab ab-shop" id="bs" aria-label="Comprar (loja)" title="Loja">🛒<small>Loja</small></button>
 </div>
 <div id="dock"></div>
 <div id="bn"></div>
@@ -443,7 +443,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl"><span class="ver">v1.8.3</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl"><span class="ver">v1.9.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k)),pc=Math.min(5,own.length);map.style.minWidth=pc?(pc*144+(pc-1)*6+28)+'px':'';
   if(own.length){const w=document.createElement('div');w.id='pens';w.style.setProperty('--pc',pc);map.append(w);
     own.forEach(m=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);w.append(x.d);pens.push(x)})}
@@ -544,7 +544,7 @@ const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 100.000 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(100000)}},
   ...[{id:'soil',i:'🌿',name:'Solo fértil',desc:'+5% de velocidade por nível',cost:[250,500,900,1500,2400]},{id:'worker',i:'🧤',name:'Mãos rápidas',desc:'Trabalhadores 5% mais rápidos por nível',cost:[300,600,1100,1800,2800]},{id:'quality',i:'🌟',name:'Olho de agricultor',desc:'Melhora a chance de colheitas de qualidade',cost:[400,800,1400,2300,3500]},{id:'rare',i:'🔮',name:'Sorte no jardim',desc:'+15% de chance de planta rara por nível',cost:[600,1200,2200,3600,5500]},{id:'compost',i:'♻️',name:'Compostagem',desc:'+1 composto extra ao limpar uma planta morta por nível',cost:[350,700,1200,2000,3200]}].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${S.upgrades[u.id]}/5)`,s:u.desc,p:u.cost[S.upgrades[u.id]],lv:Math.min(25,8+S.upgrades[u.id]*3),full:S.upgrades[u.id]>=5,buy(){S.upgrades[u.id]++}})),
   ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
-  ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 🪙 e dá ${Math.max(1,Math.round(m.every*.4))} XP. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
+  ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 🪙 e dá ${Math.max(2,Math.round(m.every*.8))} XP. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
 function row(it){
   const lk=S.lv<(it.lv||1),dis=lk||it.full||S.coins<it.p;
   return `<div class="row${lk?' lock':''}"><span class="i">${it.i}</span><span class="t"><b>${it.t}</b><small>${lk?`<span class="tag">🔒 Nível ${it.lv}</span> `:''}${it.s}</small></span><button data-a="${it.id}"${dis?' disabled':''}>${lk?'🔒 Nv '+it.lv:it.full?'Cheio':it.id==='compost_trade'?'5 ♻️':it.id==='crystal_trade'?'1 💎':it.p+' 🪙'}</button></div>`}
@@ -679,7 +679,7 @@ function tick(){
     else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,false)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
-  AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,xp=a.q*Math.max(1,Math.round(m.every*.4)),x=pens.find(z=>z.m===m);
+  AM.forEach(m=>{const a=AN(m.k);if(!a.a||n<a.a.e)return;const g=a.q*m.val,xp=a.q*Math.max(2,Math.round(m.every*.8)),x=pens.find(z=>z.m===m);
     earn(g);if(m.k==='hen')S.st.e+=a.q;a.q=0;a.a=0;if(xp)addXp(xp);pop(x&&x.d,`+${g} 🪙`+(xp?` ⭐${xp}`:''))});
   pump();
 }
