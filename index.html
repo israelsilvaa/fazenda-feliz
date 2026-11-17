@@ -66,12 +66,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .rare-magic{box-shadow:0 0 0 3px #79baff,0 0 18px 5px #71b7ff99}
 .rare-rainbow{box-shadow:0 0 0 3px #d58cff,0 0 20px 6px #e4a0ff99}
 .rare-crystal{box-shadow:0 0 0 3px #72e6e0,0 0 18px 5px #7bfff099}.rare-gold::after,.rare-magic::after,.rare-rainbow::after,.rare-crystal::after{content:'✦';position:absolute;right:3px;top:0;font-size:12px;color:#fff3a3;text-shadow:0 0 5px #fff;pointer-events:none}
+.plot.rare-crystal::after{content:'💎';right:1px;top:-4px;font-size:19px;line-height:1;color:inherit;text-shadow:none;filter:drop-shadow(0 0 4px #7bfff0) drop-shadow(0 1px 1px #0008);z-index:3;animation:dmnd 1.6s ease-in-out infinite}@keyframes dmnd{0%,100%{transform:scale(1)}50%{transform:scale(1.22) translateY(-1px)}}
 .tier-stone{border-color:#8e9698;background:repeating-linear-gradient(90deg,#777d7d 0 10px,#626969 10px 12px)}
 .tier-fertile{border-color:#4c8b37;background:repeating-linear-gradient(90deg,#80502d 0 10px,#5d3b23 10px 12px)}
 .tier-magic{border-color:#9870c7;background:repeating-linear-gradient(90deg,#76519b 0 10px,#583b78 10px 12px)}
 .tier-gold{border-color:#e4b82e;background:repeating-linear-gradient(90deg,#a97922 0 10px,#805719 10px 12px)}
 .row .t small .meter{display:block;height:5px;background:#0002;border-radius:5px;margin-top:4px;overflow:hidden}.row .t small .meter u{display:block;height:100%;background:#70bd4e}
-.daily-panel{margin:10px 0;padding:10px;border:2px solid var(--line);border-radius:12px;background:#00000008}.daily-panel h3{margin:0 0 5px;font-size:16px}.daily-panel .row{padding:7px 0}.daily-panel button{border:0;border-radius:9px;padding:6px 9px;background:#e9bd42;color:#422d0c;font-weight:700}
+.daily-panel{margin:10px 0;padding:10px;border:2px solid var(--line);border-radius:12px;background:#00000008}.daily-panel h3{margin:0 0 5px;font-size:16px}.daily-panel .row{padding:7px 0}.daily-panel button{border:0;border-radius:9px;padding:6px 9px;background:#4caf2e;color:#fff;font-weight:700}
 
 .dead .bar{display:none}
 .splash{animation:splash .45s}
@@ -146,6 +147,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .row .i{font-size:28px}.level-ach-icon{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;position:relative;border-radius:11px;background:linear-gradient(145deg,#fff1a8,#f7c33d);border:2px solid #c58a17;color:#68430c;box-shadow:0 2px 0 #986a13}.level-ach-icon b{font-size:17px;line-height:1}.level-ach-icon span{position:absolute;right:-5px;top:-7px;font-size:17px;color:#2e8bff;text-shadow:0 1px 1px #0b3a7a,0 0 3px #fff}.row .t{flex:1}.row small{display:block;opacity:.8}
 .box button{font:inherit;cursor:pointer;color:#3b2a14;background:var(--sun);border:0;border-radius:10px;padding:7px 12px;font-weight:600}
 .box button:disabled{opacity:.4;cursor:not-allowed}
+.box:has(.daily-panel) button{background:#4caf2e;color:#fff;box-shadow:0 2px 0 #2f7d1a}.box:has(.daily-panel) button:active{background:#3f9a25}
 .row.lock{opacity:.6}.row.lock .i{filter:grayscale(1)}
 .tag{display:inline-block;background:#0002;border-radius:8px;padding:0 6px;font-size:12px;font-weight:700;opacity:1}
 .gold{background:var(--sun);color:#3b2a14}
@@ -199,7 +201,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #hud #wk{padding:5px 8px}
 #menu{position:fixed;z-index:6;top:var(--top);right:calc(env(safe-area-inset-right,0px) + 8px);display:flex;gap:5px}
 .ib{position:relative;width:46px;height:46px;border-radius:14px;border:2px solid var(--line);background:var(--panel);color:inherit;font-size:22px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003;display:grid;place-items:center}
-.ab-shop{background:linear-gradient(145deg,#ffe58a,#f6c33a);border-color:#c58a17;color:#3b2a14}
+.ab-shop{background:linear-gradient(145deg,#7fd968,#3f9a25);border-color:#2f7d1a;color:#fff}
 #bak{position:absolute;top:-6px;right:-6px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;min-width:17px;font-size:10px;line-height:13px;font-weight:700;padding:0 3px;display:none;text-align:center}
 #menu,#bs{display:none!important}
 #zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:var(--top);display:flex;gap:5px}
@@ -429,6 +431,14 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
   ['l60','🏰','Lenda do campo','Chegue ao nível 60',()=>S.lv>=60,6000],
   ['l75','💫','Ícone da fazenda','Chegue ao nível 75',()=>S.lv>=75,9000],
   ['l100','🌎','Herói da agricultura','Chegue ao nível 100',()=>S.lv>=100,15000],
+  ['l200','🌠','Estrela da lavoura','Chegue ao nível 200',()=>S.lv>=200,20000],
+  ['l300','🪐','Fazendeiro planetário','Chegue ao nível 300',()=>S.lv>=300,27000],
+  ['l400','☄️','Cometa da colheita','Chegue ao nível 400',()=>S.lv>=400,35000],
+  ['l500','🚀','Rumo às estrelas','Chegue ao nível 500',()=>S.lv>=500,45000],
+  ['l600','🛰️','Satélite verde','Chegue ao nível 600',()=>S.lv>=600,57000],
+  ['l700','🌀','Mestre das galáxias','Chegue ao nível 700',()=>S.lv>=700,70000],
+  ['l800','🔱','Titã da agricultura','Chegue ao nível 800',()=>S.lv>=800,85000],
+  ['l900','⚡','Quase um deus rural','Chegue ao nível 900',()=>S.lv>=900,105000],
   ['l1000','🌌','Lenda do universo','Chegue ao nível 1000',()=>S.lv>=1000,150000],
   ['h1000','🌾','Mar de plantações','Colha 1.000 plantas',()=>S.st.h>=1000,600],
   ['h2500','🚛','Colheita lendária','Colha 2.500 plantas',()=>S.st.h>=2500,1500],
