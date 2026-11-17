@@ -119,9 +119,9 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #hud .p{position:static;pointer-events:auto}
 #lv{display:flex;align-items:center;gap:6px;padding:2px 8px 2px 3px;font-weight:700;border-radius:999px}
 #lv .lvb{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#63b8ff,#2a66d9);border:2px solid #0b3a7a;color:#fff;font-size:13px;line-height:1;box-shadow:0 1px 3px #0005;text-shadow:0 1px 1px #0b3a7a}
-#lv .xpw{position:relative;display:block;min-width:66px;height:15px;border-radius:9px;background:#0004;overflow:hidden}
+#lv .xpw{position:relative;display:block;min-width:138px;height:16px;border-radius:9px;background:#0004;overflow:hidden}
 #lv u{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(180deg,#ffdc5a,#f2b01c)}
-#lv i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:10px;line-height:1;font-weight:700;color:#fff;text-shadow:0 1px 2px #000c,0 0 2px #000a;white-space:nowrap}
+#lv i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:10.5px;line-height:1;font-weight:700;color:#fff;text-shadow:0 1px 2px #000c,0 0 2px #000a;white-space:nowrap}
 #hud #co,#hud #wk{font-weight:700;font-size:14px;line-height:1.25;padding:2px 9px;border-radius:999px;white-space:nowrap}
 #hud #resources{position:static;max-width:none;display:flex;gap:4px}
 #hud .resource{font-size:12px;padding:1px 6px}
@@ -250,7 +250,6 @@ const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
 ].map(([k,n,e,cost,sell,t,lv])=>({k,n,e,cost,sell,t,lv,xp:Math.round(t*.4)}));
 const C=Object.fromEntries(CR.map(c=>[c.k,c]));
 // ---------- Fé: versículos e mensagens (edite aqui e adicione quantos quiser) ----------
-// Cada versículo: {t:'texto', r:'Referência'}
 
 // Cada versículo: {t:'texto', r:'Referência'}
 const VERSICULOS = [
@@ -345,8 +344,17 @@ let verseIdx=-1,rankAt=null,fieldEl=null;
 // coloca a placa logo acima da casinha do ranking (mesmo eixo horizontal); se bater no título, sobe acima dele
 function placeVerse(){
   const v=$('#verse'),f=fieldEl;if(!v||!f||!rankAt)return;
-  const w=v.offsetWidth,h=v.offsetHeight,x=Math.max(0,Math.min(f.offsetWidth-w,rankAt.x-w/2)),L=f.offsetLeft+x;
-  let B=f.offsetTop+rankAt.y-55;
+  const FL=f.offsetLeft,FT=f.offsetTop,FR=FL+f.offsetWidth,mw=map.offsetWidth,left0=FL+rankAt.x+36,avail=FR-left0-2;
+  let L,B,w;
+  if(avail>=128){ // ao lado, bem à direita da casinha do ranking (base alinhada com a casinha)
+    w=Math.min(212,avail);v.style.width=w+'px';L=left0;B=FT+rankAt.y+24}
+  else{ // sem espaço ao lado (terreno pequeno): fica logo acima da casinha
+    w=212;v.style.width=w+'px';L=Math.max(0,Math.min(mw-w,FL+rankAt.x-w/2));B=FT+rankAt.y-55}
+  const h=v.offsetHeight;
+  // não cobre canteiros: sobe até ficar livre
+  const bx=cells.map(x=>[FL+x.d.offsetLeft,FT+x.d.offsetTop,x.d.offsetWidth,x.d.offsetHeight]);
+  const hit=()=>bx.some(q=>L<q[0]+q[2]&&L+w>q[0]&&B-h<q[1]+q[3]+4&&B+18>q[1]-4);
+  for(let i=0;i<40&&hit();i++)B-=12;
   const t=$('#ttl');
   if(t){const tl=t.offsetLeft-t.offsetWidth/2-12,tr=tl+t.offsetWidth+24,tt=t.offsetTop-6,tb=t.offsetTop+t.offsetHeight+6;
     if(L<tr&&L+w>tl&&B-h<tb&&B+18>tt)B=tt-24}
