@@ -251,15 +251,95 @@ const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
 const C=Object.fromEntries(CR.map(c=>[c.k,c]));
 // ---------- Fé: versículos e mensagens (edite aqui e adicione quantos quiser) ----------
 // Cada versículo: {t:'texto', r:'Referência'}
-const VERSICULOS=[
- {t:'Eu disse isso para que em mim vocês tenham paz. Neste mundo, vocês terão aflições; contudo, tenham coragem! Eu venci o mundo.',r:'João 16:33'},
- {t:'Eclesiastes 11:2 orienta a dividir os recursos ou investimentos em “sete e até a oito” partes, aconselhando a generosidade ampla e a prudência diante de um futuro incerto.',r:'Eclesiastes 11:2'}
+
+// Cada versículo: {t:'texto', r:'Referência'}
+const VERSICULOS = [
+  {t:'O Senhor é o meu pastor; nada me faltará.',r:'Salmos 23:1'},
+  {t:'Tudo posso naquele que me fortalece.',r:'Filipenses 4:13'},
+  {t:'O amor nunca falha.',r:'1 Coríntios 13:8'},
+  {t:'O choro pode durar uma noite, mas a alegria vem pela manhã.',r:'Salmos 30:5'},
+  {t:'Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.',r:'Salmos 37:5'},
+  {t:'Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.',r:'Salmos 46:1'},
+  {t:'Aquietai-vos e sabei que eu sou Deus.',r:'Salmos 46:10'},
+  {t:'O Senhor é a minha luz e a minha salvação; a quem temerei?',r:'Salmos 27:1'},
+  {t:'Lâmpada para os meus pés é a tua palavra e luz para o meu caminho.',r:'Salmos 119:105'},
+  {t:'A alegria do Senhor é a vossa força.',r:'Neemias 8:10'},
+  {t:'Buscai primeiro o Reino de Deus e a sua justiça.',r:'Mateus 6:33'},
+  {t:'Não temas, porque eu sou contigo.',r:'Isaías 41:10'},
+  {t:'Os que esperam no Senhor renovarão as suas forças.',r:'Isaías 40:31'},
+  {t:'O Senhor pelejará por vós, e vós vos calareis.',r:'Êxodo 14:14'},
+  {t:'Porque para Deus nada é impossível.',r:'Lucas 1:37'},
+  {t:'A fé é o firme fundamento das coisas que se esperam.',r:'Hebreus 11:1'},
+  {t:'O Senhor é bom, uma fortaleza no dia da angústia.',r:'Naum 1:7'},
+  {t:'Em todo tempo ama o amigo.',r:'Provérbios 17:17'},
+  {t:'Sobre tudo o que se deve guardar, guarda o teu coração.',r:'Provérbios 4:23'},
+  {t:'Confia no Senhor de todo o teu coração.',r:'Provérbios 3:5'},
+  {t:'O coração alegre aformoseia o rosto.',r:'Provérbios 15:13'},
+  {t:'A resposta branda desvia o furor.',r:'Provérbios 15:1'},
+  {t:'O temor do Senhor é o princípio da sabedoria.',r:'Provérbios 9:10'},
+  {t:'Melhor é o pouco com justiça do que grandes rendimentos sem direito.',r:'Provérbios 16:8'},
+  {t:'Tudo tem o seu tempo determinado.',r:'Eclesiastes 3:1'},
+  {t:'Melhor é serem dois do que um.',r:'Eclesiastes 4:9'},
+  {t:'Lança o teu pão sobre as águas, porque depois de muitos dias o acharás.',r:'Eclesiastes 11:1'},
+  {t:'O Senhor te abençoe e te guarde.',r:'Números 6:24'},
+  {t:'O Senhor faça resplandecer o seu rosto sobre ti.',r:'Números 6:25'},
+  {t:'Sede fortes e corajosos; não temais.',r:'Deuteronômio 31:6'},
+  {t:'Eu e a minha casa serviremos ao Senhor.',r:'Josué 24:15'},
+  {t:'Não fui eu que lhe ordenei? Seja forte e corajoso!',r:'Josué 1:9'},
+  {t:'O Senhor é a minha força e o meu escudo.',r:'Salmos 28:7'},
+  {t:'Cria em mim, ó Deus, um coração puro.',r:'Salmos 51:10'},
+  {t:'Provai e vede que o Senhor é bom.',r:'Salmos 34:8'},
+  {t:'Perto está o Senhor dos que têm o coração quebrantado.',r:'Salmos 34:18'},
+  {t:'O Senhor sustenta a todos os que caem.',r:'Salmos 145:14'},
+  {t:'A tua graça me basta.',r:'2 Coríntios 12:9'},
+  {t:'Andamos por fé, e não pelo que vemos.',r:'2 Coríntios 5:7'},
+  {t:'Se Deus é por nós, quem será contra nós?',r:'Romanos 8:31'},
+  {t:'O salário do pecado é a morte, mas o dom gratuito de Deus é a vida eterna.',r:'Romanos 6:23'},
+  {t:'Alegrai-vos na esperança, sede pacientes na tribulação.',r:'Romanos 12:12'},
+  {t:'O amor seja sem hipocrisia.',r:'Romanos 12:9'},
+  {t:'Em tudo dai graças.',r:'1 Tessalonicenses 5:18'},
+  {t:'Orai sem cessar.',r:'1 Tessalonicenses 5:17'},
+  {t:'Deus é amor.',r:'1 João 4:8'},
+  {t:'Nós amamos porque ele nos amou primeiro.',r:'1 João 4:19'},
+  {t:'Bem-aventurados os pacificadores.',r:'Mateus 5:9'},
+  {t:'Vinde a mim, todos os que estais cansados e oprimidos.',r:'Mateus 11:28'},
+  {t:'Eu sou o caminho, e a verdade, e a vida.',r:'João 14:6'}
 ];
+
 // Mensagens curtas (sem referência) que aparecem na mesma placa
-const MENSAGENS_FE=[
- 'Já leu a Bíblia hoje? 📖',
- 'Já falou com Deus hoje? 🙏'
+const MENSAGENS_FE = [
+  'Já leu a Bíblia hoje? 📖',
+  'Já falou com Deus hoje? 🙏',
+  'Deus ainda está cuidando de tudo. ❤️',
+  'Não desista. Deus está contigo!',
+  'Ore mais, preocupe-se menos. 🙏',
+  'Deus conhece o seu coração. ❤️',
+  'A fé torna tudo possível.',
+  'Confie no tempo de Deus.',
+  'Hoje é mais um dia para agradecer. ☀️',
+  'Deus nunca perde o controle.',
+  'Sua oração nunca é em vão.',
+  'Deus tem cuidado de você.',
+  'Permita que Deus guie seus passos.',
+  'A esperança floresce em Deus. 🌷',
+  'Um coração grato atrai alegria.',
+  'Deus é maior que qualquer problema.',
+  'Não tenha medo de recomeçar.',
+  'A paz de Deus esteja com você. 🕊️',
+  'Seu amanhã está nas mãos de Deus.',
+  'Nunca deixe de acreditar.',
+  'Deus ouve até o silêncio do coração.',
+  'Seja luz por onde passar. ✨',
+  'A bondade também é uma forma de fé.',
+  'Comece o dia falando com Deus.',
+  'Deus conhece suas batalhas.',
+  'A oração muda o coração.',
+  'Que nunca falte fé no seu caminho.',
+  'Espalhe amor, fé e esperança. ❤️',
+  'Deus continua escrevendo sua história.',
+  'Respire fundo. Deus está no controle. 🙌'
 ];
+
 const fePool=()=>VERSICULOS.map(v=>({t:v.t,r:v.r||''})).concat(MENSAGENS_FE.map(t=>({t,r:''})));
 let verseIdx=-1,rankAt=null,fieldEl=null;
 // coloca a placa logo acima da casinha do ranking (mesmo eixo horizontal); se bater no título, sobe acima dele
