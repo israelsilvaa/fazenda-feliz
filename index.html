@@ -36,7 +36,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 /* placa de fé (canto superior direito do mapa) */
 #verse{position:absolute;right:12px;bottom:calc(100% + 40px);width:212px;z-index:6;cursor:pointer;pointer-events:auto;text-align:center;padding:8px 10px 6px;border-radius:9px;background:linear-gradient(180deg,#f6dea6,#d9aa63);border:3px solid #6b4420;box-shadow:0 3px 0 #4a2f14,0 6px 10px #0005,inset 0 2px 0 #ffffff55;transform:rotate(1.2deg);transition:transform .15s}
 #verse:active{transform:rotate(0) scale(.98)}
-#verse::before,#verse::after{content:"";position:absolute;top:100%;width:7px;height:46px;background:linear-gradient(90deg,#8a5a2b,#6b4420);border-radius:0 0 3px 3px;box-shadow:1px 0 0 #3a210e}
+#verse::before,#verse::after{content:"";position:absolute;top:100%;width:7px;height:18px;background:linear-gradient(90deg,#8a5a2b,#6b4420);border-radius:0 0 3px 3px;box-shadow:1px 0 0 #3a210e}
 #verse::before{left:26px}#verse::after{right:26px}
 #verse .vt{display:block;font-size:10.5px;line-height:13.5px;font-weight:600;color:#3b2410;text-shadow:0 1px 0 #fff6;transition:opacity .16s}
 #verse .vr{display:block;margin-top:3px;font-size:9.5px;line-height:11px;font-weight:700;color:#7a4a1c;letter-spacing:.3px}
@@ -95,7 +95,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #places{position:absolute;inset:0;z-index:3;pointer-events:none}
 .bld .bi{position:absolute;left:50%;top:-12px;transform:translateX(-50%);width:23px;height:23px;border-radius:50%;background:#fff7dc;border:2px solid var(--c);display:grid;place-items:center;font-size:12px;line-height:1;font-style:normal}
 .bld .bl{position:absolute;left:50%;top:44px;transform:translateX(-50%);white-space:nowrap;font-size:11px;line-height:14px;font-weight:700;color:#3b2a14;background:#fff7dce6;border:1.5px solid #8a6a2f;border-radius:8px;padding:0 6px}
-.bld .b1{position:absolute;left:50%;top:62px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;white-space:nowrap;text-align:center;color:#4b2d08;background:linear-gradient(180deg,#fff0a6,#ffd13f 55%,#f0b21c);border:2px solid #8d5a12;border-radius:11px;padding:3px 10px 3px;box-shadow:0 2px 0 #a9761a,0 3px 6px #0004;pointer-events:none}.bld .b1:empty{display:none}
+.bld .b1{position:absolute;left:50%;top:62px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;white-space:nowrap;text-align:center;color:#4b2d08;background:linear-gradient(180deg,#fff0a6,#ffd13f 55%,#f0b21c);border:2px solid #8d5a12;border-radius:11px;padding:3px 10px 3px;box-shadow:0 2px 0 #a9761a,0 3px 6px #0004;pointer-events:auto;cursor:pointer}.bld .b1:active{transform:translateX(-50%) scale(.96)}.bld .b1:empty{display:none}
 .bld .b1 .n{font-size:12px;line-height:15px;font-weight:800;letter-spacing:.2px;text-shadow:0 1px 0 #fff8}
 .bld .b1 .l{font-size:10px;line-height:12px;font-weight:700;color:#fff;background:#2e6fd0;border:1px solid #17407f;border-radius:7px;padding:0 7px}
 .sign{position:absolute;pointer-events:none;text-align:center;white-space:nowrap;padding:3px 10px 4px;border-radius:7px;background:linear-gradient(180deg,#e9bf7c,#c9964f);border:2px solid #6b4420;box-shadow:0 2px 0 #4a2f14,0 4px 6px #0004}
@@ -261,7 +261,16 @@ const MENSAGENS_FE=[
  'Já falou com Deus hoje? 🙏'
 ];
 const fePool=()=>VERSICULOS.map(v=>({t:v.t,r:v.r||''})).concat(MENSAGENS_FE.map(t=>({t,r:''})));
-let verseIdx=-1;
+let verseIdx=-1,rankAt=null,fieldEl=null;
+// coloca a placa logo acima da casinha do ranking (mesmo eixo horizontal); se bater no título, sobe acima dele
+function placeVerse(){
+  const v=$('#verse'),f=fieldEl;if(!v||!f||!rankAt)return;
+  const w=v.offsetWidth,h=v.offsetHeight,x=Math.max(0,Math.min(f.offsetWidth-w,rankAt.x-w/2)),L=f.offsetLeft+x;
+  let B=f.offsetTop+rankAt.y-55;
+  const t=$('#ttl');
+  if(t){const tl=t.offsetLeft-t.offsetWidth/2-12,tr=tl+t.offsetWidth+24,tt=t.offsetTop-6,tb=t.offsetTop+t.offsetHeight+6;
+    if(L<tr&&L+w>tl&&B-h<tb&&B+18>tt)B=tt-24}
+  v.style.right='auto';v.style.bottom='auto';v.style.left=L+'px';v.style.top=B+'px';v.style.translate='0 -100%'}
 const feEsc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function verseHtml(){
   const P=fePool();if(!P.length)return '';
@@ -272,7 +281,7 @@ function nextVerse(){
   const P=fePool(),el=$('#verse');if(!P.length||!el)return;
   let i=verseIdx;if(P.length>1)while(i===verseIdx)i=Math.floor(Math.random()*P.length);verseIdx=i;
   el.classList.add('chg');
-  setTimeout(()=>{const v=P[i];el.querySelector('.vt').textContent=v.t;el.querySelector('.vr').textContent=v.r?'— '+v.r:'';el.classList.remove('chg')},160)}
+  setTimeout(()=>{const v=P[i];el.querySelector('.vt').textContent=v.t;el.querySelector('.vr').textContent=v.r?'— '+v.r:'';el.classList.remove('chg');placeVerse()},160)}
 const AM=[ // animais: k, nome, emoji, produto, emoji prod, valor, intervalo(s), capacidade, máx, nível, preço base, passo
  ['hen','Galinha','🐔','Ovo','🥚',8,15,12,6,2,60,40],['duck','Pato','🦆','Ovo de pato','🥚',12,20,10,5,3,110,70],
  ['rabbit','Coelho','🐇','Pelo','🧶',25,30,8,5,4,160,100],['cow','Vaca','🐄','Leite','🥛',40,40,6,3,5,250,150],
@@ -530,6 +539,7 @@ function buildMap(){
       const fx=ex.slice(0,rects.length).concat(bp,[[hx-72,hy-58,hx+72,hy+58]]),hr=q=>fx.some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
       cx=two?xc+46:hx+100;let found=0;for(let y=74;y<=cy&&!found;y+=8){found=!hr([cx-40,y-34,cx+40,y+74]);if(found)cy=y}}
     bp.push([cx-32,cy-34,cx+32,cy+(b[0]==='brank'?74:40)]);ex.push([cx-40,cy-36,cx+40,cy+(b[0]==='brank'?78:54)]);b.push(cx,cy)});
+  {const rb=BD.find(b=>b[0]==='brank');rankAt=rb?{x:rb[4],y:rb[5]}:null;fieldEl=F}
   ex.push([hx+34,hy+8,hx+150,hy+58]);
   tv.push([hy+44,`<div class="sign" style="left:${(hx+40).toFixed(0)}px;top:${(hy+14).toFixed(0)}px;z-index:${Math.round(hy)+62}"><small>Fazenda de</small><span class="sn"></span></div>`]);
   const placesHtml='<div id="places">'+BD.map(([go,nm,ic,col,cx,cy])=>`<div class="bld" data-go="${go}" style="left:${(cx-BW/2).toFixed(0)}px;top:${(cy-BH/2).toFixed(0)}px;--c:${col}"><svg viewBox="0 0 64 56"><use href="#hut"/></svg><b class="bi">${ic}</b><span class="bl">${nm}</span>${go==='brank'?'<span class="b1"></span>':''}${go==='ba'?'<em class="bdg"></em>':''}</div>`).join('')+'</div>';
@@ -554,7 +564,7 @@ function buildMap(){
     E('🏡','left:34px;top:0;font-size:28px'),E('🚜','right:36px;bottom:0;font-size:26px'),
     E('🌼','left:12px;top:30%;font-size:18px'),E('🌷','right:14px;top:36%;font-size:18px'),E('🌻','left:14px;top:66%;font-size:18px'),E('🌾','right:12px;top:68%;font-size:18px')].join('');
   map.insertAdjacentElement('afterbegin',dc);
-  metrics();fit();
+  metrics();fit();placeVerse();
 }
 const SIDE=30;let TOPM=106,BOTM=200,mapW=0,mapH=0;
 function metrics(){mapW=map.offsetWidth;mapH=map.offsetHeight;const vh=view.clientHeight,bar=$('#dock').getBoundingClientRect(),hud=$('#hud').getBoundingClientRect();if(bar.height)BOTM=Math.max(110,Math.ceil(vh-bar.top)+8);if(hud.height)TOPM=Math.max(90,Math.ceil(hud.bottom)+6)}
@@ -571,7 +581,7 @@ addEventListener('pointermove',e=>{if(!drag)return;
   if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;if(!mapRaf)mapRaf=requestAnimationFrame(()=>{mapRaf=0;fit()})}});
 addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
 addEventListener('pointercancel',()=>{drag=null});
-addEventListener('resize',()=>{metrics();fit()});document.fonts&&document.fonts.ready.then(()=>{metrics();fit()});
+addEventListener('resize',()=>{metrics();fit()});document.fonts&&document.fonts.ready.then(()=>{metrics();fit();placeVerse()});
 const ZMIN=.25,ZMAX=2,zset=z=>{zoom=Math.min(ZMAX,Math.max(ZMIN,+z.toFixed(3)));fit()};
 $('#zin').onclick=()=>zset(zoom*1.2);
 $('#zout').onclick=()=>zset(zoom/1.2);
