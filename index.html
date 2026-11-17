@@ -33,6 +33,17 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .fertilizer-icon{display:inline-grid;place-items:center;position:relative;width:25px;height:25px;font-size:22px;line-height:1}
 .fertilizer-icon::before{content:'⚡'}
 .fertilizer-icon::after{content:attr(data-level);position:absolute;right:-7px;top:-5px;min-width:14px;height:14px;padding:0 2px;border-radius:50%;display:grid;place-items:center;background:#6338a5;color:#fff;border:1px solid #fff;font-size:9px;font-weight:700;line-height:12px}
+/* placa de fé (canto superior direito do mapa) */
+#verse{position:absolute;right:12px;bottom:calc(100% + 40px);width:212px;z-index:6;cursor:pointer;pointer-events:auto;text-align:center;padding:8px 10px 6px;border-radius:9px;background:linear-gradient(180deg,#f6dea6,#d9aa63);border:3px solid #6b4420;box-shadow:0 3px 0 #4a2f14,0 6px 10px #0005,inset 0 2px 0 #ffffff55;transform:rotate(1.2deg);transition:transform .15s}
+#verse:active{transform:rotate(0) scale(.98)}
+#verse::before,#verse::after{content:"";position:absolute;top:100%;width:7px;height:46px;background:linear-gradient(90deg,#8a5a2b,#6b4420);border-radius:0 0 3px 3px;box-shadow:1px 0 0 #3a210e}
+#verse::before{left:26px}#verse::after{right:26px}
+#verse .vt{display:block;font-size:10.5px;line-height:13.5px;font-weight:600;color:#3b2410;text-shadow:0 1px 0 #fff6;transition:opacity .16s}
+#verse .vr{display:block;margin-top:3px;font-size:9.5px;line-height:11px;font-weight:700;color:#7a4a1c;letter-spacing:.3px}
+#verse .vr:empty{display:none}
+#verse.chg .vt,#verse.chg .vr{opacity:0}
+#verse .vx{position:absolute;left:50%;top:-27px;width:20px;height:28px;margin-left:-10px;filter:drop-shadow(0 2px 0 #4a2f14) drop-shadow(0 0 5px #ffe27a99);pointer-events:none}
+#verse .vb{position:absolute;right:-9px;top:-13px;font-size:19px;line-height:1;transform:rotate(12deg);filter:drop-shadow(0 2px 1px #0006);pointer-events:none}
 #ttl{position:absolute;left:50%;top:-36px;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none;padding:3px 18px 4px;border-radius:16px;background:repeating-linear-gradient(180deg,#b07a42 0 7px,#9a6735 7px 9px);border:3px solid #4e2f15;box-shadow:0 3px 0 #3a210e,0 6px 12px #0004,inset 0 2px 0 #ffffff3a}
 #ttl::before,#ttl::after{content:'';position:absolute;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#3a210e;box-shadow:inset 0 1px 0 #ffffff55}
 #ttl::before{left:6px}#ttl::after{right:6px}
@@ -238,6 +249,30 @@ const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
  ['manga','Manga','🥭',550,1650,540,17],['coco','Coco','🥥',800,2400,720,19]
 ].map(([k,n,e,cost,sell,t,lv])=>({k,n,e,cost,sell,t,lv,xp:Math.round(t*.4)}));
 const C=Object.fromEntries(CR.map(c=>[c.k,c]));
+// ---------- Fé: versículos e mensagens (edite aqui e adicione quantos quiser) ----------
+// Cada versículo: {t:'texto', r:'Referência'}
+const VERSICULOS=[
+ {t:'Eu disse isso para que em mim vocês tenham paz. Neste mundo, vocês terão aflições; contudo, tenham coragem! Eu venci o mundo.',r:'João 16:33'},
+ {t:'Eclesiastes 11:2 orienta a dividir os recursos ou investimentos em “sete e até a oito” partes, aconselhando a generosidade ampla e a prudência diante de um futuro incerto.',r:'Eclesiastes 11:2'}
+];
+// Mensagens curtas (sem referência) que aparecem na mesma placa
+const MENSAGENS_FE=[
+ 'Já leu a Bíblia hoje? 📖',
+ 'Já falou com Deus hoje? 🙏'
+];
+const fePool=()=>VERSICULOS.map(v=>({t:v.t,r:v.r||''})).concat(MENSAGENS_FE.map(t=>({t,r:''})));
+let verseIdx=-1;
+const feEsc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function verseHtml(){
+  const P=fePool();if(!P.length)return '';
+  if(verseIdx<0||verseIdx>=P.length)verseIdx=Math.floor(Math.random()*P.length);
+  const v=P[verseIdx];
+  return `<div id="verse" title="Toque para trocar a mensagem"><svg class="vx" viewBox="0 0 24 32" aria-hidden="true"><rect x="9" y="1" width="6" height="30" rx="1.5" fill="#f2c94c" stroke="#8d5a12" stroke-width="1.4"/><rect x="2" y="9" width="20" height="6" rx="1.5" fill="#f2c94c" stroke="#8d5a12" stroke-width="1.4"/><rect x="10.5" y="3" width="1.4" height="26" fill="#fff3b0" opacity=".8"/></svg><span class="vb" aria-hidden="true">📖</span><span class="vt">${feEsc(v.t)}</span><span class="vr">${v.r?'— '+feEsc(v.r):''}</span></div>`}
+function nextVerse(){
+  const P=fePool(),el=$('#verse');if(!P.length||!el)return;
+  let i=verseIdx;if(P.length>1)while(i===verseIdx)i=Math.floor(Math.random()*P.length);verseIdx=i;
+  el.classList.add('chg');
+  setTimeout(()=>{const v=P[i];el.querySelector('.vt').textContent=v.t;el.querySelector('.vr').textContent=v.r?'— '+v.r:'';el.classList.remove('chg')},160)}
 const AM=[ // animais: k, nome, emoji, produto, emoji prod, valor, intervalo(s), capacidade, máx, nível, preço base, passo
  ['hen','Galinha','🐔','Ovo','🥚',8,15,12,6,2,60,40],['duck','Pato','🦆','Ovo de pato','🥚',12,20,10,5,3,110,70],
  ['rabbit','Coelho','🐇','Pelo','🧶',25,30,8,5,4,160,100],['cow','Vaca','🐄','Leite','🥛',40,40,6,3,5,250,150],
@@ -316,7 +351,7 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
 const money=v=>{v=Math.floor(Number(v)||0);const f=(x,u)=>(Math.floor(x*100)/100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' '+u;return v>=1e9?f(v/1e9,'Bi'):v>=1e6?f(v/1e6,'Mi'):v.toLocaleString('pt-BR')};
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp*(.95**(S.upgrades?.worker||0)),HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0,feed:0,barn:0,market:0,books:0,combo:0,seeds:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
 let top1=null;let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
 S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
@@ -324,7 +359,7 @@ try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(
   [['hen','hens','eggs','eggT'],['cow','cows','milk','milkT']].forEach(([k,n,q,t])=>{if(j[n]&&!S.an[k])S.an[k]={n:j[n],q:j[q]||0,t:j[t]||0,a:0}})}}catch(e){}
 S.st=S.st||{};S.st.crops=S.st.crops||{};S.st.planted=S.st.planted||{};S.st.dead=Number(S.st.dead)||0;S.items=Object.assign({f1:0,f2:0,f3:0,poison:0,potion:0},S.items||{});delete S.items.repel;
 /* Compatibilidade: o antigo estoque genérico de adubo vira adubo simples. */
-if(S.fert){S.items.f1=(S.items.f1||0)+S.fert;S.fert=0;}S.upgrades=Object.assign({soil:0,worker:0,quality:0,rare:0,compost:0},S.upgrades||{});S.plotTier=Number(S.plotTier)||0;S.combo=Number(S.combo)||0;S.comboAt=Number(S.comboAt)||0;S.comboTier=Number(S.comboTier)||0;S.daily=Object.assign({date:'',harvest:0,water:0,fert:0,claimed:{}},S.daily||{});S.daily.claimed=S.daily.claimed||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
+if(S.fert){S.items.f1=(S.items.f1||0)+S.fert;S.fert=0;}S.upgrades=Object.assign({soil:0,worker:0,quality:0,rare:0,compost:0,feed:0,barn:0,market:0,books:0,combo:0,seeds:0},S.upgrades||{});S.plotTier=Number(S.plotTier)||0;S.combo=Number(S.combo)||0;S.comboAt=Number(S.comboAt)||0;S.comboTier=Number(S.comboTier)||0;S.daily=Object.assign({date:'',harvest:0,water:0,fert:0,claimed:{}},S.daily||{});S.daily.claimed=S.daily.claimed||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
 const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 const dailyResetRemaining=()=>{const n=new Date(),next=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,0,0);let ms=next-n;const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000);return ` ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`};if(S.daily.date!==today())S.daily={date:today(),harvest:0,water:0,fert:0,claimed:{}};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
@@ -339,6 +374,7 @@ function rollRarity(){const r=Math.random();const boost=(1+(S.upgrades.rare||0)*
 function useFertilizer(p,preferred=''){const keys=preferred?[preferred]:['f3','f2','f1'];const k=keys.find(x=>S.items[x]>0);if(!k)return false;S.items[k]--;p.fm=fertilizerInfo[k].mult;p.fl=Number(k.slice(1));p.fe=Date.now()+fertilizerInfo[k].dur;p.fertUsed=1;S.daily.fert=(S.daily.fert||0)+1;return true}
 function dailyClaim(id){const rewards={harvest:100,water:80,fert:120},goals={harvest:15,water:10,fert:2};const v=S.daily[id]||0;if(v<goals[id]||S.daily.claimed[id])return 0;S.daily.claimed[id]=1;earn(rewards[id]);return rewards[id]}
 const earn=n=>{S.coins+=n;S.st.g+=n};
+const UP=k=>(S.upgrades&&S.upgrades[k])||0,seedCost=k=>Math.max(1,Math.round(k.cost*(1-.04*UP('seeds')))),capOf=m=>m.cap+2*UP('barn'),comboWin=()=>30000+5000*UP('combo');
 const free=()=>S.wk-[...Object.values(S.pl),...Object.values(S.an)].filter(x=>x.a).length;
 const done=()=>{chk();save();dockTools();ui()};
 
@@ -420,7 +456,7 @@ function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
   const pg=cls.includes(' work')?Math.round(Math.max(0,Math.min(1,bw))*360):0;if(x.lpg!==pg){(x.rd||(x.rd=x.d.querySelector('.rd'))).style.setProperty('--pg',pg+'deg');x.lpg=pg}
   if(x.d.className!==cls)x.d.className=cls}
 
-function addXp(n){S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
+function addXp(n){n=Math.round(n*(1+.06*UP('books')));S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
   const u=[...CR.filter(c=>c.lv===S.lv).map(c=>c.e+' '+c.n),...AM.filter(m=>m.lv===S.lv).map(m=>m.e+' '+m.n)];
   bn(`Nível ${S.lv}!`+(u.length?` Desbloqueou: ${u.join(', ')}`:'')+(WL.includes(S.lv)?' 🧑‍🌾':''));buildDock()}}
 
@@ -431,7 +467,7 @@ function buildDock(){
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
-    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${c.cost}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🌱${c.cost}</small><small class="cs">🪙${c.sell}</small></button>`).join('');
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${seedCost(c)}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🌱${seedCost(c)}</small><small class="cs">🪙${c.sell}</small></button>`).join('');
   chips=[...$('#dock').children];toolEls=chips.filter(b=>TL[b.dataset.k]);
 }
 let chips=[],toolEls=[];
@@ -460,7 +496,7 @@ $('#bhelp').onclick=()=>open(help);
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
 function buildMap(){
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl"><span class="ver">v2.0.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>';cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl"><span class="ver">v2.0.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>'+verseHtml();cells=[];cm={};pens=[];
   const own=AM.filter(m=>cnt(m.k)),col=id=>{const w=document.createElement('div');w.className='pcol';w.id=id;return w},L=col('pL'),R=col('pR'),F=document.createElement('div');F.id='field';map.style.minWidth='';
   own.forEach((m,i)=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);(i%2?R:L).append(x.d);pens.push(x)});
   // mesma quantidade de canteiros, em grupos separados por florestas
@@ -540,7 +576,7 @@ const ZMIN=.25,ZMAX=2,zset=z=>{zoom=Math.min(ZMAX,Math.max(ZMIN,+z.toFixed(3)));
 $('#zin').onclick=()=>zset(zoom*1.2);
 $('#zout').onclick=()=>zset(zoom/1.2);
 $('#zfit').onclick=()=>{const vw=view.clientWidth,vh=view.clientHeight;zset(Math.min(1.2,(vw-2*SIDE)/mapW,(vh-TOPM-BOTM)/mapH))};
-map.onclick=e=>{if(moved)return;const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
+map.onclick=e=>{if(moved)return;if(e.target.closest('#verse')){nextVerse();return}const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
 
 // ---------- Trabalhadores e fila ----------
 function start(t){
@@ -549,8 +585,8 @@ function start(t){
   const p=P(t.k);
   if(t.t==='p'){
     const k=C[t.c];if(p.c||p.a)return;
-    if(S.coins<k.cost)return bn('Faltam moedas para plantar');
-    S.coins-=k.cost;const e=n+pt(k);const useFert=!!(S.autoFert&&(S.items.f3||S.items.f2||S.items.f1));const rare=rollRarity();S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,fm:0,fe:0,rt:0,died:0,rare,q:0,shieldUntil:0,a:{t:'p',s:n,e}});if(useFert){useFertilizer(p);}pop(cm[t.k]&&cm[t.k].d,`-${k.cost}`);
+    if(S.coins<seedCost(k))return bn('Faltam moedas para plantar');
+    S.coins-=seedCost(k);const e=n+pt(k);const useFert=!!(S.autoFert&&(S.items.f3||S.items.f2||S.items.f1));const rare=rollRarity();S.st.planted=S.st.planted||{};S.st.planted[t.c]=(S.st.planted[t.c]||0)+1;Object.assign(p,{c:t.c,g:0,w:0,th:0,f:0,fm:0,fe:0,rt:0,died:0,rare,q:0,shieldUntil:0,a:{t:'p',s:n,e}});if(useFert){useFertilizer(p);}pop(cm[t.k]&&cm[t.k].d,`-${seedCost(k)}`);
   }else if(p.c&&!p.a&&p.rt&&!p.died)p.a={t:'h',s:n,e:n+HT()};
 }
 const pump=()=>{while(S.q.length&&free()>0)start(S.q.shift())};
@@ -583,7 +619,7 @@ function bulk(kind){
   if(kind==='p'){
     const c=isT()?last:sel,k=C[c];
     cells.forEach(x=>{const p=S.pl[x.key];if(!(p&&(p.c||p.a)))ts.push({k:x.key,t:'p',c})});
-    const can=Math.floor(S.coins/k.cost);
+    const can=Math.floor(S.coins/seedCost(k));
     if(!ts.length)return bn('Sem canteiros livres');
     if(!can)return bn(`Faltam moedas para ${k.e} ${k.n}`);
     ts.splice(can);
@@ -611,6 +647,14 @@ const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
   {id:'compost_trade',i:'♻️',t:'Trocar 5 compostos por 3 adubos simples',s:`Você tem ${S.st.compost||0} compostos`,p:0,lv:3,full:(S.st.compost||0)<5,buy(){S.st.compost-=5;item('f1',3)}},
   {id:'crystal_trade',i:'💎',t:'Trocar 1 cristal por 100.000 moedas',s:`Você tem ${S.st.crystals||0} cristais`,p:0,lv:10,full:(S.st.crystals||0)<1,buy(){S.st.crystals--;earn(100000)}},
   ...[{id:'soil',i:'🌿',name:'Solo fértil',desc:'+5% de velocidade por nível',cost:[250,500,900,1500,2400]},{id:'worker',i:'🧤',name:'Mãos rápidas',desc:'Trabalhadores 5% mais rápidos por nível',cost:[300,600,1100,1800,2800]},{id:'quality',i:'🌟',name:'Olho de agricultor',desc:'Melhora a chance de colheitas de qualidade',cost:[400,800,1400,2300,3500]},{id:'rare',i:'🔮',name:'Sorte no jardim',desc:'+15% de chance de planta rara por nível',cost:[600,1200,2200,3600,5500]},{id:'compost',i:'♻️',name:'Compostagem',desc:'+1 composto extra ao limpar uma planta morta por nível',cost:[350,700,1200,2000,3200]}].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${S.upgrades[u.id]}/5)`,s:u.desc,p:u.cost[S.upgrades[u.id]],lv:Math.min(25,8+S.upgrades[u.id]*3),full:S.upgrades[u.id]>=5,buy(){S.upgrades[u.id]++}})),
+  ...[
+    {id:'books',i:'📚',name:'Livros de agricultura',desc:'+6% de XP em tudo que você faz, por nível',cost:[500,1000,1800,3000,4500],lv:6},
+    {id:'combo',i:'⏱️',name:'Cronômetro de colheita',desc:'+5s para manter o combo ativo, por nível',cost:[450,900,1600,2600,4000],lv:9},
+    {id:'seeds',i:'🏷️',name:'Cooperativa de sementes',desc:'Sementes 4% mais baratas por nível',cost:[600,1200,2200,3600,5500],lv:10},
+    {id:'feed',i:'🌽',name:'Ração nutritiva',desc:'Animais produzem 8% mais rápido por nível',cost:[400,800,1500,2500,4000],lv:10},
+    {id:'barn',i:'🏚️',name:'Celeiro ampliado',desc:'+2 de capacidade em todos os currais por nível',cost:[500,1100,2000,3400,5200],lv:11},
+    {id:'market',i:'⚖️',name:'Balança de feira',desc:'Colheitas valem 4% mais por nível',cost:[700,1400,2600,4200,6500],lv:12}
+  ].map(u=>({id:'up_'+u.id,i:u.i,t:`${u.name} (${UP(u.id)}/5)`,s:u.desc,p:u.cost[UP(u.id)],lv:Math.min(25,u.lv+UP(u.id)*2),full:UP(u.id)>=5,buy(){S.upgrades[u.id]=UP(u.id)+1;if(u.id==='seeds')buildDock()}})),
   ...[{id:'tier1',tier:1,i:'🪨',name:'Canteiro de pedra',desc:'Visual resistente',cost:900},{id:'tier2',tier:2,i:'🌱',name:'Canteiro fértil',desc:'+5% de crescimento em todos os canteiros',cost:1800},{id:'tier3',tier:3,i:'🔮',name:'Canteiro mágico',desc:'Visual mágico e bônus de raridade',cost:3500},{id:'tier4',tier:4,i:'👑',name:'Canteiro dourado',desc:'Visual dourado e +10% de moedas nas colheitas',cost:7000}].map(t=>({id:t.id,i:t.i,t:`${t.name} ${S.plotTier>=t.tier?'✓':''}`,s:t.desc,p:t.cost,lv:8+t.tier*5,full:S.plotTier!==t.tier-1,buy(){S.plotTier=t.tier-1; if(t.tier===1)S.plotTier=1; if(t.tier===2)S.plotTier=2; if(t.tier>=3)S.plotTier=t.tier;}})),
   ...AM.map(m=>({id:m.k,i:m.e,t:`${m.n} (${cnt(m.k)}/${m.max})`,s:`${m.pn} a cada ${fmt(m.every)}, vale ${m.val} 🪙 e dá ${Math.max(2,Math.round(m.every*.8))} XP. Coleta no mapa`,p:m.base+m.step*cnt(m.k),lv:m.lv,full:cnt(m.k)>=m.max,buy(){AN(m.k).n++;buildMap()}}))]};
 function row(it){
@@ -644,6 +688,7 @@ function help(){
     <h3>🧰 Ferramentas e recursos</h3>
     <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Com o botão Auto ligado, o melhor adubo disponível (nível 3, depois 2 e 1) é aplicado automaticamente ao plantar.</small></span></div>
     <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta. Limpe a planta morta tocando nela ou usando Colher para receber composto. Cada nível de Compostagem aumenta o composto recebido. Troque 5 compostos por 3 adubos simples na loja.</small></span></div>
+    <div class="help-row"><span class="i">📚</span><span><b>Melhorias da loja</b><small>Livros dão mais XP, o Cronômetro prolonga o combo, a Cooperativa baixa o preço das sementes, a Ração acelera os animais, o Celeiro aumenta a capacidade dos currais e a Balança valoriza as colheitas. Cada uma tem 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Poção</b><small>A poção adianta instantaneamente 15% do crescimento de uma planta. Compre pacotes na loja e selecione na barra inferior para usar.</small></span></div>
     <div class="help-row"><span class="i">📅</span><span><b>Missões e conquistas</b><small>Missões diárias: colha 15 plantas (100 moedas), regue 10 vezes (80 moedas) e use 2 adubos (120 moedas). Elas reiniciam à meia-noite no horário local. Conquistas dão moedas por metas de nível, colheita, animais, qualidade, raridades e muito mais; algumas são secretas.</small></span></div>
     <div class="help-row"><span class="i">💾</span><span><b>Salvamento e progresso offline</b><small>O jogo salva automaticamente neste navegador, aproximadamente a cada 5 segundos e ao sair/ocultar a aba. Ao voltar, calcula até 1 hora de progresso offline para crescimento e produção dos animais. Use o mesmo navegador e aparelho para continuar seu jogo.</small></span></div>
@@ -745,10 +790,10 @@ function chk(){A.forEach(a=>{if(!S.ach[a[0]]&&a[4]()){S.ach[a[0]]=1;bn(`🏆 Con
 // ---------- Loop ----------
 function tick(){
   const n=Date.now(),dt=Math.min(n-S.last,36e5);S.last=n;if(S.daily.date!==today())S.daily={date:today(),harvest:0,water:0,fert:0,claimed:{}};
-  AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n;const iv=m.every*1000;while(a.t>=iv){if(a.q<m.cap)a.q++;a.t-=iv}});
+  AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n*(1+.08*UP('feed'));const iv=m.every*1000;while(a.t>=iv){if(a.q<capOf(m))a.q++;a.t-=iv}});
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
-      if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>30000){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult);earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 🪙 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
+      if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>comboWin()){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult*(1+.04*UP('market')));earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 🪙 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
     else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,false)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
@@ -788,7 +833,7 @@ function ui(){
     if(qs.has('pen:'+m.k))cls+=' qd';
     if(cls.includes(' work'))nw++;
     const lt=m.e+' '+m.n+' ×'+cnt(m.k);if(x.llt!==lt){x.lbl.textContent=lt;x.llt=lt}
-    paint(x,cls,em,tm,bw,m.pe+a.q+'/'+m.cap);
+    paint(x,cls,em,tm,bw,m.pe+a.q+'/'+capOf(m));
   });
   mp.classList.toggle('many-work',nw>4);
 }
