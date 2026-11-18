@@ -204,15 +204,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .ab-shop{background:linear-gradient(145deg,#7fd968,#3f9a25);border-color:#2f7d1a;color:#fff}
 #bak{position:absolute;top:-6px;right:-6px;background:#e53935;color:#fff;border:1.5px solid #fff;border-radius:9px;min-width:17px;font-size:10px;line-height:13px;font-weight:700;padding:0 3px;display:none;text-align:center}
 #menu,#bs{display:none!important}
-#zoom{position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 8px);top:var(--top);display:flex;gap:5px}
-#zoom button{width:44px;height:44px;border-radius:13px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:22px;font-weight:700;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 4px #0003}
 #bar{position:fixed;z-index:6;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;gap:4px;padding:3px;border-radius:16px;background:var(--panel);border:2px solid var(--line);box-shadow:0 3px 8px #0003}
 .ab{width:54px;height:50px;border-radius:14px;border:2px solid var(--line);background:#ffffff40;color:inherit;font:inherit;font-size:22px;line-height:1;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
 .ab small{display:block;font-size:10.5px;font-weight:600;margin-top:2px}
 .ab.on{background:var(--water);border-color:#fff;color:#fff;box-shadow:0 0 0 2px var(--water)}
 #bu.on{background:var(--ok);box-shadow:0 0 0 2px var(--ok)}
 #bu.on small::after{content:' ✓'}
-.ab:active,.ib:active,#zoom button:active{transform:scale(.93)}
+.ab:active,.ib:active{transform:scale(.93)}
 #bc{display:none;position:fixed;z-index:6;right:calc(env(safe-area-inset-right,0px) + 10px);bottom:var(--barb);height:30px;padding:0 12px;border-radius:15px;border:2px solid #e57a6a;background:#ffd6d0;color:#7a1d10;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 4px #0003}
 #bc.on{display:block}
 /* mapa grande: brilho simples (sem blur) nos canteiros prontos */
@@ -224,20 +222,19 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .corral.locked::after{content:none}
 .lk{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;pointer-events:none;color:#fff;text-shadow:0 1px 2px #000b}
 .lk b{font-size:30px;line-height:1;filter:grayscale(1);opacity:.6}.lk small{font-size:11px;line-height:13px;font-weight:700}
-#hud #boost{display:none;align-items:center;gap:4px;font-weight:700;font-size:13px;line-height:1.25;padding:2px 9px;border-radius:999px;white-space:nowrap;background:linear-gradient(145deg,#fff1a8,#f7c33d);border-color:#c58a17;color:#4b2d08;box-shadow:0 2px 0 #986a13}#hud #boost.on{display:flex}
+#hud #boost{display:none;align-items:center;gap:4px;font-weight:700;font-size:13px;line-height:1.25;padding:2px 9px;border-radius:999px;white-space:nowrap;background:linear-gradient(145deg,#fff1a8,#f7c33d);border-color:#c58a17;color:#4b2d08;box-shadow:0 2px 0 #986a13}#hud #boost.on{display:flex}#hud #boost .bstar{color:#1e7bff;font-size:16px;line-height:1;text-shadow:0 0 1px #fff,0 1px 0 #0a3d99}
 .box a.xl{flex:none;text-decoration:none;font:inherit;font-weight:700;color:#fff;background:#4caf2e;box-shadow:0 2px 0 #2f7d1a;border-radius:10px;padding:7px 12px;white-space:nowrap}.box a.xl:active{background:#3f9a25}
 </style>
 </head>
 <body>
 <div id="view"><div id="map"></div></div>
-<div id="hud"><div class="hrow"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div class="hrow"><div class="p" id="co">🪙 <span id="coins">0</span></div><div class="p" id="boost" title="Acelerador de XP: +50% de XP"><span>⭐</span><span id="boostT"></span></div></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
+<div id="hud"><div class="hrow"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div class="hrow"><div class="p" id="co">🪙 <span id="coins">0</span></div><div class="p" id="boost" title="Acelerador de XP: +50% de XP"><span class="bstar">★</span><span id="boostT"></span></div></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
 <div id="menu">
 <button class="ib" id="ba" aria-label="Conquistas" title="Conquistas">🏆<span id="bak"></span></button>
 <button class="ib" id="brank" aria-label="Ranking global" title="Ranking">👑</button>
 <button class="ib" id="bhelp" aria-label="Ajuda" title="Ajuda">❔</button>
 <button id="bextras" hidden aria-hidden="true" tabindex="-1"></button>
 </div>
-<div id="zoom"><button id="zout" aria-label="Diminuir zoom">−</button><button id="zin" aria-label="Aumentar zoom">+</button><button id="zfit" aria-label="Ajustar à tela">↔</button></div>
 <button id="bc" aria-label="Cancelar fila"><span id="bcn"></span> Cancelar fila</button>
 <div id="bar">
 <button class="ab" id="bu" aria-label="Rega e adubo automáticos" title="Liga/desliga rega e adubo automáticos">🚿<small>Auto</small></button>
@@ -491,7 +488,7 @@ function rollRarity(){const r=Math.random();const boost=(1+(S.upgrades.rare||0)*
 function useFertilizer(p,preferred=''){const keys=preferred?[preferred]:['f3','f2','f1'];const k=keys.find(x=>S.items[x]>0);if(!k)return false;S.items[k]--;p.fm=fertilizerInfo[k].mult;p.fl=Number(k.slice(1));p.fe=Date.now()+fertilizerInfo[k].dur;p.fertUsed=1;S.daily.fert=(S.daily.fert||0)+1;return true}
 function dailyClaim(id){const rewards={harvest:100,water:80,fert:120},goals={harvest:15,water:10,fert:2};const v=S.daily[id]||0;if(v<goals[id]||S.daily.claimed[id])return 0;S.daily.claimed[id]=1;earn(rewards[id]);return rewards[id]}
 const earn=n=>{S.coins+=n;S.st.g+=n};
-const XPB_COST=300,XPB_MS=600000,xpBoostOn=()=>(Number(S.xpBoostEnd)||0)>Date.now(),UP=k=>(S.upgrades&&S.upgrades[k])||0,seedCost=k=>Math.max(1,Math.round(k.cost*(1-.04*UP('seeds')))),capOf=m=>m.cap+2*UP('barn'),comboWin=()=>30000+5000*UP('combo');
+const XPB_COST=300,XPB_MS=300000,xpBoostOn=()=>(Number(S.xpBoostEnd)||0)>Date.now(),UP=k=>(S.upgrades&&S.upgrades[k])||0,seedCost=k=>Math.max(1,Math.round(k.cost*(1-.04*UP('seeds')))),capOf=m=>m.cap+2*UP('barn'),comboWin=()=>30000+5000*UP('combo');
 const free=()=>S.wk-[...Object.values(S.pl),...Object.values(S.an)].filter(x=>x.a).length;
 const done=()=>{chk();save();dockTools();ui()};
 
@@ -699,17 +696,27 @@ function fit(){
   map.style.transformOrigin='top left';map.style.transform=`translate(${px}px,${py}px) scale(${zoom})`;
 }
 let mapRaf=0;
-view.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false;view.setPointerCapture?.(e.pointerId)});
-addEventListener('pointermove',e=>{if(!drag)return;
+const ptrs=new Map();let pinch=null;
+const ZMIN=.25,ZMAX=2,clampZ=z=>Math.min(ZMAX,Math.max(ZMIN,z));
+function pinchInfo(){const [a,b]=[...ptrs.values()];return{d:Math.hypot(a.x-b.x,a.y-b.y)||1,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2}}
+function startPinch(){const i=pinchInfo();pinch={d:i.d,z:zoom,mx:(i.cx-px)/zoom,my:(i.cy-py)/zoom};drag=null;moved=true}
+view.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});view.setPointerCapture?.(e.pointerId);
+  if(ptrs.size===2){startPinch();return}
+  if(ptrs.size>2)return;
+  drag={x:e.clientX-px,y:e.clientY-py,sx:e.clientX,sy:e.clientY};moved=false});
+addEventListener('pointermove',e=>{if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&ptrs.size>=2){const i=pinchInfo();zoom=clampZ(pinch.z*i.d/pinch.d);px=i.cx-pinch.mx*zoom;py=i.cy-pinch.my*zoom;if(!mapRaf)mapRaf=requestAnimationFrame(()=>{mapRaf=0;fit()});return}
+  if(!drag)return;
   if(!moved&&Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)moved=true;
   if(moved){px=e.clientX-drag.x;py=e.clientY-drag.y;if(!mapRaf)mapRaf=requestAnimationFrame(()=>{mapRaf=0;fit()})}});
-addEventListener('pointerup',()=>{drag=null;setTimeout(()=>moved=false,0)});
-addEventListener('pointercancel',()=>{drag=null});
+function endPtr(e){ptrs.delete(e.pointerId);
+  if(pinch){if(ptrs.size<2){pinch=null;if(ptrs.size===1){const p=[...ptrs.values()][0];drag={x:p.x-px,y:p.y-py,sx:p.x,sy:p.y};moved=true}else{drag=null}}else startPinch()}
+  else if(!ptrs.size)drag=null;
+  if(!ptrs.size)setTimeout(()=>moved=false,0)}
+addEventListener('pointerup',endPtr);addEventListener('pointercancel',endPtr);
+view.addEventListener('wheel',e=>{e.preventDefault();const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015)),nz=clampZ(zoom*f),mx=(e.clientX-px)/zoom,my=(e.clientY-py)/zoom;zoom=nz;px=e.clientX-mx*zoom;py=e.clientY-my*zoom;fit()},{passive:false});
+['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
 addEventListener('resize',()=>{metrics();fit()});document.fonts&&document.fonts.ready.then(()=>{metrics();fit();placeVerse()});
-const ZMIN=.25,ZMAX=2,zset=z=>{zoom=Math.min(ZMAX,Math.max(ZMIN,+z.toFixed(3)));fit()};
-$('#zin').onclick=()=>zset(zoom*1.2);
-$('#zout').onclick=()=>zset(zoom/1.2);
-$('#zfit').onclick=()=>{const vw=view.clientWidth,vh=view.clientHeight;zset(Math.min(1.2,(vw-2*SIDE)/mapW,(vh-TOPM-BOTM)/mapH))};
 map.onclick=e=>{if(moved)return;if(e.target.closest('#verse')){nextVerse();return}const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d&&d.dataset.lockpen){const m=AM.find(z=>z.k===d.dataset.lockpen);bn(S.lv<m.lv?`${m.e} ${m.n} libera no nível ${m.lv}`:`${m.e} ${m.n}: compre na loja por ${m.base} 🪙`);return}if(d&&d.dataset.lock){bn(`🌱 Terreno vazio. Amplie na loja por ${lc()} 🪙`);return}if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
 
 // ---------- Trabalhadores e fila ----------
@@ -775,7 +782,7 @@ const SH=()=>{const mx=S.cols>=MC&&S.rows>=MR;return[
   {id:'wk',i:'🧑‍🌾',t:`Trabalhador (${S.wk}/10)`,s:'Faz uma tarefa por vez: plantar, colher ou coletar',p:wc(),lv:WL[S.wk],full:S.wk>=10,buy(){S.wk++}},
   {id:'sp',i:'👢',t:`Botas ágeis (${S.sp}/5)`,s:'Trabalhadores 15% mais rápidos',p:bc(),lv:3+2*S.sp,full:S.sp>=5,buy(){S.sp++}},
   ...Object.entries(fertilizerInfo).map(([id,f])=>({id,i:`<span class=\"fertilizer-icon\" data-level=\"${id.slice(1)}\"></span>`,t:`Adubo nível ${id.slice(1)} (${S.items[id]||0})`,s:`Acelera o crescimento em ${Math.round((f.mult-1)*100)}% por ${f.dur/60000} min. Pacote com 10 unidades`,p:f.cost,lv:2,buy(){item(id,10)}})),
-  {id:'xpboost',i:'⭐',t:`Acelerador de XP${xpBoostOn()?' (ativo)':''}`,s:`+50% de XP em tudo por 10 min. Comprar de novo soma mais 10 min${xpBoostOn()?` · restam ${fmt(Math.ceil((S.xpBoostEnd-Date.now())/1000))}`:''}`,p:XPB_COST,lv:3,buy(){S.xpBoostEnd=Math.max(Date.now(),Number(S.xpBoostEnd)||0)+XPB_MS;bn('⭐ Acelerador de XP ativo: +50% de XP por 10 min')}},
+  {id:'xpboost',i:'<span style="color:#2e8bff">★</span>',t:`Acelerador de XP${xpBoostOn()?' (ativo)':''}`,s:`+50% de XP em tudo por 5 min. Comprar de novo soma mais 5 min${xpBoostOn()?` · restam ${fmt(Math.ceil((S.xpBoostEnd-Date.now())/1000))}`:''}`,p:XPB_COST,lv:3,buy(){S.xpBoostEnd=Math.max(Date.now(),Number(S.xpBoostEnd)||0)+XPB_MS;bn('⚡ Acelerador de XP ativo: +50% de XP por 5 min')}},
   {id:'poison',i:'☠️',t:`Veneno (${S.items.poison||0})`,s:'Elimina uma planta e conta para conquistas de descarte. Pacote com 3',p:90,lv:4,buy(){item('poison',3)}},
   {id:'potion',i:'🧪',t:`Poção de crescimento (${S.items.potion||0})`,s:'Avança instantaneamente 15% do crescimento. Pacote com 2',p:180,lv:7,buy(){item('potion',2)}},
   {id:'sprinkler',i:'🚿',t:`Aspersor automático ${S.sprinkler?'(comprado)':''}`,s:'Regas automáticas gratuitas em todos os canteiros',p:1800,lv:12,full:!!S.sprinkler,buy(){S.sprinkler=1}},
@@ -809,7 +816,7 @@ const EXTRAS=[
  ['🥊','Diallogo','Jogo de luta com skins de personagens e golpes especiais. Derrote seus inimigos, avance pelos níveis e dispute o ranking por pontuação e nível alcançado.','https://diallogo.netlify.app/']
 ];
 function extras(){
-  $('#box').innerHTML=`<h2>🎮 Extras <button data-a="x">Fechar</button></h2><small>Outros jogos do Israel. Cada um abre em uma nova aba.</small>`+EXTRAS.map(g=>`<div class="row"><span class="i">${g[0]}</span><span class="t"><b>${g[1]}</b><small>${g[2]}</small></span><a class="xl" href="${g[3]}" target="_blank" rel="noopener noreferrer">Jogar agora</a></div>`).join('')}
+  $('#box').innerHTML=`<h2>🎮 Extras <button data-a="x">Fechar</button></h2><small>Veja outros jogos. Cada um abre em uma nova aba.</small>`+EXTRAS.map(g=>`<div class="row"><span class="i">${g[0]}</span><span class="t"><b>${g[1]}</b><small>${g[2]}</small></span><a class="xl" href="${g[3]}" target="_blank" rel="noopener noreferrer">Jogar agora</a></div>`).join('')}
 function help(){
   $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
   <div id="helptext">
@@ -826,15 +833,15 @@ function help(){
     <h3>🛒 Loja e evolução</h3>
     <div class="help-row"><span class="i">🛒</span><span><b>As cinco melhorias permanentes</b><small>Solo fértil: +5% de velocidade de crescimento por nível. Mãos rápidas: trabalhadores 5% mais rápidos por nível. Olho de agricultor: aumenta a chance de qualidade excelente. Sorte no jardim: +15% de chance relativa de raridade por nível. Compostagem: +1 composto extra ao limpar uma planta morta por nível. Cada melhoria tem até 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá um visual resistente; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
-    <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>O mapa já mostra todas as vagas: os terrenos que ainda não são seus aparecem vazios (tracejados). Amplie o terreno pela loja até o limite de 200 canteiros. Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
+    <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>O mapa já mostra todas as vagas: os terrenos que ainda não são seus aparecem vazios (tracejados). Amplie o terreno pela loja até o limite de 200 canteiros. Use o gesto de pinça com dois dedos para aproximar ou afastar e arraste o mapa para se mover.</small></span></div>
     <h3>🧑‍🌾 Trabalhadores, fila e animais</h3>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
     <div class="help-row"><span class="i">🐴</span><span><b>Currais</b><small>Cada animal tem um curral fixo nas laterais do mapa, que fica vazio (tracejado) até você comprar o bicho; depois os bichinhos passeiam sozinhos nele. A quantidade de animais aparece no curral. As colmeias ficam paradas. Toque no curral para coletar os produtos.</small></span></div>
     <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador e todo produto coletado também rende XP.</small></span></div>
     <h3>🧰 Ferramentas e recursos</h3>
     <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Com o botão Auto ligado, o melhor adubo disponível (nível 3, depois 2 e 1) é aplicado automaticamente ao plantar.</small></span></div>
-    <div class="help-row"><span class="i">⭐</span><span><b>XP e acelerador</b><small>Plantar rende de 1 a 5 de XP, conforme a planta (as mais caras rendem mais); colher e coletar dos animais rendem XP maior. O Acelerador de XP, vendido na loja, dá +50% de XP em tudo por 10 minutos: o ícone ⭐ com o tempo restante aparece ao lado das moedas. Comprar de novo soma mais 10 minutos. Os pacotes de adubo vêm com 10 unidades.</small></span></div>
-    <div class="help-row"><span class="i">🎮</span><span><b>Extras (espantalho)</b><small>Toque no espantalho no mapa para ver outros jogos do Israel. Cada um abre em uma nova aba.</small></span></div>
+    <div class="help-row"><span class="i"><span style="color:#2e8bff">★</span></span><span><b>XP e acelerador</b><small>Plantar rende de 1 a 5 de XP, conforme a planta (as mais caras rendem mais); colher e coletar dos animais rendem XP maior. O Acelerador de XP, vendido na loja, dá +50% de XP em tudo por 5 minutos: o ícone <span style="color:#2e8bff">★</span> com o tempo restante aparece ao lado das moedas. Comprar de novo soma mais 5 minutos. Os pacotes de adubo vêm com 10 unidades.</small></span></div>
+    <div class="help-row"><span class="i">🎮</span><span><b>Extras (espantalho)</b><small>Toque no espantalho no mapa para ver outros jogos. Cada um abre em uma nova aba.</small></span></div>
     <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta. Limpe a planta morta tocando nela ou usando Colher para receber composto. Cada nível de Compostagem aumenta o composto recebido. Troque 5 compostos por 3 adubos simples na loja.</small></span></div>
     <div class="help-row"><span class="i">📚</span><span><b>Melhorias da loja</b><small>Livros dão mais XP, o Cronômetro prolonga o combo, a Cooperativa baixa o preço das sementes, a Ração acelera os animais, o Celeiro aumenta a capacidade dos currais e a Balança valoriza as colheitas. Cada uma tem 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Poção</b><small>A poção adianta instantaneamente 15% do crescimento de uma planta. Compre pacotes na loja e selecione na barra inferior para usar.</small></span></div>
@@ -953,7 +960,7 @@ function ui(){
   const resetTimer=$('#dailyResetTimer');if(resetTimer)resetTimer.textContent=dailyResetRemaining();
   const n=Date.now(),qs=new Set(S.q.map(t=>t.k)),ql=S.q.length;
   $('#coins').textContent=money(S.coins);$('#compostCount').textContent='♻️ '+(S.st.compost||0);$('#crystalCount').textContent='💎 '+(S.st.crystals||0);$('#lvt').textContent=S.lv;$('#xpt').textContent=money(S.xp)+' / '+money(need(S.lv))+' XP';$('#lv').title='Nível '+S.lv;$('#map').classList.toggle('sprinkler-on',!!S.sprinkler);$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
-  {const bl=(Number(S.xpBoostEnd)||0)-n,bo=$('#boost');if(bl>0){const t=fmt(Math.ceil(bl/1000));if(!bo.classList.contains('on'))bo.classList.add('on');if(bo._t!==t){$('#boostT').textContent=t;bo._t=t}}else if(S.xpBoostEnd){S.xpBoostEnd=0;bo.classList.remove('on');bo._t='';bn('⭐ O acelerador de XP acabou')}}
+  {const bl=(Number(S.xpBoostEnd)||0)-n,bo=$('#boost');if(bl>0){const t=fmt(Math.ceil(bl/1000));if(!bo.classList.contains('on'))bo.classList.add('on');if(bo._t!==t){$('#boostT').textContent=t;bo._t=t}}else if(S.xpBoostEnd){S.xpBoostEnd=0;bo.classList.remove('on');bo._t='';bn('⚡ O acelerador de XP acabou')}}
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
   $('#bu').classList.toggle('on',!!(S.auto||S.autoFert));
