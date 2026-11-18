@@ -224,15 +224,18 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .corral.locked::after{content:none}
 .lk{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;pointer-events:none;color:#fff;text-shadow:0 1px 2px #000b}
 .lk b{font-size:30px;line-height:1;filter:grayscale(1);opacity:.6}.lk small{font-size:11px;line-height:13px;font-weight:700}
+#hud #boost{display:none;align-items:center;gap:4px;font-weight:700;font-size:13px;line-height:1.25;padding:2px 9px;border-radius:999px;white-space:nowrap;background:linear-gradient(145deg,#fff1a8,#f7c33d);border-color:#c58a17;color:#4b2d08;box-shadow:0 2px 0 #986a13}#hud #boost.on{display:flex}
+.box a.xl{flex:none;text-decoration:none;font:inherit;font-weight:700;color:#fff;background:#4caf2e;box-shadow:0 2px 0 #2f7d1a;border-radius:10px;padding:7px 12px;white-space:nowrap}.box a.xl:active{background:#3f9a25}
 </style>
 </head>
 <body>
 <div id="view"><div id="map"></div></div>
-<div id="hud"><div class="hrow"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div class="p" id="co">🪙 <span id="coins">0</span></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
+<div id="hud"><div class="hrow"><div class="p" id="lv"><span class="lvb"><b id="lvt"></b></span><span class="xpw"><u id="xpb"></u><i id="xpt"></i></span></div><div class="p" id="wk" title="Trabalhadores livres / total"><span id="wkt"></span></div></div><div class="hrow"><div class="p" id="co">🪙 <span id="coins">0</span></div><div class="p" id="boost" title="Acelerador de XP: +50% de XP"><span>⭐</span><span id="boostT"></span></div></div><div id="resources"><span class="resource" id="compostCount">♻️ 0</span><span class="resource" id="crystalCount">💎 0</span></div></div>
 <div id="menu">
 <button class="ib" id="ba" aria-label="Conquistas" title="Conquistas">🏆<span id="bak"></span></button>
 <button class="ib" id="brank" aria-label="Ranking global" title="Ranking">👑</button>
 <button class="ib" id="bhelp" aria-label="Ajuda" title="Ajuda">❔</button>
+<button id="bextras" hidden aria-hidden="true" tabindex="-1"></button>
 </div>
 <div id="zoom"><button id="zout" aria-label="Diminuir zoom">−</button><button id="zin" aria-label="Aumentar zoom">+</button><button id="zfit" aria-label="Ajustar à tela">↔</button></div>
 <button id="bc" aria-label="Cancelar fila"><span id="bcn"></span> Cancelar fila</button>
@@ -256,7 +259,7 @@ const CR=[ // k, nome, emoji, custo, venda, tempo(s), nível
  ['melancia','Melancia','🍉',100,290,140,8],['berinjela','Berinjela','🍆',130,370,170,9],['brocolis','Brócolis','🥦',160,460,200,10],
  ['uva','Uva','🍇',220,640,260,12],['abacaxi','Abacaxi','🍍',300,880,330,13],['girassol','Girassol','🌻',400,1200,420,15],
  ['manga','Manga','🥭',550,1650,540,17],['coco','Coco','🥥',800,2400,720,19]
-].map(([k,n,e,cost,sell,t,lv])=>({k,n,e,cost,sell,t,lv,xp:Math.round(t*.4)}));
+].map(([k,n,e,cost,sell,t,lv],i,arr)=>({k,n,e,cost,sell,t,lv,xp:Math.round(t*.4),px:Math.floor(i*5/arr.length)+1}));
 const C=Object.fromEntries(CR.map(c=>[c.k,c]));
 // ---------- Fé: versículos e mensagens (edite aqui e adicione quantos quiser) ----------
 
@@ -465,7 +468,7 @@ const A=[ // id, emoji, nome, descrição, teste, prêmio
 const money=v=>{v=Math.floor(Number(v)||0);const f=(x,u)=>(Math.floor(x*100)/100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' '+u;return v>=1e9?f(v/1e9,'Bi'):v>=1e6?f(v/1e6,'Mi'):v.toLocaleString('pt-BR')};
 const need=l=>25*l,fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const spd=()=>.85**S.sp*(.95**(S.upgrades?.worker||0)),HT=()=>5000*spd(),pt=k=>(1500+Math.min(3500,k.t*25))*spd();
-const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0,feed:0,barn:0,market:0,books:0,combo:0,seeds:0},plotTier:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
+const fresh=()=>({coins:30,lv:1,xp:0,cols:4,rows:4,pl:{},an:{},q:[],wk:1,sp:0,fert:0,auto:0,autoFert:0,ach:{},clm:{},st:{h:0,w:0,g:0,e:0,dead:0,crops:{},planted:{}},items:{f1:0,f2:0,f3:0,poison:0,potion:0},upgrades:{soil:0,worker:0,quality:0,rare:0,compost:0,feed:0,barn:0,market:0,books:0,combo:0,seeds:0},plotTier:0,xpBoostEnd:0,combo:0,comboAt:0,comboTier:0,daily:{date:'',harvest:0,water:0,fert:0,claimed:{}},last:Date.now()});
 let top1=null;let S=fresh(),sel='cenoura',last='cenoura',armed=false,cells=[],cm={},pens=[],tickN=0,fn=null;
 S.st.crops=S.st.crops||{};S.autoFert=Number(S.autoFert)||0;S.auto=Number(S.auto)||0;if(sel==='repelente')sel='cenoura';
 try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S=Object.assign(fresh(),j);if(!j.clm)S.clm=Object.assign({},j.ach);
@@ -488,7 +491,7 @@ function rollRarity(){const r=Math.random();const boost=(1+(S.upgrades.rare||0)*
 function useFertilizer(p,preferred=''){const keys=preferred?[preferred]:['f3','f2','f1'];const k=keys.find(x=>S.items[x]>0);if(!k)return false;S.items[k]--;p.fm=fertilizerInfo[k].mult;p.fl=Number(k.slice(1));p.fe=Date.now()+fertilizerInfo[k].dur;p.fertUsed=1;S.daily.fert=(S.daily.fert||0)+1;return true}
 function dailyClaim(id){const rewards={harvest:100,water:80,fert:120},goals={harvest:15,water:10,fert:2};const v=S.daily[id]||0;if(v<goals[id]||S.daily.claimed[id])return 0;S.daily.claimed[id]=1;earn(rewards[id]);return rewards[id]}
 const earn=n=>{S.coins+=n;S.st.g+=n};
-const UP=k=>(S.upgrades&&S.upgrades[k])||0,seedCost=k=>Math.max(1,Math.round(k.cost*(1-.04*UP('seeds')))),capOf=m=>m.cap+2*UP('barn'),comboWin=()=>30000+5000*UP('combo');
+const XPB_COST=300,XPB_MS=600000,xpBoostOn=()=>(Number(S.xpBoostEnd)||0)>Date.now(),UP=k=>(S.upgrades&&S.upgrades[k])||0,seedCost=k=>Math.max(1,Math.round(k.cost*(1-.04*UP('seeds')))),capOf=m=>m.cap+2*UP('barn'),comboWin=()=>30000+5000*UP('combo');
 const free=()=>S.wk-[...Object.values(S.pl),...Object.values(S.an)].filter(x=>x.a).length;
 const done=()=>{chk();save();dockTools();ui()};
 
@@ -570,9 +573,9 @@ function paint(x,cls,em,tm,bw,ct='',fertLevel=0){
   const pg=cls.includes(' work')?Math.round(Math.max(0,Math.min(1,bw))*360):0;if(x.lpg!==pg){(x.rd||(x.rd=x.d.querySelector('.rd'))).style.setProperty('--pg',pg+'deg');x.lpg=pg}
   if(x.d.className!==cls)x.d.className=cls}
 
-function addXp(n){n=Math.round(n*(1+.06*UP('books')));S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
+function addXp(n){n=Math.round(n*(1+.06*UP('books'))*(xpBoostOn()?1.5:1));S.xp+=n;while(S.xp>=need(S.lv)){S.xp-=need(S.lv);S.lv++;
   const u=[...CR.filter(c=>c.lv===S.lv).map(c=>c.e+' '+c.n),...AM.filter(m=>m.lv===S.lv).map(m=>m.e+' '+m.n)];
-  bn(`Nível ${S.lv}!`+(u.length?` Desbloqueou: ${u.join(', ')}`:'')+(WL.includes(S.lv)?' 🧑‍🌾':''));buildDock()}}
+  bn(`Nível ${S.lv}!`+(u.length?` Desbloqueou: ${u.join(', ')}`:'')+(WL.includes(S.lv)?' 🧑‍🌾':''));buildDock()}return n}
 
 // ---------- Dock ----------
 function buildDock(){
@@ -581,7 +584,7 @@ function buildDock(){
     ['veneno','☠️','Veneno'],['pocao','🧪','Poção +15%']
   ];
   $('#dock').innerHTML=tools.map(([k,icon,label])=>{const stockKey=k==='veneno'?'poison':k==='pocao'?'potion':k;const amount=S.items[stockKey]||0;return `<button class="chip" data-k="${k}" title="${label}: ${amount}"><span>${k.startsWith('f')?`<span class="fertilizer-icon" data-level="${k.slice(1)}"></span>`:icon}</span><small>${label} · ${amount}</small></button>`}).join('')+
-    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${seedCost(c)}, venda ${c.sell}, ${c.xp} XP"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🌱${seedCost(c)}</small><small class="cs">🪙${c.sell}</small></button>`).join('');
+    CR.map(c=>S.lv<c.lv?`<button class="chip lock" data-k="${c.k}"><span class="g">${c.e}</span><b>🔒</b><small>Nv ${c.lv}</small></button>`:`<button class="chip crop" data-k="${c.k}" title="Compra ${seedCost(c)}, venda ${c.sell}, ${c.xp} XP ao colher, ${c.px} XP ao plantar"><span class="ce">${c.e}</span><small class="cx"><span style="color:#2e8bff">★</span>${c.xp}</small><small class="ck">🕒${fmt(c.t)}</small><small class="cb">🌱${seedCost(c)}</small><small class="cs">🪙${c.sell}</small></button>`).join('');
   chips=[...$('#dock').children];toolEls=chips.filter(b=>TL[b.dataset.k]);
 }
 let chips=[],toolEls=[];
@@ -649,10 +652,10 @@ function buildMap(){
   const rdH=rd.map(([x0,y0,x1,y1])=>`<i class="rdw" style="left:${(x0-RW/2).toFixed(0)}px;top:${(y0-RW/2).toFixed(0)}px;width:${(x1-x0+RW).toFixed(0)}px;height:${(y1-y0+RW).toFixed(0)}px"></i>`).join('');
   tv.push([hy+40,`<svg class="tr" viewBox="0 0 96 80" style="left:${(hx-60).toFixed(0)}px;top:${(hy-62).toFixed(0)}px;width:120px;height:100px;z-index:${Math.round(hy)+60}"><use href="#house"/></svg>`]);
   // prédios clicáveis: Loja, Ranking, Conquistas e Ajuda (substituem os botões da tela)
-  const BW=52,BH=46,BD=[['bs','Loja','🛒','#e0a21b'],['brank','Ranking','👑','#2e86c1'],['ba','Conquistas','🏆','#8e44ad'],['bhelp','Ajuda','❔','#27ae60']],bp=[],hit=q=>ex.concat(bp).some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
+  const BW=52,BH=46,BD=[['bs','Loja','🛒','#e0a21b'],['brank','Ranking','👑','#2e86c1'],['ba','Conquistas','🏆','#8e44ad'],['bhelp','Ajuda','❔','#27ae60'],['bextras','Extras','🎮','#d2691e']],bp=[],hit=q=>ex.concat(bp).some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
   BD.forEach((b,i)=>{let cx,cy;
-    if(two){const sx=i%2?46:-46,sy=i<2?-1:1;let ok=0;cx=xc+sx;for(let dy=100;dy<=240&&!ok;dy+=20){cy=hy+sy*dy;ok=!hit([cx-32,cy-34,cx+32,cy+40])}if(!ok)cy=hy+sy*104}
-    else{cx=hx+[-100,100,-180,180][i];cy=hy-10-BH/2}
+    if(two){const xt=b[0]==='bextras',sx=xt?46:i%2?46:-46,sy=xt?-1:i<2?-1:1;let ok=0;cx=xc+sx;if(xt){cy=hy-104;ok=1}for(let dy=100;dy<=240&&!ok;dy+=20){cy=hy+sy*dy;ok=!hit([cx-32,cy-34,cx+32,cy+40])}if(!ok)cy=hy+sy*104}
+    else{cx=hx+[-100,100,-180,180,260][i];cy=hy-10-BH/2}
     if(b[0]==='brank'){ // casa do ranking: lá no alto do mapa, longe do casarão
       const fx=ex.slice(0,rects.length).concat(bp,[[hx-72,hy-58,hx+72,hy+58]]),hr=q=>fx.some(e=>q[0]<e[2]&&q[2]>e[0]&&q[1]<e[3]&&q[3]>e[1]);
       cx=two?xc+46:hx+100;let found=0;for(let y=74;y<=cy&&!found;y+=8){found=!hr([cx-40,y-34,cx+40,y+74]);if(found)cy=y}}
@@ -660,7 +663,7 @@ function buildMap(){
   {const rb=BD.find(b=>b[0]==='brank');rankAt=rb?{x:rb[4],y:rb[5]}:null;fieldEl=F}
   ex.push([hx+34,hy+8,hx+150,hy+58]);
   tv.push([hy+44,`<div class="sign" style="left:${(hx+40).toFixed(0)}px;top:${(hy+14).toFixed(0)}px;z-index:${Math.round(hy)+62}"><small>Fazenda de</small><span class="sn"></span></div>`]);
-  const placesHtml='<div id="places">'+BD.map(([go,nm,ic,col,cx,cy])=>`<div class="bld" data-go="${go}" style="left:${(cx-BW/2).toFixed(0)}px;top:${(cy-BH/2).toFixed(0)}px;--c:${col}"><svg viewBox="0 0 64 56"><use href="#hut"/></svg><b class="bi">${ic}</b><span class="bl">${nm}</span>${go==='brank'?'<span class="b1"></span>':''}${go==='ba'?'<em class="bdg"></em>':''}</div>`).join('')+'</div>';
+  const placesHtml='<div id="places">'+BD.map(([go,nm,ic,col,cx,cy])=>`<div class="bld" data-go="${go}" style="left:${(cx-BW/2).toFixed(0)}px;top:${(cy-BH/2).toFixed(0)}px;--c:${col}">${go==='bextras'?SCARE:'<svg viewBox="0 0 64 56"><use href="#hut"/></svg>'}<b class="bi">${ic}</b><span class="bl">${nm}</span>${go==='brank'?'<span class="b1"></span>':''}${go==='ba'?'<em class="bdg"></em>':''}</div>`).join('')+'</div>';
   for(let y=14,a=1;y<Hp;y+=sp*.8)for(let x=10;x<Wp;x+=sp,a++){
     const px=x+(rng(a)-.5)*sp*.8,py=y+(rng(a+7000)-.5)*sp*.6,u=rng(a+20000),t=u<.36?'oak':u<.62?'pine':u<.82?'bush':u<.93?'tuft':'flw',z=rng(a+30000),v=rng(a+40000);
     let wd=t==='oak'||t==='pine'?(z<.18?72+v*18:z<.55?44+v*12:26+v*8):t==='bush'?24+v*10:16+v*6;
@@ -771,7 +774,8 @@ const SH=()=>{const mx=S.cols>=MC&&S.rows>=MR;return[
   {id:'land',i:'🌱',t:'Ampliar terreno',s:mx?'Terreno no máximo':`${S.cols}x${S.rows} (${S.cols*S.rows}/${MAXP}), ganha ${S.cols<MC&&S.cols<=S.rows?'uma coluna':'uma linha'}`,p:lc(),full:mx,buy(){S.cols<MC&&S.cols<=S.rows?S.cols++:S.rows++;buildMap()}},
   {id:'wk',i:'🧑‍🌾',t:`Trabalhador (${S.wk}/10)`,s:'Faz uma tarefa por vez: plantar, colher ou coletar',p:wc(),lv:WL[S.wk],full:S.wk>=10,buy(){S.wk++}},
   {id:'sp',i:'👢',t:`Botas ágeis (${S.sp}/5)`,s:'Trabalhadores 15% mais rápidos',p:bc(),lv:3+2*S.sp,full:S.sp>=5,buy(){S.sp++}},
-  ...Object.entries(fertilizerInfo).map(([id,f])=>({id,i:`<span class=\"fertilizer-icon\" data-level=\"${id.slice(1)}\"></span>`,t:`Adubo nível ${id.slice(1)} (${S.items[id]||0})`,s:`Acelera o crescimento em ${Math.round((f.mult-1)*100)}% por ${f.dur/60000} min. Pacote com 5 unidades`,p:f.cost,lv:2,buy(){item(id,5)}})),
+  ...Object.entries(fertilizerInfo).map(([id,f])=>({id,i:`<span class=\"fertilizer-icon\" data-level=\"${id.slice(1)}\"></span>`,t:`Adubo nível ${id.slice(1)} (${S.items[id]||0})`,s:`Acelera o crescimento em ${Math.round((f.mult-1)*100)}% por ${f.dur/60000} min. Pacote com 10 unidades`,p:f.cost,lv:2,buy(){item(id,10)}})),
+  {id:'xpboost',i:'⭐',t:`Acelerador de XP${xpBoostOn()?' (ativo)':''}`,s:`+50% de XP em tudo por 10 min. Comprar de novo soma mais 10 min${xpBoostOn()?` · restam ${fmt(Math.ceil((S.xpBoostEnd-Date.now())/1000))}`:''}`,p:XPB_COST,lv:3,buy(){S.xpBoostEnd=Math.max(Date.now(),Number(S.xpBoostEnd)||0)+XPB_MS;bn('⭐ Acelerador de XP ativo: +50% de XP por 10 min')}},
   {id:'poison',i:'☠️',t:`Veneno (${S.items.poison||0})`,s:'Elimina uma planta e conta para conquistas de descarte. Pacote com 3',p:90,lv:4,buy(){item('poison',3)}},
   {id:'potion',i:'🧪',t:`Poção de crescimento (${S.items.potion||0})`,s:'Avança instantaneamente 15% do crescimento. Pacote com 2',p:180,lv:7,buy(){item('potion',2)}},
   {id:'sprinkler',i:'🚿',t:`Aspersor automático ${S.sprinkler?'(comprado)':''}`,s:'Regas automáticas gratuitas em todos os canteiros',p:1800,lv:12,full:!!S.sprinkler,buy(){S.sprinkler=1}},
@@ -795,6 +799,17 @@ function shop(){
   $('#box').innerHTML=`<h2>Loja da fazenda <button data-a="x">Fechar</button></h2><div class="daily-panel"><h3>📅 Missões diárias</h3><small>⏳ Reseta em <b id="dailyResetTimer">${dailyResetRemaining()}</b> · ♻️ Composto: ${S.st.compost||0} · 💎 Cristais: ${S.st.crystals||0} · 🔥 Melhor combo: ${S.st.bestCombo||0}</small>${[['harvest','Colha 15 plantas',15,100],['water','Regue 10 vezes',10,80],['fert','Use 2 adubos',2,120]].map(([id,label,max,reward])=>`<div class="row"><span class="t"><b>${label}</b><small>${Math.min(S.daily[id]||0,max)}/${max} · ${reward} 🪙</small></span>${S.daily.claimed[id]?'✓':(S.daily[id]||0)>=max?`<button data-a="daily:${id}">Resgatar</button>`:'🔒'}</div>`).join('')}</div>`+SH().map(row).join('')+
    `<div class="row"><span class="t"><small>Apagar o progresso salvo</small></span><button data-a="reset">${armed?'Toque de novo':'Recomeçar'}</button></div>`}
 
+const SCARE='<svg viewBox="0 0 64 56"><ellipse cx="32" cy="52" rx="15" ry="2.6" fill="#0003"/><g transform="translate(3.2 5) scale(.9)"><rect x="30" y="20" width="4" height="33" rx="1.5" fill="#7a4d24"/><rect x="8" y="23" width="48" height="4.5" rx="2" fill="#8a5a2b"/><path d="M22 26h20l3 17H19z" fill="#3a7bd5"/><path d="M26 33h6v6h-6z" fill="#e8b84a"/><path d="M6 25l-4 5m4-5l-1 6m1-5l3 5M58 25l4 5m-4-5l1 6m-1-5l-3 5" stroke="#e8b84a" stroke-width="2" stroke-linecap="round"/><circle cx="32" cy="15" r="8" fill="#f3d9a4"/><circle cx="29" cy="14" r="1.3" fill="#3b2a14"/><circle cx="35" cy="14" r="1.3" fill="#3b2a14"/><path d="M28.5 18.5q3.5 2.5 7 0" stroke="#3b2a14" stroke-width="1.3" fill="none" stroke-linecap="round"/><ellipse cx="32" cy="9" rx="14" ry="3" fill="#c99a4b"/><path d="M23 9a9 8 0 0 1 18 0z" fill="#d9a94f"/><rect x="23" y="7" width="18" height="2.2" fill="#8d5a12"/></g></svg>';
+const EXTRAS=[
+ ['🏐','Spike Jump','Jogo de vôlei com skins, níveis, pontuação e ranking. Suba de nível, desbloqueie visuais e dispute o topo.','https://spike-jump.netlify.app/'],
+ ['📖','Daniel','Quiz sobre o livro de Daniel, com rodadas de 120 perguntas. O ranking considera o número de acertos, a porcentagem de acerto, o tempo total e o tempo médio por resposta.','https://gincana-eu-conheco-daniel.netlify.app/'],
+ ['👗','Diva','Crie e personalize sua DIVA. Conheça também as divas criadas por outros jogadores ao redor do mundo.','https://minha-diva.netlify.app/'],
+ ['🚜','Fazenda feliz','Torne-se o maior fazendeiro de todos! Plante diversos alimentos, utilize adubo, conquiste objetivos e dispute os rankings de nível e dinheiro.','https://fazenda-feliz.netlify.app/'],
+ ['🏎️','Ana Turbo','Jogo de corrida com bônus de velocidade, escudo e invencibilidade. Supere seus limites e dispute o ranking pela maior distância percorrida.','https://ana-turbo.netlify.app/'],
+ ['🥊','Diallogo','Jogo de luta com skins de personagens e golpes especiais. Derrote seus inimigos, avance pelos níveis e dispute o ranking por pontuação e nível alcançado.','https://diallogo.netlify.app/']
+];
+function extras(){
+  $('#box').innerHTML=`<h2>🎮 Extras <button data-a="x">Fechar</button></h2><small>Outros jogos do Israel. Cada um abre em uma nova aba.</small>`+EXTRAS.map(g=>`<div class="row"><span class="i">${g[0]}</span><span class="t"><b>${g[1]}</b><small>${g[2]}</small></span><a class="xl" href="${g[3]}" target="_blank" rel="noopener noreferrer">Jogar agora</a></div>`).join('')}
 function help(){
   $('#box').innerHTML=`<h2>Como jogar <button data-a="x">Fechar</button></h2>
   <div id="helptext">
@@ -818,6 +833,8 @@ function help(){
     <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador e todo produto coletado também rende XP.</small></span></div>
     <h3>🧰 Ferramentas e recursos</h3>
     <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Com o botão Auto ligado, o melhor adubo disponível (nível 3, depois 2 e 1) é aplicado automaticamente ao plantar.</small></span></div>
+    <div class="help-row"><span class="i">⭐</span><span><b>XP e acelerador</b><small>Plantar rende de 1 a 5 de XP, conforme a planta (as mais caras rendem mais); colher e coletar dos animais rendem XP maior. O Acelerador de XP, vendido na loja, dá +50% de XP em tudo por 10 minutos: o ícone ⭐ com o tempo restante aparece ao lado das moedas. Comprar de novo soma mais 10 minutos. Os pacotes de adubo vêm com 10 unidades.</small></span></div>
+    <div class="help-row"><span class="i">🎮</span><span><b>Extras (espantalho)</b><small>Toque no espantalho no mapa para ver outros jogos do Israel. Cada um abre em uma nova aba.</small></span></div>
     <div class="help-row"><span class="i">☠️</span><span><b>Veneno e composto</b><small>O veneno elimina uma planta. Limpe a planta morta tocando nela ou usando Colher para receber composto. Cada nível de Compostagem aumenta o composto recebido. Troque 5 compostos por 3 adubos simples na loja.</small></span></div>
     <div class="help-row"><span class="i">📚</span><span><b>Melhorias da loja</b><small>Livros dão mais XP, o Cronômetro prolonga o combo, a Cooperativa baixa o preço das sementes, a Ração acelera os animais, o Celeiro aumenta a capacidade dos currais e a Balança valoriza as colheitas. Cada uma tem 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🧪</span><span><b>Poção</b><small>A poção adianta instantaneamente 15% do crescimento de uma planta. Compre pacotes na loja e selecione na barra inferior para usar.</small></span></div>
@@ -904,7 +921,7 @@ function rankGlobal(){
   <div class="rk-form"><input id="rk-nome" type="text" maxlength="20" autocomplete="nickname" placeholder="Seu nome" value="${rkEsc(lsGet(RK_NAME)||'')}"><button id="rk-btn" data-a="rk-save">Atualizar meus dados (Nv ${S.lv} · 🪙 ${money(S.coins)})</button><p id="rk-msg" aria-live="polite"></p></div>
   <div id="rk-list">Carregando…</div>`;
   rkLoad()}
-$('#brank').onclick=()=>open(rankGlobal);
+$('#brank').onclick=()=>open(rankGlobal);$('#bextras').onclick=()=>open(extras);
 $('#sheet').onclick=e=>{
   const sh=$('#sheet'),a=e.target.dataset.a;
   if(e.target.id==='sheet'||a==='x')return sh.classList.remove('on');
@@ -924,7 +941,7 @@ function tick(){
   AM.forEach(m=>{const a=AN(m.k);if(!a.n)return;a.t+=dt*a.n*(1+.08*UP('feed'));const iv=m.every*1000;while(a.t>=iv){if(a.q<capOf(m))a.q++;a.t-=iv}});
   for(const key in S.pl){const p=S.pl[key];if(!p.c)continue;
     if(p.a){if(n<p.a.e)continue;const t=p.a.t,k=C[p.c];p.a=0;
-      if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>comboWin()){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult*(1+.04*UP('market')));earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 🪙 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}}
+      if(t==='h'){const now=Date.now();if(now-(S.comboAt||0)>comboWin()){S.combo=0;S.comboTier=0}S.combo=(S.combo||0)+1;S.comboAt=now;const tier=S.combo>=20?3:S.combo>=10?2:S.combo>=5?1:0;const comboOnly=[1,1.02,1.05,1.10][tier],comboMult=comboOnly*(S.plotTier===4?1.10:1);const waterNeed=TH(k).length;const qRoll=Math.random()<(S.upgrades.quality||0)*.08;const quality=(p.fertUsed?4:qRoll?3:p.w>=waterNeed?2:1);const qMult=[1,1,1.2,1.5,2][Math.min(quality,4)];const rare=p.rare||'',rMult=rare?(rarityInfo[rare]?.mult||1):1;const val=Math.round(k.sell*qMult*comboMult*rMult*(1+.04*UP('market')));earn(val);S.st.h++;S.daily.harvest=(S.daily.harvest||0)+1;S.st.crops=S.st.crops||{};S.st.crops[k.k]=(S.st.crops[k.k]||0)+1;S.st.quality=S.st.quality||{};S.st.quality[quality]=(S.st.quality[quality]||0)+1;if(k.k==='girassol'&&quality===4)S.st.perfectSun=(S.st.perfectSun||0)+1;S.st.bestCombo=Math.max(S.st.bestCombo||0,S.combo);if(rare){S.st.rares=S.st.rares||{};S.st.rares[rare]=(S.st.rares[rare]||0)+1;if(rare==='crystal')S.st.crystals=(S.st.crystals||0)+1}addXp(k.xp);if(tier>S.comboTier){S.comboTier=tier;bn(`🔥 Combo ${S.combo}! bônus ${Math.round((comboOnly-1)*100)}%`)}const qName=['','Comum','Boa','Excelente','Perfeita'][quality];pop(cm[key]&&cm[key].d,`+${val} 🪙 ${rare?rarityInfo[rare].emoji+' ':''}${qName}`);clr(p)}else if(t==='p'){const g=addXp(k.px);pop(cm[key]&&cm[key].d,`+${g} ⭐`)}}
     else if(p.th){if(S.sprinkler||S.auto&&S.coins>=WC){if(!S.sprinkler)S.coins-=WC;water(p,cm[key]&&cm[key].d,false)}}
     else if(!p.rt){const k=C[p.c],tot=k.t*1000,boost=(p.fm&&n<(p.fe||0)?p.fm:(p.f?1.5:1)),rt=boost*(1+(S.upgrades.soil||0)*.05)*(S.plotTier===2?1.05:1),s=TH(k)[p.w],nx=s===undefined?tot:s*tot,ng=p.g+dt*rt;
       if(ng>=nx){p.g=nx;if(nx<tot)p.th=1;else p.rt=n-(ng-tot)/rt}else p.g=ng}}
@@ -936,13 +953,14 @@ function ui(){
   const resetTimer=$('#dailyResetTimer');if(resetTimer)resetTimer.textContent=dailyResetRemaining();
   const n=Date.now(),qs=new Set(S.q.map(t=>t.k)),ql=S.q.length;
   $('#coins').textContent=money(S.coins);$('#compostCount').textContent='♻️ '+(S.st.compost||0);$('#crystalCount').textContent='💎 '+(S.st.crystals||0);$('#lvt').textContent=S.lv;$('#xpt').textContent=money(S.xp)+' / '+money(need(S.lv))+' XP';$('#lv').title='Nível '+S.lv;$('#map').classList.toggle('sprinkler-on',!!S.sprinkler);$('#xpb').style.width=(S.xp/need(S.lv)*100)+'%';
+  {const bl=(Number(S.xpBoostEnd)||0)-n,bo=$('#boost');if(bl>0){const t=fmt(Math.ceil(bl/1000));if(!bo.classList.contains('on'))bo.classList.add('on');if(bo._t!==t){$('#boostT').textContent=t;bo._t=t}}else if(S.xpBoostEnd){S.xpBoostEnd=0;bo.classList.remove('on');bo._t='';bn('⭐ O acelerador de XP acabou')}}
   $('#wkt').textContent=`🧑‍🌾 ${Math.max(0,free())}/${S.wk}`+(ql?` ⏳${ql}`:'');
   $('#bc').classList.toggle('on',ql>0);$('#bcn').textContent='✖ '+ql;
   $('#bu').classList.toggle('on',!!(S.auto||S.autoFert));
   const cl=A.filter(a=>S.ach[a[0]]&&!S.clm[a[0]]).length,bk=$('#bak');bk.textContent=cl;bk.style.display=cl?'block':'none';document.querySelectorAll('.bdg').forEach(e=>{e.textContent=cl;e.style.display=cl?'block':'none'});
   chips.forEach(b=>b.classList.toggle('on',b.dataset.k===sel));
   const tierClass=['','tier-stone','tier-fertile','tier-magic','tier-gold'][Math.min(4,S.plotTier||0)];
-  const work=(a,tool)=>[' work',FARM(tool),fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
+  const work=(a,tool)=>[' work',FARM(tool),a.t==='h'?'':fmt(Math.max(0,Math.ceil((a.e-n)/1000))),Math.min(1,(n-a.s)/(a.e-a.s))];
   let nr=0,nw=0;
   cells.forEach(x=>{
     const p=S.pl[x.key];let cls='plot '+tierClass,em='',tm='',bw=0,r,ct='';
