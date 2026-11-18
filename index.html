@@ -217,6 +217,13 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 #bc.on{display:block}
 /* mapa grande: brilho simples (sem blur) nos canteiros prontos */
 #map.large .ready:not([class*="rare-"]),#map.many-ready .ready:not([class*="rare-"]){box-shadow:0 0 0 3px var(--sun)}
+/* vagas fixas: aparecem vazias (tracejadas) até serem compradas */
+.plot.locked{cursor:pointer;background:repeating-linear-gradient(0deg,#0002 0 9px,#0001 9px 12px);border:3px dashed #4e2f1580;box-shadow:none;opacity:.55;font-size:22px;color:#fff;text-shadow:0 1px 2px #0008}
+.plot.locked::after{content:'＋';opacity:.7}
+.plot.pen.corral.locked{display:grid;place-items:center;padding:0;background:repeating-linear-gradient(90deg,#0002 0 6px,#0001 6px 8px);border:3px dashed #5a3a1a99;opacity:.65}
+.corral.locked::after{content:none}
+.lk{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;pointer-events:none;color:#fff;text-shadow:0 1px 2px #000b}
+.lk b{font-size:30px;line-height:1;filter:grayscale(1);opacity:.6}.lk small{font-size:11px;line-height:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -342,7 +349,7 @@ const MENSAGENS_FE = [
 ];
 
 const fePool=()=>VERSICULOS.map(v=>({t:v.t,r:v.r||''})).concat(MENSAGENS_FE.map(t=>({t,r:''})));
-let verseIdx=-1,rankAt=null,fieldEl=null;
+let verseIdx=-1,rankAt=null,fieldEl=null,locks=[],lockPens=[],firstFocus=1;
 // coloca a placa logo acima da casinha do ranking (mesmo eixo horizontal); se bater no título, sobe acima dele
 function placeVerse(){
   const v=$('#verse'),f=fieldEl;if(!v||!f||!rankAt)return;
@@ -354,7 +361,7 @@ function placeVerse(){
     w=212;v.style.width=w+'px';L=Math.max(0,Math.min(mw-w,FL+rankAt.x-w/2));B=FT+rankAt.y-55}
   const h=v.offsetHeight;
   // não cobre canteiros: sobe até ficar livre
-  const bx=cells.map(x=>[FL+x.d.offsetLeft,FT+x.d.offsetTop,x.d.offsetWidth,x.d.offsetHeight]);
+  const bx=cells.concat(locks).map(x=>[FL+x.d.offsetLeft,FT+x.d.offsetTop,x.d.offsetWidth,x.d.offsetHeight]);
   const hit=()=>bx.some(q=>L<q[0]+q[2]&&L+w>q[0]&&B-h<q[1]+q[3]+4&&B+18>q[1]-4);
   for(let i=0;i<40&&hit();i++)B-=12;
   const t=$('#ttl');
@@ -601,13 +608,24 @@ $('#bhelp').onclick=()=>open(help);
 
 // ---------- Mapa ----------
 const view=$('#view'),map=$('#map');let px=0,py=0,drag=null,moved=false,zoom=1;
+// terreno: o mapa sempre desenha TODAS as vagas (MC x MR = 200 canteiros); só as compradas ficam ativas
+const MC=10,MR=20,MAXP=MC*MR,ORD=(()=>{const o=[];let cc=4,rr=4;for(let r=0;r<4;r++)for(let c=0;c<4;c++)o.push([r,c]);
+  while(cc<MC||rr<MR){if(cc<MC&&cc<=rr){for(let r=0;r<rr;r++)o.push([r,cc]);cc++}else{for(let c=0;c<cc;c++)o.push([rr,c]);rr++}}return o})();
+function refreshLocks(){lockPens.forEach(x=>{const m=x.m,t=S.lv<m.lv?`🔒 Nível ${m.lv}`:`🪙 ${m.base} · na loja`;if(x.lt!==t){x.sm.textContent=t;x.lt=t}})}
+function focusOwned(){const f=fieldEl;if(!f||!cells.length)return;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  cells.forEach(x=>{const l=f.offsetLeft+x.d.offsetLeft,t=f.offsetTop+x.d.offsetTop;x0=Math.min(x0,l);y0=Math.min(y0,t);x1=Math.max(x1,l+x.d.offsetWidth);y1=Math.max(y1,t+x.d.offsetHeight)});
+  const vw=view.clientWidth,vh=view.clientHeight,ah=vh-TOPM-BOTM,bw=x1-x0+160,bh=y1-y0+160;
+  zoom=Math.max(ZMIN,Math.min(1,(vw-2*SIDE)/bw,ah/bh));px=vw/2-(x0+x1)/2*zoom;py=TOPM+ah/2-(y0+y1)/2*zoom}
 function buildMap(){
+  S.cols=Math.min(S.cols,MC);S.rows=Math.min(S.rows,MR);
   map.classList.toggle('large',S.cols*S.rows>36);
-  map.innerHTML='<div id="ttl"><span class="ver">v2.0.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>'+verseHtml();cells=[];cm={};pens=[];
+  map.innerHTML='<div id="ttl"><span class="ver">v2.0.0</span><span class="tt"><span class="sun">🌻</span><b>Fazenda</b> <i>Feliz</i><span class="sun">🌻</span></span><small>Desenvolvido por Israel Silva · com Claude Code</small></div>'+verseHtml();cells=[];cm={};pens=[];locks=[];lockPens=[];
   const own=AM.filter(m=>cnt(m.k)),col=id=>{const w=document.createElement('div');w.className='pcol';w.id=id;return w},L=col('pL'),R=col('pR'),F=document.createElement('div');F.id='field';map.style.minWidth='';
-  own.forEach((m,i)=>{const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);(i%2?R:L).append(x.d);pens.push(x)});
+  AM.forEach((m,i)=>{const pc=i%2?R:L;
+    if(cnt(m.k)){const x=mk('plot pen corral');x.d.dataset.pen=m.k;x.m=m;setupCorral(x);pc.append(x.d);pens.push(x)}
+    else{const d=document.createElement('div');d.className='plot pen corral locked';d.dataset.lockpen=m.k;d.innerHTML=`<span class="lk"><b>${m.e}</b><small>${m.n}</small><small class="lkt"></small></span>`;pc.append(d);lockPens.push({d,m,sm:d.querySelector('.lkt'),lt:''})}});
   // mesma quantidade de canteiros, em grupos separados por florestas
-  const N=S.cols*S.rows,rng=a=>{let t=(a+0x6D2B79F5)|0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296};
+  const N=MAXP,rng=a=>{let t=(a+0x6D2B79F5)|0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296};
   const blob=n=>{const gh=Math.max(1,Math.round(Math.sqrt(n*.85))),cy=(gh-1)/2,wt=Array.from({length:gh},(_,j)=>Math.sqrt(Math.max(.08,1-((j-cy)/(gh/2))**2))),sw=wt.reduce((p,q)=>p+q,0),idl=wt.map(v=>v*n/sw),w=idl.map(v=>Math.max(1,Math.floor(v))),ord=w.map((_,j)=>j).sort((p,q)=>Math.abs(p-cy)-Math.abs(q-cy)),fr=ord.slice().sort((p,q)=>(idl[q]%1)-(idl[p]%1));
     for(let g=0,sum=w.reduce((p,q)=>p+q,0);sum!==n&&g<999;g++){if(sum<n){w[(g<gh?fr:ord)[g%gh]]++;sum++}else{const j=ord[gh-1-g%gh];if(w[j]>1){w[j]--;sum--}}}return w};
   const ks=N<=24?2:N<=48?3:4,PR=[[.55,.45],[.4,.33,.27],[.3,.27,.24,.19]][ks-2],sz=PR.map(p=>Math.round(N*p));sz[ks-1]+=N-sz.reduce((p,q)=>p+q,0);
@@ -618,6 +636,8 @@ function buildMap(){
   cols.forEach((c,ci)=>{let row=ro[ci];c.forEach((i,ix)=>{const{w,gm,gh}=cl[i],cu=(ci?cw[0]*2+FG:0)+cw[ci]-gm+(!two&&ix%2?2:0),p=document.createElement('div');
     rects.push([cu,row,gm*2,gh,ci]);if(ix<c.length-1)gaps.push([ci,PD+(row+gh+RG/2)*79-2.5]);p.className='patch';p.style.gridColumn=(cu+1)+' / span '+gm*2;p.style.gridRow=(row+1)+' / span '+gh;F.append(p);pick[i]=[];
     w.forEach((n,j)=>{for(let q=0;q<n;q++)pick[i].push([cu+(gm-n)+2*q+1,row+j+1])});row+=gh+RG})});
+  // as primeiras vagas (as que já são suas) ficam no miolo de cada grupo; as demais vão crescendo para fora
+  pick.forEach(a=>{const mx=a.reduce((t,q)=>t+q[0],0)/a.length,my=a.reduce((t,q)=>t+q[1],0)/a.length;a.sort((p,q)=>Math.hypot((p[0]-mx)/2,p[1]-my)-Math.hypot((q[0]-mx)/2,q[1]-my)||p[1]-q[1]||p[0]-q[0])});
   // floresta: árvores grandes e pequenas, arbustos e mato (estáticos, sem sombra), fora dos grupos de canteiros
   const Wp=PD*2+tu*39.5-5,Hp=PD*2+tr*79-5,ex=rects.map(([cu,rr,wu,h])=>[PD+cu*39.5-16,PD+rr*79-16,PD+(cu+wu)*39.5+11,PD+(rr+h)*79+11]),sp=Math.max(46,Math.sqrt(Wp*Hp/150)),tv=[];
   // estradas de terra ligando casarão, grupos de canteiros e currais (as laterais encostam nas colunas de animais)
@@ -647,9 +667,12 @@ function buildMap(){
     if(px<6||px>Wp-6||py>Hp-2||ex.some(q=>px+wd*.3>q[0]&&px-wd*.3<q[2]&&py>q[1]&&py-6<q[3]))continue;
     tv.push([py,`<svg class="tr" viewBox="0 0 56 64" style="left:${(px-wd/2).toFixed(0)}px;top:${(py-wd*64/56*.94).toFixed(0)}px;width:${wd.toFixed(0)}px;height:${(wd*64/56).toFixed(0)}px;z-index:${Math.round(py)+2}"><use href="#${t}"/></svg>`])}
   F.insertAdjacentHTML('afterbegin','<div id="forest">'+rdH+tv.sort((p,q)=>p[0]-q[0]).map(q=>q[1]).join('')+'</div>');
-  const flat=pick.flat();let k=0;for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){
-    const x=mk('plot'),key=r+','+c,q=flat[k++],id=r*97+c;x.d.dataset.key=key;x.key=key;x.d.style.gridColumn=q[0]+' / span 2';x.d.style.gridRow=q[1];
-    x.d.style.translate=`${((rng(id)-.5)*8).toFixed(1)}px ${((rng(id+500)-.5)*8).toFixed(1)}px`;x.d.style.rotate=`${((rng(id+900)-.5)*3).toFixed(1)}deg`;F.append(x.d);cells.push(cm[key]=x)}
+  const flat=pick.flat(),ownN=S.cols*S.rows;for(let i=0;i<MAXP;i++){
+    const [r,c]=ORD[i],q=flat[i],id=r*97+c;let x;
+    if(i<ownN){x=mk('plot');const key=r+','+c;x.d.dataset.key=key;x.key=key;cells.push(cm[key]=x)}
+    else{const d=document.createElement('div');d.className='plot locked';d.dataset.lock='1';x={d};locks.push(x)}
+    x.d.style.gridColumn=q[0]+' / span 2';x.d.style.gridRow=q[1];
+    x.d.style.translate=`${((rng(id)-.5)*8).toFixed(1)}px ${((rng(id+500)-.5)*8).toFixed(1)}px`;x.d.style.rotate=`${((rng(id+900)-.5)*3).toFixed(1)}deg`;F.append(x.d)}
   F.insertAdjacentHTML('beforeend',placesHtml);rkShow();
   if(L.children.length)map.append(L);map.append(F);if(R.children.length)map.append(R);
   const dc=document.createElement('div');dc.id='decor';
@@ -662,7 +685,7 @@ function buildMap(){
     E('🏡','left:34px;top:0;font-size:28px'),E('🚜','right:36px;bottom:0;font-size:26px'),
     E('🌼','left:12px;top:30%;font-size:18px'),E('🌷','right:14px;top:36%;font-size:18px'),E('🌻','left:14px;top:66%;font-size:18px'),E('🌾','right:12px;top:68%;font-size:18px')].join('');
   map.insertAdjacentElement('afterbegin',dc);
-  metrics();fit();placeVerse();
+  metrics();refreshLocks();if(firstFocus){firstFocus=0;focusOwned()}fit();placeVerse();
 }
 const SIDE=30;let TOPM=106,BOTM=200,mapW=0,mapH=0;
 function metrics(){mapW=map.offsetWidth;mapH=map.offsetHeight;const vh=view.clientHeight,bar=$('#dock').getBoundingClientRect(),hud=$('#hud').getBoundingClientRect();if(bar.height)BOTM=Math.max(110,Math.ceil(vh-bar.top)+8);if(hud.height)TOPM=Math.max(90,Math.ceil(hud.bottom)+6)}
@@ -684,7 +707,7 @@ const ZMIN=.25,ZMAX=2,zset=z=>{zoom=Math.min(ZMAX,Math.max(ZMIN,+z.toFixed(3)));
 $('#zin').onclick=()=>zset(zoom*1.2);
 $('#zout').onclick=()=>zset(zoom/1.2);
 $('#zfit').onclick=()=>{const vw=view.clientWidth,vh=view.clientHeight;zset(Math.min(1.2,(vw-2*SIDE)/mapW,(vh-TOPM-BOTM)/mapH))};
-map.onclick=e=>{if(moved)return;if(e.target.closest('#verse')){nextVerse();return}const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
+map.onclick=e=>{if(moved)return;if(e.target.closest('#verse')){nextVerse();return}const bl=e.target.closest('.bld');if(bl){const t=$('#'+bl.dataset.go);if(t)t.click();return}const d=e.target.closest('.plot');if(d&&d.dataset.lockpen){const m=AM.find(z=>z.k===d.dataset.lockpen);bn(S.lv<m.lv?`${m.e} ${m.n} libera no nível ${m.lv}`:`${m.e} ${m.n}: compre na loja por ${m.base} 🪙`);return}if(d&&d.dataset.lock){bn(`🌱 Terreno vazio. Amplie na loja por ${lc()} 🪙`);return}if(d)act(d.dataset.pen?'pen:'+d.dataset.pen:d.dataset.key,d)};
 
 // ---------- Trabalhadores e fila ----------
 function start(t){
@@ -744,8 +767,8 @@ $('#bc').onclick=()=>{const n=S.q.length;S.q=[];bn(`Fila cancelada (${n})`);done
 
 // ---------- Loja ----------
 const lc=()=>50*(S.cols+S.rows-7),wc=()=>Math.round(6*S.wk**1.8)*10,bc=()=>150*(S.sp+1)**2;
-const SH=()=>{const mx=S.cols>=10&&S.rows>=10;return[
-  {id:'land',i:'🌱',t:'Ampliar terreno',s:mx?'Terreno no máximo':`${S.cols}x${S.rows}, ganha uma ${S.cols<=S.rows?'coluna':'linha'}`,p:lc(),full:mx,buy(){S.cols<=S.rows?S.cols++:S.rows++;buildMap()}},
+const SH=()=>{const mx=S.cols>=MC&&S.rows>=MR;return[
+  {id:'land',i:'🌱',t:'Ampliar terreno',s:mx?'Terreno no máximo':`${S.cols}x${S.rows} (${S.cols*S.rows}/${MAXP}), ganha ${S.cols<MC&&S.cols<=S.rows?'uma coluna':'uma linha'}`,p:lc(),full:mx,buy(){S.cols<MC&&S.cols<=S.rows?S.cols++:S.rows++;buildMap()}},
   {id:'wk',i:'🧑‍🌾',t:`Trabalhador (${S.wk}/10)`,s:'Faz uma tarefa por vez: plantar, colher ou coletar',p:wc(),lv:WL[S.wk],full:S.wk>=10,buy(){S.wk++}},
   {id:'sp',i:'👢',t:`Botas ágeis (${S.sp}/5)`,s:'Trabalhadores 15% mais rápidos',p:bc(),lv:3+2*S.sp,full:S.sp>=5,buy(){S.sp++}},
   ...Object.entries(fertilizerInfo).map(([id,f])=>({id,i:`<span class=\"fertilizer-icon\" data-level=\"${id.slice(1)}\"></span>`,t:`Adubo nível ${id.slice(1)} (${S.items[id]||0})`,s:`Acelera o crescimento em ${Math.round((f.mult-1)*100)}% por ${f.dur/60000} min. Pacote com 5 unidades`,p:f.cost,lv:2,buy(){item(id,5)}})),
@@ -788,10 +811,10 @@ function help(){
     <h3>🛒 Loja e evolução</h3>
     <div class="help-row"><span class="i">🛒</span><span><b>As cinco melhorias permanentes</b><small>Solo fértil: +5% de velocidade de crescimento por nível. Mãos rápidas: trabalhadores 5% mais rápidos por nível. Olho de agricultor: aumenta a chance de qualidade excelente. Sorte no jardim: +15% de chance relativa de raridade por nível. Compostagem: +1 composto extra ao limpar uma planta morta por nível. Cada melhoria tem até 5 níveis.</small></span></div>
     <div class="help-row"><span class="i">🪨</span><span><b>Evolução dos canteiros</b><small>Há quatro evoluções sequenciais: pedra, fértil, mágico e dourado. Pedra dá um visual resistente; fértil dá +5% de crescimento; mágico aumenta em 50% a chance de raridade; dourado dá +10% de moedas na colheita. Cada evolução substitui o nível anterior, não soma o bônus antigo. É preciso comprar na ordem e cada etapa tem seu custo e nível mínimo na loja.</small></span></div>
-    <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>Amplie o terreno pela loja até o limite de 10×10 (100 canteiros). Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
+    <div class="help-row"><span class="i">🗺️</span><span><b>Terreno</b><small>O mapa já mostra todas as vagas: os terrenos que ainda não são seus aparecem vazios (tracejados). Amplie o terreno pela loja até o limite de 200 canteiros. Use os botões + e − para ajustar o zoom e arraste o mapa para se mover.</small></span></div>
     <h3>🧑‍🌾 Trabalhadores, fila e animais</h3>
     <div class="help-row"><span class="i">🧑‍🌾</span><span><b>Trabalhadores e fila</b><small>Você começa com 1 trabalhador e pode contratar até 10. Cada trabalhador executa uma tarefa por vez: plantar, colher ou coletar de um animal. Tarefas sem trabalhador livre entram na fila; o botão Cancelar limpa a fila. Trabalhadores levam cerca de 5 segundos por tarefa, antes dos bônus de velocidade.</small></span></div>
-    <div class="help-row"><span class="i">🐴</span><span><b>Currais</b><small>Cada animal que você compra ganha um curral no topo do mapa, onde os bichinhos passeiam sozinhos. A quantidade de animais aparece no curral. As colmeias ficam paradas. Toque no curral para coletar os produtos.</small></span></div>
+    <div class="help-row"><span class="i">🐴</span><span><b>Currais</b><small>Cada animal tem um curral fixo nas laterais do mapa, que fica vazio (tracejado) até você comprar o bicho; depois os bichinhos passeiam sozinhos nele. A quantidade de animais aparece no curral. As colmeias ficam paradas. Toque no curral para coletar os produtos.</small></span></div>
     <div class="help-row"><span class="i">🐔</span><span><b>Animais e coleta</b><small>Galinha libera no nível 2: produz ovos a cada 15 s (até 12), cada um vale 8 moedas. Vaca libera no nível 5: leite a cada 40 s (até 6), vale 40. Ovelha libera no nível 8: lã a cada 60 s (até 6), vale 70. Porco libera no nível 11: bacon a cada 90 s (até 5), vale 120. Colmeia libera no nível 14: mel a cada 120 s (até 4), vale 200. Compre na loja, aguarde a produção e toque no cercado ou use Colher para colocar a coleta na fila. Cada coleta ocupa um trabalhador e todo produto coletado também rende XP.</small></span></div>
     <h3>🧰 Ferramentas e recursos</h3>
     <div class="help-row"><span class="i">⚡</span><span><b>Adubos</b><small>Adubo nível 1 acelera 20% por 2 minutos; nível 2 acelera 30% por 3 minutos; nível 3 acelera 40% por 8 minutos. Selecione o adubo na barra e toque em uma planta em crescimento. Não acumula dois adubos na mesma planta. Com o botão Auto ligado, o melhor adubo disponível (nível 3, depois 2 e 1) é aplicado automaticamente ao plantar.</small></span></div>
@@ -887,7 +910,7 @@ $('#sheet').onclick=e=>{
   if(e.target.id==='sheet'||a==='x')return sh.classList.remove('on');
   if(!a)return;
   if(a==='rk-save'){rkSave();return}
-  if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';buildMap();buildDock();sh.classList.remove('on')}}
+  if(a==='reset'){if(!armed){armed=true;setTimeout(()=>{armed=false},3000)}else{S=fresh();armed=false;sel=last='cenoura';firstFocus=1;buildMap();buildDock();sh.classList.remove('on')}}
   else if(a.startsWith('claim')){const t=a==='claimall'?A.reduce((s,x)=>s+claim(x[0]),0):claim(a.slice(6));if(t)bn(`🏆 +${t} 🪙`)}
   else if(a.startsWith('daily:')){const t=dailyClaim(a.slice(6));if(t)bn(`📅 Missão concluída! +${t} 🪙`);shop();save();return}
   else{const it=SH().find(i=>i.id===a);if(it&&S.lv>=(it.lv||1)&&!it.full&&S.coins>=it.p){S.coins-=it.p;it.buy();pump()}}
@@ -943,7 +966,7 @@ function ui(){
     const lt=m.e+' '+m.n+' ×'+cnt(m.k);if(x.llt!==lt){x.lbl.textContent=lt;x.llt=lt}
     paint(x,cls,em,tm,bw,m.pe+a.q+'/'+capOf(m));
   });
-  mp.classList.toggle('many-work',nw>4);
+  mp.classList.toggle('many-work',nw>4);refreshLocks();
 }
 
 // ---------- Currais: animais andando ----------
